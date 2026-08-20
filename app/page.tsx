@@ -1,69 +1,134 @@
-import Image from "next/image";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowRight, Blocks, Paintbrush, Zap } from "lucide-react";
+import { ProfileRenderer } from "@/components/public/profile-renderer";
+import { Button } from "@/components/ui/button";
+import { demoSnapshot } from "@/lib/demo";
 
-export default function Home() {
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
+
+/**
+ * The landing page.
+ *
+ * The example on the right is a real snapshot rendered by the real
+ * `ProfileRenderer`, not a screenshot — so it can never quietly stop matching
+ * what the product actually produces.
+ */
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      <header className="flex h-14 items-center gap-3 px-4 sm:px-8">
+        <span className="text-sm font-semibold tracking-tight">OWNA</span>
+        <div className="ml-auto flex items-center gap-1">
+          <Button variant="ghost" size="sm" render={<Link href="/login" />}>
+            Sign in
+          </Button>
+          <Button size="sm" render={<Link href="/signup" />}>
+            Create your profile
+          </Button>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
+      </header>
+
+      <main className="flex-1">
+        <section className="mx-auto grid w-full max-w-6xl gap-12 px-4 py-16 sm:px-8 lg:grid-cols-2 lg:items-center lg:py-24">
+          <div>
+            <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+              Your own corner of the internet.
+            </h1>
+            <p className="text-muted-foreground mt-5 text-lg">
+              Not another identical link page. Build a page that looks like you —
+              blocks you arrange, colours and type you choose, on a link you can
+              share anywhere.
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button size="lg" render={<Link href="/signup" />}>
+                Create your profile
+                <ArrowRight />
+              </Button>
+              <Button size="lg" variant="outline" render={<Link href="/maya" />}>
+                See an example
+              </Button>
+            </div>
+
+            <p className="text-muted-foreground mt-4 font-mono text-sm">
+              owna.app/<span className="text-foreground">yourname</span>
+            </p>
+          </div>
+
+          <div className="overflow-hidden rounded-2xl border shadow-xl">
+            <div className="bg-muted flex items-center gap-1.5 border-b px-3 py-2">
+              <span className="size-2.5 rounded-full bg-red-400/70" />
+              <span className="size-2.5 rounded-full bg-amber-400/70" />
+              <span className="size-2.5 rounded-full bg-emerald-400/70" />
+              <span className="text-muted-foreground ml-2 font-mono text-xs">
+                owna.app/maya
+              </span>
+            </div>
+            <div className="pointer-events-none max-h-[30rem] overflow-hidden">
+              <ProfileRenderer snapshot={demoSnapshot("dark")} isPreview />
+            </div>
+          </div>
+        </section>
+
+        <section className="border-t">
+          <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 py-16 sm:grid-cols-3 sm:px-8">
+            <Feature
+              icon={<Blocks aria-hidden="true" />}
+              title="Blocks, not templates"
+              body="Hero, links, projects, galleries, Spotify, YouTube. Drag them into the order you want and hide what you don’t."
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+            <Feature
+              icon={<Paintbrush aria-hidden="true" />}
+              title="Design it properly"
+              body="Ten starting themes, then every colour, font, corner and gap is yours. Nothing locks after you pick a preset."
+            />
+            <Feature
+              icon={<Zap aria-hidden="true" />}
+              title="Fast for visitors"
+              body="Published pages are prerendered and cached, and republish without a rebuild. Your page loads like a page, not like a website builder."
+            />
+          </div>
+        </section>
+
+        <section className="border-t">
+          <div className="mx-auto w-full max-w-2xl px-4 py-20 text-center sm:px-8">
+            <h2 className="text-2xl font-semibold tracking-tight">
+              Take your name before someone else does.
+            </h2>
+            <Button size="lg" className="mt-6" render={<Link href="/signup" />}>
+              Create your profile
+              <ArrowRight />
+            </Button>
+          </div>
+        </section>
       </main>
+
+      <footer className="text-muted-foreground border-t px-4 py-6 text-center text-xs sm:px-8">
+        OWNA
+      </footer>
+    </>
+  );
+}
+
+function Feature({
+  icon,
+  title,
+  body,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  body: string;
+}) {
+  return (
+    <div>
+      <div className="bg-muted mb-3 inline-flex size-9 items-center justify-center rounded-lg [&_svg]:size-4">
+        {icon}
+      </div>
+      <h3 className="font-medium">{title}</h3>
+      <p className="text-muted-foreground mt-1.5 text-sm">{body}</p>
     </div>
   );
 }
