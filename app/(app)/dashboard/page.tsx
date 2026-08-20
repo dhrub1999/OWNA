@@ -28,8 +28,8 @@ async function DashboardBody() {
   const blockCount = draft.blocks.length;
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <div className="flex flex-1 flex-col lg:min-h-0 lg:flex-row">
+      <div className="flex flex-col gap-6 p-4 sm:p-6 lg:min-h-0 lg:w-80 lg:shrink-0 lg:overflow-y-auto lg:border-r">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">
             {draft.profile.display_name || draft.profile.username}
@@ -46,23 +46,23 @@ async function DashboardBody() {
               {blockCount} block{blockCount === 1 ? "" : "s"}
             </span>
           </div>
+          <div className="mt-4">
+            <PublishControls isLive={publication.isLive} />
+          </div>
         </div>
-        <PublishControls isLive={publication.isLive} />
+
+        <div>
+          <ShareCard url={url} label={profileUrlLabel(draft.profile.username)} />
+          {!publication.isLive ? (
+            <p className="text-muted-foreground mt-2 text-xs">
+              This link won’t work for anyone else until you publish.
+            </p>
+          ) : null}
+        </div>
       </div>
 
-      <div className="mt-6">
-        <ShareCard url={url} label={profileUrlLabel(draft.profile.username)} />
-        {!publication.isLive ? (
-          <p className="text-muted-foreground mt-2 text-xs">
-            This link won’t work for anyone else until you publish.
-          </p>
-        ) : null}
-      </div>
-
-      <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_18rem]">
-        {/* A live render of the draft, scaled down. Not a screenshot — it is the
-            same renderer the public page uses, so it can never be out of date. */}
-        <div className="overflow-hidden rounded-xl border">
+      <div className="bg-muted/40 flex flex-1 flex-col p-4 sm:p-8 lg:min-h-0 lg:min-w-0 lg:overflow-y-auto">
+        <div className="mx-auto w-full max-w-[390px] overflow-hidden rounded-xl border bg-background shadow-sm lg:max-w-md">
           <div className="bg-muted/40 flex items-center gap-2 border-b px-3 py-2">
             <span className="text-muted-foreground text-xs">Preview</span>
             <Button
@@ -75,11 +75,13 @@ async function DashboardBody() {
               Full size
             </Button>
           </div>
-          <div className="pointer-events-none max-h-[28rem] overflow-hidden">
-            <ProfileRenderer snapshot={snapshot} isPreview />
+          <div className="pointer-events-none">
+            <ProfileRenderer snapshot={snapshot} isPreview className="min-h-[60vh]" />
           </div>
         </div>
+      </div>
 
+      <div className="flex flex-col p-4 sm:p-6 lg:min-h-0 lg:w-72 lg:shrink-0 lg:overflow-y-auto lg:border-l">
         <div className="flex flex-col gap-2">
           <Button className="justify-start" render={<Link href="/editor" />}>
             <PencilLine />
@@ -114,19 +116,28 @@ async function DashboardBody() {
 
 export default function DashboardPage() {
   return (
-    <>
+    <div className="flex min-h-dvh flex-col lg:h-dvh lg:overflow-hidden">
       <AppHeader />
       <Suspense
         fallback={
-          <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
-            <Skeleton className="h-9 w-56" />
-            <Skeleton className="mt-6 h-10 w-full" />
-            <Skeleton className="mt-8 h-72 w-full" />
+          <div className="flex min-h-0 flex-1">
+            <div className="flex flex-1 flex-col lg:flex-row">
+              <div className="p-4 sm:p-6 lg:w-80 lg:shrink-0 lg:border-r">
+                <Skeleton className="h-9 w-56" />
+                <Skeleton className="mt-6 h-10 w-full" />
+              </div>
+              <div className="bg-muted/40 flex flex-1 flex-col p-4 sm:p-8 lg:min-w-0">
+                <Skeleton className="h-full w-full rounded-xl" />
+              </div>
+              <div className="p-4 sm:p-6 lg:w-72 lg:shrink-0 lg:border-l">
+                <Skeleton className="h-40 w-full" />
+              </div>
+            </div>
           </div>
         }
       >
         <DashboardBody />
       </Suspense>
-    </>
+    </div>
   );
 }

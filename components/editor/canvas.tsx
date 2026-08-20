@@ -45,8 +45,8 @@ export function Canvas() {
   const hiddenCount = document.blocks.filter((block) => !block.visible).length;
 
   return (
-    <div className="bg-muted/40 flex flex-1 flex-col overflow-auto">
-      <div className="flex min-h-full justify-center p-4 sm:p-8">
+    <div className="bg-muted/40 absolute inset-0 flex flex-col overflow-auto">
+      <div className="flex min-h-full shrink-0 justify-center p-4 sm:p-8">
         <div
           className="bg-background w-full overflow-hidden rounded-xl border shadow-sm transition-[max-width] duration-200"
           style={{ maxWidth: FRAME_WIDTH[device] }}
@@ -66,7 +66,8 @@ export function Canvas() {
 
       {hiddenCount > 0 ? (
         <p className="text-muted-foreground border-t px-4 py-2 text-center text-xs">
-          {hiddenCount} hidden block{hiddenCount === 1 ? "" : "s"} won’t be published.
+          {hiddenCount} hidden block{hiddenCount === 1 ? "" : "s"} won’t be
+          published.
         </p>
       ) : null}
     </div>

@@ -42,20 +42,20 @@ function EditorLayout() {
   const [mobilePanel, setMobilePanel] = useState<"blocks" | "props" | null>(null);
 
   return (
-    <div className="flex h-dvh flex-col overflow-hidden">
+    <div className="flex absolute inset-0 flex-col overflow-hidden bg-background">
       <Toolbar flush={flush} />
       <ConflictBanner />
 
-      <div className="flex min-h-0 flex-1">
-        <aside className="hidden w-64 shrink-0 flex-col overflow-y-auto border-r lg:flex">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        <aside className="hidden w-64 shrink-0 flex-col overflow-y-auto border-r lg:flex lg:min-h-0">
           <LeftPanel />
         </aside>
 
-        <main className="flex min-w-0 flex-1 flex-col">
+        <main className="relative min-w-0 flex-1 lg:min-h-0">
           <Canvas />
         </main>
 
-        <aside className="hidden w-80 shrink-0 flex-col overflow-y-auto border-l lg:flex">
+        <aside className="hidden w-80 shrink-0 flex-col overflow-hidden border-l lg:flex lg:min-h-0">
           <RightPanel />
         </aside>
       </div>
@@ -126,7 +126,7 @@ function LeftPanel() {
 
 function RightPanel() {
   return (
-    <Tabs defaultValue="block" className="flex min-h-full flex-col gap-0">
+    <Tabs defaultValue="block" className="flex min-h-0 flex-col gap-0 flex-1">
       <TabsList className="mx-3 mt-3 grid grid-cols-3">
         <TabsTrigger value="block" className="text-xs">
           <Settings2 className="size-3.5" aria-hidden="true" />
@@ -141,13 +141,13 @@ function RightPanel() {
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="block" className="mt-3 flex-1">
+      <TabsContent value="block" className="mt-3 flex-1 min-h-0 overflow-y-auto">
         <Inspector />
       </TabsContent>
-      <TabsContent value="design" className="mt-3 flex-1">
+      <TabsContent value="design" className="mt-3 flex-1 min-h-0 overflow-y-auto">
         <ThemePanel />
       </TabsContent>
-      <TabsContent value="page" className="mt-3 flex-1">
+      <TabsContent value="page" className="mt-3 flex-1 min-h-0 overflow-y-auto">
         <PagePanel />
       </TabsContent>
     </Tabs>
