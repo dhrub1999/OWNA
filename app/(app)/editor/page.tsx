@@ -35,7 +35,7 @@ export default function EditorPage() {
  */
 function EditorSkeleton() {
   return (
-    <div className="flex h-dvh flex-col overflow-hidden">
+    <div className="flex absolute inset-0 flex-col overflow-hidden bg-background">
       <div className="flex h-14 items-center gap-3 border-b px-4">
         <span className="text-sm font-semibold tracking-tight">OWNA</span>
         <Skeleton className="ml-auto h-7 w-24" />
