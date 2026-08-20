@@ -32,7 +32,10 @@ import { useEditor, useEditorDispatch } from "./editor-store";
  * because a page builder whose reordering only works with a mouse is not a page
  * builder everyone can use.
  */
+import { useId } from "react";
+
 export function BlockList() {
+  const dndId = useId();
   const { document, selectedBlockId } = useEditor();
   const dispatch = useEditorDispatch();
   const blocks = document.blocks;
@@ -66,6 +69,7 @@ export function BlockList() {
 
   return (
     <DndContext
+      id={dndId}
       sensors={sensors}
       collisionDetection={closestCenter}
       onDragEnd={onDragEnd}

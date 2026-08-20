@@ -141,13 +141,13 @@ function RightPanel() {
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="block" className="mt-3 flex-1 min-h-0 overflow-y-auto">
+      <TabsContent value="block" className="mt-3 flex-1 min-h-0 overflow-y-auto" style={{ scrollbarGutter: "stable" }}>
         <Inspector />
       </TabsContent>
-      <TabsContent value="design" className="mt-3 flex-1 min-h-0 overflow-y-auto">
+      <TabsContent value="design" className="mt-3 flex-1 min-h-0 overflow-y-auto" style={{ scrollbarGutter: "stable" }}>
         <ThemePanel />
       </TabsContent>
-      <TabsContent value="page" className="mt-3 flex-1 min-h-0 overflow-y-auto">
+      <TabsContent value="page" className="mt-3 flex-1 min-h-0 overflow-y-auto" style={{ scrollbarGutter: "stable" }}>
         <PagePanel />
       </TabsContent>
     </Tabs>

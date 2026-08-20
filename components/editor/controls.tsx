@@ -5,7 +5,11 @@ import { HexColorPicker } from "react-colorful";
 import { AlertTriangle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
@@ -221,8 +225,8 @@ export function SegmentedField<T extends string | number>({
                 "flex cursor-pointer items-center justify-center gap-1.5 rounded-md border px-2 py-1.5 text-xs transition-colors",
                 "has-[:focus-visible]:ring-ring has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-offset-1",
                 selected
-                  ? "border-foreground/25 bg-muted font-medium"
-                  : "border-transparent hover:bg-muted/60",
+                  ? "border-foreground/25 bg-muted"
+                  : "border-transparent hover:bg-muted/60 text-muted-foreground",
               )}
             >
               <input
@@ -296,13 +300,17 @@ export function ColorField({
 
   // Keep the text input in step when the colour changes from elsewhere, e.g.
   // applying a preset or hitting undo.
-  if (draft.toLowerCase() !== value.toLowerCase() && document.activeElement?.id !== id) {
+  if (
+    draft.toLowerCase() !== value.toLowerCase() &&
+    document.activeElement?.id !== id
+  ) {
     setDraft(value);
   }
 
   function commit(next: string) {
     setDraft(next);
-    if (/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(next)) onChange(next.toLowerCase());
+    if (/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(next))
+      onChange(next.toLowerCase());
   }
 
   return (
