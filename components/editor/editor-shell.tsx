@@ -42,20 +42,20 @@ function EditorLayout() {
   const [mobilePanel, setMobilePanel] = useState<"blocks" | "props" | null>(null);
 
   return (
-    <div className="flex absolute inset-0 flex-col overflow-hidden bg-background">
+    <div className="absolute inset-0 flex flex-col overflow-hidden bg-background">
       <Toolbar flush={flush} />
       <ConflictBanner />
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
-        <aside className="hidden w-64 shrink-0 flex-col overflow-y-auto border-r lg:flex lg:min-h-0">
+        <aside className="hidden w-64 shrink-0 flex-col overflow-y-auto border-r lg:flex min-h-0 [overflow-anchor:none]">
           <LeftPanel />
         </aside>
 
-        <main className="relative min-w-0 flex-1 lg:min-h-0">
+        <main className="relative min-w-0 flex-1 min-h-0 overflow-hidden">
           <Canvas />
         </main>
 
-        <aside className="hidden w-80 shrink-0 flex-col overflow-hidden border-l lg:flex lg:min-h-0">
+        <aside className="hidden w-80 shrink-0 flex-col overflow-hidden border-l lg:flex min-h-0">
           <RightPanel />
         </aside>
       </div>
@@ -141,13 +141,13 @@ function RightPanel() {
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="block" className="mt-3 flex-1 min-h-0 overflow-y-auto" style={{ scrollbarGutter: "stable" }}>
+      <TabsContent value="block" className="mt-3 flex-1 min-h-0 overflow-y-auto [overflow-anchor:none]" style={{ scrollbarGutter: "stable" }}>
         <Inspector />
       </TabsContent>
-      <TabsContent value="design" className="mt-3 flex-1 min-h-0 overflow-y-auto" style={{ scrollbarGutter: "stable" }}>
+      <TabsContent value="design" className="mt-3 flex-1 min-h-0 overflow-y-auto [overflow-anchor:none]" style={{ scrollbarGutter: "stable" }}>
         <ThemePanel />
       </TabsContent>
-      <TabsContent value="page" className="mt-3 flex-1 min-h-0 overflow-y-auto" style={{ scrollbarGutter: "stable" }}>
+      <TabsContent value="page" className="mt-3 flex-1 min-h-0 overflow-y-auto [overflow-anchor:none]" style={{ scrollbarGutter: "stable" }}>
         <PagePanel />
       </TabsContent>
     </Tabs>

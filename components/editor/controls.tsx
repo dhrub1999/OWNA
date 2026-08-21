@@ -348,15 +348,28 @@ export function PanelSection({
   children: React.ReactNode;
   defaultOpen?: boolean;
 }) {
+  const [open, setOpen] = useState(defaultOpen);
+
   return (
-    <details open={defaultOpen} className="group border-b last:border-b-0">
-      <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-xs font-semibold tracking-wide uppercase">
+    <div className="border-b last:border-b-0">
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        aria-expanded={open}
+        className="flex w-full cursor-pointer items-center justify-between px-4 py-3 text-xs font-semibold tracking-wide uppercase"
+      >
         {title}
-        <span className="text-muted-foreground transition-transform group-open:rotate-90">
+        <span
+          className="text-muted-foreground transition-transform"
+          style={{ display: "inline-block", transform: open ? "rotate(90deg)" : "rotate(0deg)" }}
+          aria-hidden="true"
+        >
           ›
         </span>
-      </summary>
-      <div className="flex flex-col gap-3 px-4 pb-4">{children}</div>
-    </details>
+      </button>
+      {open ? (
+        <div className="flex flex-col gap-3 px-4 pb-4">{children}</div>
+      ) : null}
+    </div>
   );
 }
