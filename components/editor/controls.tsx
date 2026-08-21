@@ -223,7 +223,7 @@ export function SegmentedField<T extends string | number>({
               key={String(option.value)}
               className={cn(
                 "flex cursor-pointer items-center justify-center gap-1.5 rounded-md border px-2 py-1.5 text-xs transition-colors",
-                "has-[:focus-visible]:ring-ring has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-offset-1",
+                "has-focus-visible:ring-ring has-focus-visible:ring-2 has-focus-visible:ring-offset-1",
                 selected
                   ? "border-foreground/25 bg-muted"
                   : "border-transparent hover:bg-muted/60 text-muted-foreground",
@@ -361,7 +361,10 @@ export function PanelSection({
         {title}
         <span
           className="text-muted-foreground transition-transform"
-          style={{ display: "inline-block", transform: open ? "rotate(90deg)" : "rotate(0deg)" }}
+          style={{
+            display: "inline-block",
+            transform: open ? "rotate(90deg)" : "rotate(0deg)",
+          }}
           aria-hidden="true"
         >
           ›
