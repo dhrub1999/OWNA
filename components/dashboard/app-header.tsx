@@ -3,6 +3,7 @@ import Link from "next/link";
 import { LogOut, Settings } from "lucide-react";
 import { signOut } from "@/app/(auth)/actions";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function AppHeader() {
   return (
@@ -11,12 +12,14 @@ export function AppHeader() {
         <Image
           src="/assets/logo/logo-with-name.svg"
           alt="OWNA"
-          width={72}
-          height={26}
+          width={90}
+          height={32}
           priority
+          className="theme-logo"
         />
       </Link>
       <div className="ml-auto flex items-center gap-1">
+        <ThemeToggle />
         <Button
           variant="ghost"
           size="icon-sm"
