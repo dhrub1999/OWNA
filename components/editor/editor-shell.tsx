@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Layers, PanelRight, Paintbrush, Settings2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -41,21 +41,35 @@ function EditorLayout() {
   const { flush } = useAutosave();
   const [mobilePanel, setMobilePanel] = useState<"blocks" | "props" | null>(null);
 
+  // Lock root document/body scrolling while in the editor so focusing inputs or
+  // accordion expansion cannot scroll the viewport or lift the page.
+  useEffect(() => {
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    window.scrollTo(0, 0);
+    return () => {
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+    };
+  }, []);
+
   return (
-    <div className="flex absolute inset-0 flex-col overflow-hidden bg-background">
+    <div className="fixed inset-0 flex flex-col overflow-hidden bg-background">
       <Toolbar flush={flush} />
       <ConflictBanner />
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
-        <aside className="hidden w-64 shrink-0 flex-col overflow-y-auto border-r lg:flex lg:min-h-0">
+        <aside className="hidden w-64 shrink-0 flex-col overflow-y-auto border-r lg:flex min-h-0 [overflow-anchor:none] overscroll-contain">
           <LeftPanel />
         </aside>
 
-        <main className="relative min-w-0 flex-1 lg:min-h-0">
+        <main className="relative min-w-0 flex-1 min-h-0 overflow-hidden">
           <Canvas />
         </main>
 
-        <aside className="hidden w-80 shrink-0 flex-col overflow-hidden border-l lg:flex lg:min-h-0">
+        <aside className="hidden w-80 shrink-0 flex-col overflow-hidden border-l lg:flex min-h-0">
           <RightPanel />
         </aside>
       </div>
@@ -101,7 +115,7 @@ function EditorLayout() {
               <X />
             </Button>
           </div>
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
             {mobilePanel === "blocks" ? <LeftPanel /> : <RightPanel />}
           </div>
         </div>
@@ -127,7 +141,7 @@ function LeftPanel() {
 function RightPanel() {
   return (
     <Tabs defaultValue="block" className="flex min-h-0 flex-col gap-0 flex-1">
-      <TabsList className="mx-3 mt-3 grid grid-cols-3">
+      <TabsList className="mx-3 mt-3 grid grid-cols-3 shrink-0">
         <TabsTrigger value="block" className="text-xs">
           <Settings2 className="size-3.5" aria-hidden="true" />
           Block
@@ -141,13 +155,13 @@ function RightPanel() {
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="block" className="mt-3 flex-1 min-h-0 overflow-y-auto">
+      <TabsContent value="block" className="mt-3 flex-1 min-h-0 overflow-y-auto overscroll-contain [overflow-anchor:none]" style={{ scrollbarGutter: "stable" }}>
         <Inspector />
       </TabsContent>
-      <TabsContent value="design" className="mt-3 flex-1 min-h-0 overflow-y-auto">
+      <TabsContent value="design" className="mt-3 flex-1 min-h-0 overflow-y-auto overscroll-contain [overflow-anchor:none]" style={{ scrollbarGutter: "stable" }}>
         <ThemePanel />
       </TabsContent>
-      <TabsContent value="page" className="mt-3 flex-1 min-h-0 overflow-y-auto">
+      <TabsContent value="page" className="mt-3 flex-1 min-h-0 overflow-y-auto overscroll-contain [overflow-anchor:none]" style={{ scrollbarGutter: "stable" }}>
         <PagePanel />
       </TabsContent>
     </Tabs>
