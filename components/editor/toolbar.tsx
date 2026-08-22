@@ -104,7 +104,7 @@ export function Toolbar({ flush }: { flush: () => Promise<boolean> }) {
             key={value}
             title={label}
             className={cn(
-              "flex cursor-pointer items-center rounded-md p-1.5 transition-colors",
+              "relative flex cursor-pointer items-center rounded-md p-1.5 transition-colors",
               "has-[:focus-visible]:ring-ring has-[:focus-visible]:ring-2",
               state.device === value
                 ? "bg-background shadow-sm"

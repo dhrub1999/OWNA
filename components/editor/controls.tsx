@@ -222,7 +222,7 @@ export function SegmentedField<T extends string | number>({
             <label
               key={String(option.value)}
               className={cn(
-                "flex cursor-pointer items-center justify-center gap-1.5 rounded-md border px-2 py-1.5 text-xs transition-colors",
+                "relative flex cursor-pointer items-center justify-center gap-1.5 rounded-md border px-2 py-1.5 text-xs transition-colors",
                 "has-focus-visible:ring-ring has-focus-visible:ring-2 has-focus-visible:ring-offset-1",
                 selected
                   ? "border-foreground/25 bg-muted"

@@ -69,7 +69,7 @@ export function ImageField({
           </div>
         ) : null}
 
-        <div className="flex gap-2">
+        <div className="relative flex gap-2">
           <Button
             type="button"
             variant="outline"
@@ -85,18 +85,18 @@ export function ImageField({
             )}
             {uploading ? "Uploading…" : value ? "Replace" : "Upload"}
           </Button>
-        </div>
 
-        <input
-          ref={inputRef}
-          type="file"
-          accept={ACCEPTED_MIME.join(",")}
-          className="sr-only"
-          onChange={(event) => {
-            void onFile(event.target.files?.[0]);
-            event.target.value = "";
-          }}
-        />
+          <input
+            ref={inputRef}
+            type="file"
+            accept={ACCEPTED_MIME.join(",")}
+            className="sr-only"
+            onChange={(event) => {
+              void onFile(event.target.files?.[0]);
+              event.target.value = "";
+            }}
+          />
+        </div>
 
         <Input
           value={value}

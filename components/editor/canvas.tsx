@@ -45,7 +45,7 @@ export function Canvas() {
   const hiddenCount = document.blocks.filter((block) => !block.visible).length;
 
   return (
-    <div className="bg-muted/40 absolute inset-0 flex flex-col overflow-auto">
+    <div className="bg-muted/40 absolute inset-0 flex flex-col overflow-auto overscroll-contain">
       <div className="flex min-h-full shrink-0 justify-center p-4 sm:p-8">
         <div
           className="bg-background w-full overflow-hidden rounded-xl border shadow-sm transition-[max-width] duration-200"
