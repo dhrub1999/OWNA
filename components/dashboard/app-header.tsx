@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { LogOut, Settings } from "lucide-react";
 import { signOut } from "@/app/(auth)/actions";
@@ -6,8 +7,14 @@ import { Button } from "@/components/ui/button";
 export function AppHeader() {
   return (
     <header className="flex h-14 items-center gap-3 border-b px-4 sm:px-6">
-      <Link href="/dashboard" className="text-sm font-semibold tracking-tight">
-        OWNA
+      <Link href="/dashboard" aria-label="OWNA dashboard">
+        <Image
+          src="/assets/logo/logo-with-name.svg"
+          alt="OWNA"
+          width={72}
+          height={26}
+          priority
+        />
       </Link>
       <div className="ml-auto flex items-center gap-1">
         <Button

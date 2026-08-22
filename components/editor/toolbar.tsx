@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   Check,
@@ -67,8 +68,14 @@ export function Toolbar({ flush }: { flush: () => Promise<boolean> }) {
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-2 border-b px-3">
-      <Link href="/dashboard" className="px-1 text-sm font-semibold tracking-tight">
-        OWNA
+      <Link href="/dashboard" className="px-1" aria-label="OWNA dashboard">
+        <Image
+          src="/assets/logo/logo-only.svg"
+          alt="OWNA"
+          width={28}
+          height={28}
+          priority
+        />
       </Link>
 
       <div className="ml-1 flex items-center">

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Blocks, Paintbrush, Zap } from "lucide-react";
 import { ProfileRenderer } from "@/components/public/profile-renderer";
@@ -20,7 +21,15 @@ export default function HomePage() {
   return (
     <>
       <header className="flex h-14 items-center gap-3 px-4 sm:px-8">
-        <span className="text-sm font-semibold tracking-tight">OWNA</span>
+        <Link href="/" aria-label="OWNA home">
+          <Image
+            src="/assets/logo/logo-with-name.svg"
+            alt="OWNA"
+            width={80}
+            height={28}
+            priority
+          />
+        </Link>
         <div className="ml-auto flex items-center gap-1">
           <Button variant="ghost" size="sm" render={<Link href="/login" />}>
             Sign in
@@ -106,8 +115,14 @@ export default function HomePage() {
         </section>
       </main>
 
-      <footer className="text-muted-foreground border-t px-4 py-6 text-center text-xs sm:px-8">
-        OWNA
+      <footer className="border-t px-4 py-6 text-center sm:px-8">
+        <Image
+          src="/assets/logo/logo-with-name.svg"
+          alt="OWNA"
+          width={60}
+          height={21}
+          className="mx-auto opacity-50"
+        />
       </footer>
     </>
   );
