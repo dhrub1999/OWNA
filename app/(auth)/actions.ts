@@ -71,3 +71,36 @@ export async function signOut() {
   await supabase.auth.signOut();
   redirect("/");
 }
+
+/**
+ * Attach real credentials to the caller's current session instead of creating
+ * a new one.
+ *
+ * Used by the editor's publish-time auth gate: a visitor who has been
+ * building anonymously calls this rather than `signUpWithPassword`, because
+ * `signUp()` would mint a second, unlinked user and orphan the profile/blocks
+ * already sitting under the anonymous one. `updateUser()` keeps the same
+ * `auth.uid()`, so everything they built carries over with no migration.
+ *
+ * Does not redirect — the caller (the publish flow) resumes what it was doing
+ * once this resolves.
+ */
+export async function upgradeAnonymousAccount(
+  formData: FormData,
+): Promise<AuthResult> {
+  const parsed = signUpSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+  });
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Check your details" };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.updateUser(parsed.data);
+
+  if (error) {
+    return { error: error.message };
+  }
+}

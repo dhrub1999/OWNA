@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { Suspense, useEffect, useRef, useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Check,
   CloudOff,
@@ -21,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { profileUrlLabel } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { useEditor, useEditorDispatch, type Device } from "./editor-store";
+import { PublishAuthGate } from "./publish-auth-gate";
 
 const DEVICES: { value: Device; label: string; icon: typeof Monitor }[] = [
   { value: "desktop", label: "Desktop", icon: Monitor },
@@ -28,15 +30,22 @@ const DEVICES: { value: Device; label: string; icon: typeof Monitor }[] = [
   { value: "mobile", label: "Mobile", icon: Smartphone },
 ];
 
-export function Toolbar({ flush }: { flush: () => Promise<boolean> }) {
+export function Toolbar({
+  flush,
+  isAnonymous,
+}: {
+  flush: () => Promise<boolean>;
+  isAnonymous: boolean;
+}) {
   const state = useEditor();
   const dispatch = useEditorDispatch();
   const [publishing, startPublish] = useTransition();
   const [justPublished, setJustPublished] = useState(false);
+  const [gateOpen, setGateOpen] = useState(false);
 
   const username = state.document.profile.username;
 
-  function onPublish() {
+  function runPublish() {
     startPublish(async () => {
       // Publishing builds its snapshot from the database, so anything still
       // sitting in the debounce window has to land first or it silently
@@ -64,6 +73,14 @@ export function Toolbar({ flush }: { flush: () => Promise<boolean> }) {
         },
       });
     });
+  }
+
+  function onPublish() {
+    if (isAnonymous) {
+      setGateOpen(true);
+      return;
+    }
+    runPublish();
   }
 
   return (
@@ -147,8 +164,46 @@ export function Toolbar({ flush }: { flush: () => Promise<boolean> }) {
         {publishing ? <Loader2 className="animate-spin" /> : null}
         {justPublished && state.status === "saved" ? "Republish" : "Publish"}
       </Button>
+
+      <PublishAuthGate
+        open={gateOpen}
+        onOpenChange={setGateOpen}
+        onAccountReady={() => {
+          setGateOpen(false);
+          runPublish();
+        }}
+      />
+
+      <Suspense fallback={null}>
+        <PublishResumeWatcher onResume={runPublish} />
+      </Suspense>
     </header>
   );
+}
+
+/**
+ * Google's linkIdentity() needs a full-page redirect through /auth/callback,
+ * so a publish interrupted by "Continue with Google" resumes here rather than
+ * in the dialog that started it. Split out because useSearchParams() needs its
+ * own Suspense boundary under Cache Components, and the toolbar itself can't
+ * afford to suspend.
+ */
+function PublishResumeWatcher({ onResume }: { onResume: () => void }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const resumed = useRef(false);
+
+  useEffect(() => {
+    if (resumed.current) return;
+    if (searchParams.get("publish") !== "1") return;
+    resumed.current = true;
+    router.replace("/editor", { scroll: false });
+    onResume();
+    // Only ever fires once, on the redirect back — not on every state change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+  return null;
 }
 
 function SaveStatusPill() {

@@ -1,5 +1,5 @@
 import type { ProfileSnapshot } from "@/lib/blocks/snapshot";
-import { parseBlockProps, parseBlockStyle } from "@/lib/blocks/definitions";
+import { parseBlockProps, parseBlockStyle, starterBlockProps } from "@/lib/blocks/definitions";
 import { resolvePreset, type ThemePresetId } from "@/lib/themes/presets";
 
 const block = (id: string, type: Parameters<typeof parseBlockProps>[0], props: unknown) => ({
@@ -40,7 +40,20 @@ function createSnapshot(
   };
 }
 
-export const demoProfiles: Record<string, ProfileSnapshot> = {
+/**
+ * Also doubles as the id space for onboarding's "what are you making this
+ * for?" question — see PURPOSE_OPTIONS/templateForPurpose below. One curated
+ * persona serves both the marketing page's illustrations and a real starting
+ * draft, so the two can never drift apart.
+ */
+export type DemoProfileId =
+  | "consultant"
+  | "jewellery"
+  | "photographer"
+  | "freelancer"
+  | "creative";
+
+export const demoProfiles: Record<DemoProfileId, ProfileSnapshot> = {
   consultant: createSnapshot(
     "professional",
     "sarah-consulting",
@@ -188,3 +201,63 @@ export const demoProfiles: Record<string, ProfileSnapshot> = {
     ]
   )
 };
+
+// ---------------------------------------------------------------------------
+// Onboarding questionnaire: "what are you making this for?"
+// ---------------------------------------------------------------------------
+
+export const PURPOSE_OPTIONS: {
+  id: DemoProfileId;
+  label: string;
+  description: string;
+}[] = [
+  {
+    id: "consultant",
+    label: "Coaching or consulting",
+    description: "A home for your services and how to book you.",
+  },
+  {
+    id: "photographer",
+    label: "Photography",
+    description: "A gallery-first page that puts your work up front.",
+  },
+  {
+    id: "freelancer",
+    label: "Freelance or independent work",
+    description: "Portfolio, projects and a way to get in touch.",
+  },
+  {
+    id: "creative",
+    label: "Creative portfolio",
+    description: "For artists, writers and makers of things.",
+  },
+  {
+    id: "jewellery",
+    label: "Selling products",
+    description: "Showcase what you make or sell.",
+  },
+];
+
+/**
+ * Turn a curated persona into a seed for a real draft.
+ *
+ * What travels is the theme, the layout and the *shape* of the page — which
+ * block types, in which order — because that is what "consultant" vs.
+ * "photographer" actually means as a starting point. The demo blocks' own
+ * props do not travel: they are Sarah Jenkins' bio, Maya's Instagram handle,
+ * fictional copy written to look good in a marketing screenshot, and would
+ * otherwise land verbatim on a real stranger's page. Each block gets the same
+ * starter placeholder content a manually-added block gets instead.
+ */
+export function templateForPurpose(purpose: DemoProfileId) {
+  const snapshot = demoProfiles[purpose];
+  return {
+    theme: snapshot.theme,
+    layout: snapshot.layout,
+    blocks: snapshot.blocks.map(({ type, style }) => ({
+      type,
+      props: starterBlockProps(type),
+      style,
+    })),
+  };
+}

@@ -1,13 +1,12 @@
 # OWNA — build context
 
-Handoff notes from the initial build. `README.md` covers how to run the repo;
-this file covers **why it is shaped the way it is**, what is proven versus
-assumed, and what to do next.
+Handoff notes for whoever picks this up next. `README.md` covers how to run
+the repo; this file covers **why it is shaped the way it is**, what is proven
+versus assumed, and what to do next.
 
-- Source PRD: `~/Downloads/songs/PRD — Customizable Digital Profile Platform.md`
-- Approved plan: `~/.claude/plans/goofy-snacking-sparkle.md`
-- Built on branch `feat/initial-setup`, on top of `8ebe6dc` (bare
-  `create-next-app` + the Supabase agent skills in `.agents/`).
+- Built on branch `feat/landing-page`.
+- Product-first onboarding plan for this session: `~/.claude/plans/twinkly-shimmying-cerf.md`.
+- Live Supabase project: `ccohfxrjpnrherqflpxa`.
 
 ---
 
@@ -15,45 +14,42 @@ assumed, and what to do next.
 
 | Area | State |
 | --- | --- |
-| Schema, RLS, RPC, storage | Written, **never executed against Postgres** |
-| Public profile route + renderer | Done, verified rendering locally |
+| Schema, RLS, RPC, storage | **Applied to the live project.** All four original migrations plus `20260823120000_onboarding_answers.sql` are live. |
+| Public profile route + renderer | Done, verified rendering locally and via e2e |
 | Nine blocks | Done |
 | Theme system + 10 presets | Done, contrast-tested |
 | Editor (canvas, outline, inspectors, autosave, undo) | Done |
-| Auth (Google + email/password) | Done, redirect flow verified |
+| Auth (Google + email/password + **anonymous**) | Done. See §10 for the current provider config and why it's provisional. |
+| Product-first onboarding (guest build → publish-gated account) | **Done and verified live**, see §10 |
 | Uploads + quota + orphan sweep | Done |
 | Publish / unpublish / preview / dashboard / share | Done |
 | SEO, OG image, robots, sitemap | Done |
 | Unit tests | 108 passing across 8 files |
-| RLS integration tests | Written, **never run** (needs a live project) |
-| Playwright e2e | Written, **never run** (needs a live project) |
+| Playwright e2e | **Both specs pass live**: `core-loop.spec.ts` (signed-up flow) and `guest-onboarding.spec.ts` (new anonymous flow) |
+| RLS integration tests | Written; not re-run this session (needs `OWNA_TEST_SUPABASE_*` env vars) |
 
-`bun run build`, `bun run typecheck`, `bun run lint`, `bun run test` were all
-green at handoff.
+`bun run build`, `bun run typecheck`, `bun run lint`, `bun run test` are all
+green as of this session. `OWNA_E2E=1 bun run test:e2e` is green too.
 
 ---
 
 ## 2. Decisions locked with the user
 
-These came out of a planning conversation. Changing any of them is a real
-redesign, not a refactor.
-
-**Vercel, not Cloudflare.** The PRD named Cloudflare; the user chose Vercel for
-full Next 16 support. No host-specific APIs are used, so Cloudflare via OpenNext
-stays possible — but `cacheComponents` and `next/og` are the two things to
+**Vercel, not Cloudflare.** No host-specific APIs are used, so Cloudflare via
+OpenNext stays possible — `cacheComponents` and `next/og` are the two things to
 re-validate if that ever happens.
 
 **Draft rows + a published JSONB snapshot.** The editor mutates normalized
 `profiles`/`pages`/`blocks`. Publishing denormalizes all of it into
-`profile_publications.snapshot`. Rejected alternatives: draft/published row
-pairs (doubles rows, forces a multi-table join on every public request) and a
-single JSONB document (loses per-block constraints and querying).
+`profile_publications.snapshot` via the `publish_profile()` RPC, built
+server-side from the caller's own rows.
 
-**Debounced autosave, explicit publish.** 800 ms debounce. Rejected: explicit
-save only (people lose work), save-per-mutation (chatty on drag and on typing).
+**Debounced autosave, explicit publish.** 800 ms debounce, no manual save
+button. Publish is a separate, deliberate action.
 
-**Full MVP, phased, vertical slice first.** Auth → username → public URL was
-made to work end to end before the editor existed.
+**Product-first onboarding.** As of this session, a visitor can build and see
+a fully curated page before ever creating an account. Publishing is the point
+an account becomes required — see §10.
 
 ---
 
@@ -63,28 +59,28 @@ This is not the Next.js in most training data. All verified against
 `node_modules/next/dist/docs/`.
 
 - **`middleware.ts` is now `proxy.ts`** at the repo root, exporting `proxy`.
-- **`params` and `searchParams` are Promises.** `PageProps<'/[username]'>` and
-  `LayoutProps<'/'>` are global generated types — use them, don't hand-write
-  prop types.
+  Its matcher (`/dashboard`, `/editor`, `/settings`, `/onboarding`, `/preview`)
+  only checks "is there a session" — it does not distinguish an anonymous
+  session from a permanent one, and that turned out to be exactly right for
+  the guest flow (see §10) rather than something that needed changing.
+- **`params` and `searchParams` are Promises.** Use the generated
+  `PageProps<'/[username]'>` / `LayoutProps<'/'>` types, don't hand-write them.
 - **`cacheComponents: true` is on.** Every request-time read must sit behind
-  `<Suspense>` or the build fails at the prerender step, not at typecheck. When
-  a route genuinely has no static shell, `export const instant = false` is the
-  sanctioned escape hatch — `app/[username]/page.tsx` uses it and says why.
+  `<Suspense>` or the build fails at the prerender step. This also applies to
+  **`useSearchParams()` in a client component** — it needs its own `<Suspense>`
+  boundary even when the enclosing route is already fully dynamic. See
+  `components/editor/toolbar.tsx`'s `PublishResumeWatcher`, split out from the
+  toolbar itself for exactly this reason.
 - **`use cache` scopes cannot call `cookies()` or `headers()`** anywhere in the
-  call stack, and it fails *at request time*, so it can pass `next build` and
-  break under `next start`. This is the entire reason `lib/supabase/public.ts`
+  call stack, and it fails *at request time*. This is why `lib/supabase/public.ts`
   exists as a third client.
 - **`revalidateTag(tag, 'max')`** takes a second argument now.
-  `updateTag()` is Server-Action-only and immediate.
-- **`next/font` loaders require literal object arguments.** No spreads, no
-  shared options constant — the build parses them statically. Cost us one build
-  failure; see the comment in `lib/themes/fonts.ts`.
+- **`next/font` loaders require literal object arguments.** No spreads.
 - **shadcn's current default style is `base-nova`, built on Base UI, not Radix.**
   Composition is `<Button render={<Link href="…" />}>`, **not** `asChild`.
-- **`react-hooks/set-state-in-effect` and `react-hooks/refs` are errors**, not
-  warnings. Synchronous `setState` in an effect body and ref writes during
-  render both fail lint. See `lib/hooks/use-username-availability.ts` for the
-  derive-during-render pattern that replaced the naive version.
+- **`react-hooks/set-state-in-effect` and `react-hooks/refs` are errors.**
+  See `lib/hooks/use-username-availability.ts` for the derive-during-render
+  pattern.
 
 ---
 
@@ -94,192 +90,212 @@ Break any of these and the design stops working. The first two are enforced by
 `tests/unit/architecture.test.ts`.
 
 1. **Block definitions are pure data.** `lib/blocks/definitions.ts` holds type,
-   label, Zod schema and defaults — no React, no components, and it is a `.ts`
-   file so it cannot contain JSX. It is imported by the editor, the public
-   renderer, the save action and the tests; a React import here leaks into all
-   four.
+   label, Zod schema and defaults — no React, no components. Imported by the
+   editor, the public renderer, the save action, the onboarding template
+   seeder (§10), and the tests.
 
 2. **The public surface imports no editor code.** `components/public/**`,
-   `app/[username]/**` and `components/icons/**` may not import
-   `@/components/editor`, `@/lib/editor`, `@dnd-kit`, `react-colorful`, or even
-   `@/components/ui/*`. That last one is why `app/[username]/not-found.tsx` uses
-   plain styled links instead of `<Button>`.
+   `app/[username]/**` and `components/icons/**` may not import editor-only
+   modules or even `@/components/ui/*`.
 
 3. **Block renderers are pure presentational components.** No `async`, no
-   fetching, no `server-only`. The server renders them for the public page and
-   the editor renders *the same components* client-side for the live preview.
-   This is what makes "preview matches production" true by construction. The
-   three permitted client islands are `gallery-lightbox`, `embed-frame` and
-   `share-card`.
+   fetching. The server renders them for the public page and the editor
+   renders *the same components* client-side for the live preview and the
+   dashboard preview — "preview matches production" by construction.
 
-4. **The public page reads exactly one row.** Everything needed is inside
-   `profile_publications.snapshot`. No joins, no N+1, and the read is legal
-   inside `use cache` because it uses the cookie-less client.
+4. **The public page reads exactly one row**, `profile_publications.snapshot`.
 
 5. **Nothing trusts the client.** The publish snapshot is built in SQL by
-   `publish_profile()` from `auth.uid()`'s own rows — never posted by the
-   browser. URLs are re-validated at render time as well as on write, because
-   rows written by an older schema outlive that validation. Embeds never render
-   user HTML; a pasted URL is matched against a strict per-provider pattern and
-   the iframe `src` is built from a fixed template.
+   `publish_profile()` from `auth.uid()`'s own rows. This held up unchanged
+   for the guest flow: an anonymous session's `auth.uid()` works identically
+   to a permanent one everywhere in the schema, so no RLS/RPC change was
+   needed to support it (see §10).
 
 ---
 
 ## 5. Non-obvious implementation notes
 
-**Row types must be `type`, not `interface`.** An interface has no implicit
-index signature, so it is not assignable to the `Record<string, unknown>` that
-supabase-js requires of a table Row — and when that constraint fails, supabase-js
-silently degrades **every query result to `never`** instead of erroring at the
-definition. Cost about twenty confusing type errors before it was spotted.
+**Row types must be `type`, not `interface`** — an interface has no implicit
+index signature, so supabase-js silently degrades every query result to
+`never` instead of erroring.
 
-**Zod v4 uses `.prefault({})`, not `.default({})`,** for "an absent object
-parses to full defaults". `.default()` takes the *output* type and would demand
-a complete pre-parsed object. Every nested schema in `lib/themes/schema.ts` and
-`lib/blocks/definitions.ts` relies on this.
+**Zod v4 uses `.prefault({})`, not `.default({})`** for "an absent object
+parses to full defaults."
 
-**Colours are hex-only, on purpose.** It keeps the contrast maths in
-`lib/themes/contrast.ts` exact and makes it impossible for a colour to carry a
-CSS payload. `red; background: url(…)` simply does not match the pattern.
+**Colours are hex-only, on purpose** — keeps `lib/themes/contrast.ts` exact and
+makes a colour unable to carry a CSS payload.
 
-**Themes are inline CSS custom properties, never a generated stylesheet.** No
-string interpolation into a CSS parser, works under CSP without a nonce (which
-is what keeps the page prerenderable), and the editor preview updates by handing
-React a new object with no stylesheet churn.
+**Themes are inline CSS custom properties, never a generated stylesheet** —
+works under CSP without a nonce, which is what keeps the page prerenderable.
 
-**Responsive CSS uses container queries, not viewport media queries.** The
+**Responsive CSS uses container queries, not viewport media queries** — the
 editor's device frames set a real width on a `container-type: inline-size`
-context. With viewport queries the mobile preview would lie — it would just be a
-narrow column showing the desktop layout.
+context.
 
-**Brand icons are inlined, not a dependency.** Lucide v1 dropped all brand
-glyphs. `components/icons/social-icons.tsx` has path data extracted from Simple
-Icons (CC0) and committed, so the public page ships eleven paths instead of a
-3,400-icon package. LinkedIn is absent from Simple Icons (trademark request), so
-its glyph is reconstructed from the mark's geometry. Regenerate by re-extracting
-`d` from `node_modules/simple-icons/icons/<slug>.svg`.
+**Brand icons are inlined, not a dependency** — `components/icons/social-icons.tsx`
+has path data extracted from Simple Icons (CC0) and committed.
 
-**`username_available()` is `SECURITY DEFINER` on purpose.** It reads
-`reserved_usernames` and `profiles`, which `anon` cannot. It returns one boolean
-about a caller-supplied candidate, and usernames are public URLs by design, so
-the enumeration it permits reveals nothing that visiting the URL would not. It
-is advisory — the unique index is what actually decides, and `claim_username`
-must handle `23505`.
+**`username_available()` is `SECURITY DEFINER`** — reads `reserved_usernames`
+and `profiles`, which `anon` cannot. Advisory only; the unique index on
+`profiles.username` is what actually decides, so `claim_username` must handle
+`23505`. It's granted to both `anon` and `authenticated`, which is what lets
+the onboarding questionnaire live-check a handle before the visitor even has a
+session.
 
-**Reserved names are enforced by a trigger, not by the RPC.** RLS lets a user
-insert their own `profiles` row with any username, so checking only inside
-`claim_username()` would be trivially bypassable by posting to the table.
+**Reserved names are enforced by a trigger, not by the RPC** — RLS lets a user
+insert their own `profiles` row with any username, so a check only inside
+`claim_username()` would be bypassable by posting to the table directly.
 
-**`proxy.ts`'s matcher is deliberately narrow.** Public profile routes must
-never reach it: reading cookies there would attach `Set-Cookie` to otherwise
-fully cacheable responses.
+**Autosave serializes its saves.** The compare-and-set on `profiles.updated_at`
+turns a second tab into a clean conflict banner instead of a silent overwrite.
 
-**Autosave serializes its saves.** Two overlapping saves would each carry a
-revision the other is about to invalidate, producing a spurious conflict. The
-compare-and-set on `profiles.updated_at` turns a second tab into a clean
-conflict banner instead of a silent overwrite.
+**Supabase anonymous sessions carry Postgres role `authenticated`, not
+`anon`.** This is the load-bearing fact behind the entire guest-onboarding
+design (§10): every RLS policy scoped `to authenticated` — which is all of
+them — already works for an anonymous session with zero changes. An anonymous
+user is a real row in `auth.users` (`is_anonymous: true`), not a special case.
+
+**`getUser()` is wrapped in React's `cache()`** (`lib/supabase/server.ts`) so
+the several places in one request that each need to know "who is this" — a
+page, a layout, a Server Action — share one token revalidation instead of
+paying for it repeatedly.
 
 ---
 
 ## 6. What is proven, and what is not
 
-**Verified locally:** landing page renders the demo profile through the real
-`ProfileRenderer`; `/tamal` 404s with the claim CTA; `/dashboard` 307s to
-`/login?next=/dashboard`; security headers and CSP present on every response;
-`robots.txt` correct; production build with all 17 routes.
+**Verified this session, live against the real Supabase project:**
+- All migrations apply cleanly, including the new `onboarding_answers` table.
+- Both e2e specs pass: signed-up core loop, and the new anonymous
+  build → publish-gate → account-creation → live-page loop.
+- `mailer_autoconfirm` and the Email/Google/Anonymous provider toggles all
+  confirmed via `GET /auth/v1/settings` (a read-only, unauthenticated
+  endpoint — useful for verifying Auth config from a shell without a
+  dashboard round trip).
+- Production build succeeds with `cacheComponents: true`; `/onboarding/questionnaire`
+  and `/editor` render as Partial Prerenders like their siblings.
 
-**Measured:** the public route is **245 KB gzipped** (862 KB raw) — essentially
-all React 19 + Next 16 runtime, our code is the small tail. The landing page
-copy was corrected from "ships almost no JavaScript" to something the number
-supports. If this needs to come down, the levers are lazy-loading the two block
-islands (small) or getting off the Next client router (not practical).
+**Not verified:**
+- The Google `linkIdentity()` path in the publish gate (upgrading an
+  anonymous session to a permanent one via Google) is implemented and
+  typechecks, but was never driven through a real Google consent screen —
+  no browser extension was available this session, and headless automation
+  can't get through Google's real login. **Needs a manual click-through.**
+- RLS integration tests (`tests/integration`) were not re-run this session.
 
-**Not verified — this is the honest gap:** no SQL has ever run. No Docker
-locally and the Supabase CLI login is interactive, so the migrations, RLS
-policies, triggers and RPC functions are hand-authored and unexecuted. Expect to
-fix syntax or ordering on first `db push`.
-
-**Two bugs the tests caught while being written** (both fixed): `parseBlockProps`
-threw on a non-object instead of falling back to defaults, and
-`hexToRgb("nonsense")` returned `NaN` channels — eight hex-shaped characters that
-would have silently poisoned every contrast ratio computed from them.
-
-**Three bugs found post-handoff (all fixed):**
-1. **CSP blocking Next.js hydration:** `next.config.ts` originally omitted `script-src` to avoid locking down scripts, but because `default-src 'self'` was set, it cascaded and blocked all inline scripts. This stopped React from booting entirely. Fixed by explicitly adding `"script-src 'self' 'unsafe-inline' 'unsafe-eval'"`.
-2. **Google sign-in silent failure:** Caused by the hydration bug above. Because React never booted, the `onClick` event handler on the Google button was never attached.
-3. **Email sign-up CSP error:** In Next.js 15 / React 19, `action={onSubmit}` injects a `javascript:` fallback to prevent default form submissions before hydration. The `form-action 'self'` CSP blocked this `javascript:` scheme. Fixed by changing the form to use `onSubmit={handleSubmit}` with standard `e.preventDefault()`.
+**Ruled out this session:** a report of "Create your OWNA" landing on the old
+`/onboarding/username` page and the dashboard instead of the new questionnaire
+was traced to a stale session/cache in the reporter's browser tab from earlier
+manual testing — confirmed by reproducing cleanly in an Incognito window. Not
+a code issue; no fix needed. (Automated fresh-session e2e already covered this
+path and passed throughout.)
 
 ---
 
 ## 7. Next steps, in order
 
-1. **Apply the schema.** Interactive, so run it yourself:
-   ```
-   bunx supabase login
-   bunx supabase link --project-ref ccohfxrjpnrherqflpxa
-   bunx supabase db push
-   bunx supabase db advisors        # fix everything it flags
-   bunx supabase gen types typescript --linked > types/database.ts
-   ```
-   The generated types should barely differ from the hand-written ones. If they
-   differ meaningfully, **the migrations are the truth** — fix the code.
-
-2. **Configure auth in the Supabase dashboard.** Enable Google under
-   Authentication → Providers, add `<origin>/auth/callback` as a redirect URL.
-
-3. **Run the two suites that matter.** They skip themselves without credentials
-   and need a scratch project with email confirmation disabled:
-   ```
-   OWNA_TEST_SUPABASE_URL=… OWNA_TEST_SUPABASE_PUBLISHABLE_KEY=… bun run test:integration
-   OWNA_E2E=1 bun run test:e2e
-   ```
-   The RLS suite is the most important test in the repo — RLS failures are
-   silent, and nothing in TypeScript can catch them.
-
-4. **Walk the §43 checklist by hand** — the ten-step list in the plan file, from
-   signup through publish, username change and unpublish.
-
+1. **Manually verify the Google-linking path** in the publish gate.
+2. **Decide the email-confirmation story before real users sign up.** The
+   project currently has `mailer_autoconfirm: true` (confirmation off)
+   because there is no SMTP configured and confirmation emails were failing
+   outright (`500 Error sending confirmation email`) — this affected the
+   *pre-existing* plain `/signup` too, not just the new flow. Either configure
+   real SMTP and turn confirmation back on, or make peace with unconfirmed
+   email signups long-term. Don't leave this as an accidental side effect of
+   testing.
+3. **Decide what happens to abandoned anonymous drafts** — a visitor who
+   starts the questionnaire or builds a page and never creates an account
+   leaves a real (harmless, but unbounded) row in `auth.users` /`profiles`.
+   No cleanup job exists yet. Worth a scheduled sweep if volume grows.
+4. **Run the RLS integration suite** against a scratch project:
+   `OWNA_TEST_SUPABASE_URL=… OWNA_TEST_SUPABASE_PUBLISHABLE_KEY=… bun run test:integration`.
 5. **Lighthouse a published profile.** Targets: Performance ≥ 95,
    Accessibility ≥ 95 on mobile.
-
-6. **Deploy to Vercel**, set env vars, confirm publishing invalidates the cache
-   within seconds.
-
----
-
-## 8. Deviations from the approved plan
-
-- **`reorder_blocks` RPC removed.** The plan specified it, but the editor sends
-  the whole document on save, so positions are rewritten by array order and the
-  RPC was dead code. Removed from the migration and the types.
-- **Image uploads pulled forward** from Phase 6 into Phase 3 — four inspectors
-  needed the field before the phase would have arrived.
-- **Undo/redo added**, which the plan did not call for. Bounded 50-step history
-  with 700 ms edit coalescing, so undo walks back through decisions rather than
-  keystrokes. Cheap given documents are small, and a builder without it is
-  frustrating.
-- **The `Toaster` moved out of the root layout** into `app/(app)/layout.tsx`
-  after the bundle measurement — it is a client component and a public profile
-  has nothing to toast.
-- **`types/database.ts` is hand-written**, contrary to the plan's "never
-  hand-write it", because generating it requires a linked project. It carries a
-  header saying so. Regenerate at step 1 above.
+6. **Deploy to Vercel**, set env vars (including the same Supabase project),
+   confirm publishing invalidates the cache within seconds.
 
 ---
 
-## 9. Known gaps and deliberate omissions
+## 8. Known gaps and deliberate omissions
 
-- Rich text is plain text only. There is no sanitizer in this codebase and no
-  call to `dangerouslySetInnerHTML` anywhere — that is a property worth keeping.
-  Rich text is a v1.1 feature that must arrive *with* a sanitizer.
-- Fonts are a fixed set of ten. `next/font/google` needs literal build-time
-  calls, so user-supplied fonts need a different loading path entirely.
+- Rich text is plain text only — no sanitizer in this codebase, no
+  `dangerouslySetInnerHTML` anywhere. Rich text must arrive *with* a sanitizer.
+- Fonts are a fixed set of ten (`next/font/google` needs literal build-time
+  calls).
 - Multi-page profiles: the `pages` table supports it, the UI does not expose it.
-- Custom domains: `domains` table exists and is empty, so mapping a hostname to
-  a `profile_id` is a renderer lookup change rather than a migration.
+- Custom domains: `domains` table exists and is empty.
 - No rate limiting on `username_available` beyond Supabase's own auth limits.
-  Worth adding a `rate_limits` table if abuse shows up.
-- The orphan asset sweep runs fire-and-forget after publish and only touches
-  uploads older than 24 h. If storage costs grow, move it to `pg_cron`.
-- No analytics, no discovery, no remix, no marketplace, no AI — all explicitly
-  out of scope per PRD §5 and §44.
+- The orphan asset sweep runs fire-and-forget after publish, only touches
+  uploads older than 24h. Move to `pg_cron` if storage costs grow.
+- **New this session:** no cleanup for abandoned anonymous accounts/drafts
+  (see §7.3). No merge path if someone builds anonymously, then logs into a
+  *different*, pre-existing account at the publish gate — the copy says the
+  guest draft won't come with them, but nothing prevents them from trying, and
+  the guest draft is simply orphaned under the anonymous user, not deleted.
+- No analytics, no discovery, no remix, no marketplace, no AI — out of scope.
+
+---
+
+## 9. Product-first onboarding (this session)
+
+**Why:** every CTA used to route straight to `/signup` — a visitor had to
+create a full account before touching the product at all. The new flow is
+land → "Create your OWNA" → short questionnaire → land in the editor
+pre-filled with a curated starting page → edit freely → **Publish is the
+moment an account becomes required**, not before and not only as an
+afterward nudge. Scoped to the free tier; pricing is future work.
+
+**Architecture: Supabase anonymous auth**, not a client-only local draft.
+`supabase.auth.signInAnonymously()` fires the moment a visitor clicks
+"Create your OWNA" (`components/marketing/start-building-button.tsx`), before
+they ever reach the questionnaire. Because anonymous sessions are real,
+cookie-backed `auth.users` rows with Postgres role `authenticated` (see §5),
+every existing RLS policy, RPC and Server Action worked immediately with zero
+schema or policy changes — the only new schema is `onboarding_answers`, used
+purely so a reload mid-questionnaire restores progress instead of losing it.
+
+**Flow, end to end:**
+1. `app/page.tsx` CTAs → `StartBuildingButton` → anonymous sign-in → `/onboarding/questionnaire`.
+2. `app/onboarding/questionnaire/` — 3 steps (purpose, name, handle-with-live-check),
+   each persisted immediately to `onboarding_answers` (`app/onboarding/questionnaire/actions.ts`).
+3. On submit: `claim_username` RPC (shared helper `claimUsernameRpc`, factored
+   out of `app/onboarding/actions.ts` so the original username-only onboarding
+   step and the new questionnaire share the exact same claim/error-translation
+   logic), then the draft is seeded from `templateForPurpose()`
+   (`lib/demo-profiles.ts`) — the matched persona's **theme and layout and
+   block-type structure**, but placeholder content via `starterBlockProps()`,
+   never the demo personas' own literal copy (a real bug caught during
+   testing: the first version put "Sarah Jenkins" verbatim on every new
+   consultant-purpose user's hero block).
+4. `/editor` — unchanged; autosave and the canvas work identically for an
+   anonymous session.
+5. **Publish gate** (`components/editor/publish-auth-gate.tsx`, wired into
+   both `components/editor/toolbar.tsx` and `components/dashboard/publish-controls.tsx`):
+   an anonymous user hitting Publish gets a dialog instead of publishing.
+   "Create free account" calls `upgradeAnonymousAccount()`
+   (`app/(auth)/actions.ts`, `supabase.auth.updateUser({email, password})`) —
+   deliberately **not** `signUpWithPassword`, which would mint a second,
+   unlinked user and orphan the draft. "Continue with Google" uses
+   `linkIdentity()` client-side (needs "Manual linking" enabled in Supabase
+   Auth settings), redirecting through `/auth/callback?next=/editor?publish=1`;
+   the toolbar's `PublishResumeWatcher` picks the interrupted publish back up
+   on return. Either way, the same `auth.uid()` carries the already-built
+   profile/blocks straight through — no migration.
+
+**Provider config required** (dashboard-only, not code — confirmed live this
+session via `GET /auth/v1/settings`): Anonymous sign-ins on, Manual linking
+on, Email and Google providers on. See §7.2 for the open `mailer_autoconfirm`
+decision.
+
+**New/changed files:** `supabase/migrations/20260823120000_onboarding_answers.sql`;
+`app/onboarding/questionnaire/{page,actions,questionnaire-form}.tsx`;
+`components/marketing/start-building-button.tsx`;
+`components/editor/publish-auth-gate.tsx`; `lib/demo-profiles.ts` (extended
+with `PURPOSE_OPTIONS`/`templateForPurpose`); `app/onboarding/actions.ts`
+(extracted `claimUsernameRpc`); `app/(auth)/actions.ts` (added
+`upgradeAnonymousAccount`); `components/editor/toolbar.tsx` and
+`components/editor/editor-shell.tsx` (threaded `isAnonymous`,
+`PublishResumeWatcher`); `app/(app)/editor/page.tsx` and
+`app/(app)/dashboard/page.tsx` (pass `isAnonymous`); `lib/supabase/server.ts`
+(`getUser()` wrapped in `cache()`); `tests/e2e/guest-onboarding.spec.ts` (new,
+passes live).

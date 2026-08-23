@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { StartBuildingButton } from "@/components/marketing/start-building-button";
 import { ProfileRenderer } from "@/components/public/profile-renderer";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -62,12 +63,9 @@ export default function HomePage() {
           >
             Log in
           </Link>
-          <Button
-            className="rounded-full px-6"
-            render={<Link href="/signup" />}
-          >
+          <StartBuildingButton className="rounded-full px-6">
             Create your OWNA
-          </Button>
+          </StartBuildingButton>
         </div>
       </header>
 
@@ -87,13 +85,12 @@ export default function HomePage() {
                   website from scratch.
                 </p>
                 <div className="mt-12 flex flex-wrap gap-4">
-                  <Button
+                  <StartBuildingButton
                     size="lg"
                     className="h-14 rounded-full px-8 text-lg font-medium"
-                    render={<Link href="/signup" />}
                   >
                     Create your OWNA
-                  </Button>
+                  </StartBuildingButton>
                   <Button
                     size="lg"
                     variant="outline"
@@ -422,13 +419,12 @@ export default function HomePage() {
             <p className="text-xl sm:text-2xl text-background/70 mb-12">
               Build a presence that's unmistakably yours.
             </p>
-            <Button
+            <StartBuildingButton
               size="lg"
               className="h-14 rounded-full px-10 text-xl font-medium bg-primary text-primary-foreground hover:bg-primary/90"
-              render={<Link href="/signup" />}
             >
               Create your OWNA
-            </Button>
+            </StartBuildingButton>
           </div>
         </section>
       </main>
