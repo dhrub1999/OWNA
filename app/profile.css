@@ -456,6 +456,22 @@ a.profile-project:hover {
   break-inside: avoid;
   margin-bottom: var(--gallery-gap, 8px);
 }
+.profile-gallery-item {
+  /* Without this, a grid item's automatic minimum size is derived from its
+     content (the image) rather than its grid track, and an image whose
+     intrinsic ratio doesn't match its cell can blow the item out past the
+     track — most visible in bento, where cells have no aspect-ratio of
+     their own to fall back on. */
+  min-width: 0;
+  min-height: 0;
+}
+.profile-gallery-trigger {
+  /* The lightbox button wraps the image. Percentage heights on the image
+     need this to be a definite box, not just width-full/height-auto. */
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 .profile-gallery-item img {
   width: 100%;
   height: 100%;
@@ -465,6 +481,39 @@ a.profile-project:hover {
 }
 .profile-gallery[data-layout="grid"] .profile-gallery-item {
   aspect-ratio: 1 / 1;
+}
+
+.profile-gallery[data-layout="bento"] {
+  display: grid;
+  grid-auto-flow: dense;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: calc((100cqw - var(--gallery-gap, 8px)) / 2);
+}
+@container profile (min-width: 30rem) {
+  .profile-gallery[data-layout="bento"]:not([data-count="1"]):not([data-count="2"]) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: calc((100cqw - 3 * var(--gallery-gap, 8px)) / 4);
+  }
+}
+.profile-gallery[data-layout="bento"] .profile-gallery-item[data-shape="square"] {
+  grid-column: span 1;
+  grid-row: span 1;
+}
+.profile-gallery[data-layout="bento"] .profile-gallery-item[data-shape="landscape"] {
+  grid-column: span 2;
+  grid-row: span 1;
+}
+.profile-gallery[data-layout="bento"] .profile-gallery-item[data-shape="portrait"] {
+  grid-column: span 1;
+  grid-row: span 2;
+}
+/* A lone image always gets a full-bleed square hero, regardless of its
+   chosen shape — with nothing to pack next to it, a small sliver would look
+   like a mistake. Must come after the [data-shape] rules: same specificity,
+   source order decides. */
+.profile-gallery[data-layout="bento"][data-count="1"] .profile-gallery-item {
+  grid-column: span 2;
+  grid-row: span 2;
 }
 
 /* --- embed ---------------------------------------------------------------- */
