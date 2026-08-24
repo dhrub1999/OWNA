@@ -19,6 +19,15 @@ export function siteUrl(): string {
   return "http://localhost:3000";
 }
 
+/**
+ * The address on the contact page and in the legal pages' "how to reach us".
+ *
+ * One constant rather than a string repeated across three routes: it is the
+ * thing most likely to change before launch, and a stale support address in a
+ * privacy policy is worse than no address at all.
+ */
+export const CONTACT_EMAIL = "hello@owna.app";
+
 /** The public URL of a profile, e.g. `https://owna.app/tamal`. */
 export function profileUrl(username: string): string {
   return `${siteUrl()}/${username}`;
