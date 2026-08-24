@@ -1,13 +1,21 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
-import { DM_Sans, Parkinsans } from "next/font/google";
+import { DM_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import { siteUrl } from "@/lib/site";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
-const parkinsans = Parkinsans({
+// Self-hosted instead of next/font/google: Next has no precalculated
+// fallback-font metrics for Parkinsans, which made next/font/google warn
+// on every build. next/font/local computes metrics from the file itself,
+// so it needs no lookup table entry. File is the variable-weight latin
+// woff2 from @fontsource-variable/parkinsans (OFL-1.1, see PARKINSANS-LICENSE.txt).
+const parkinsans = localFont({
+  src: "./fonts/parkinsans-variable.woff2",
   variable: "--font-sans",
-  subsets: ["latin"],
+  weight: "300 800",
+  display: "swap",
 });
 
 const dmSans = DM_Sans({
@@ -30,8 +38,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={`${parkinsans.variable} ${dmSans.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col">
+      {/* suppressHydrationWarning: some browser extensions inject an attribute
+          here (a random-UUID-keyed marker) before React hydrates; it's not
+          part of the app's rendered output. */}
+      <body className="flex min-h-full flex-col" suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

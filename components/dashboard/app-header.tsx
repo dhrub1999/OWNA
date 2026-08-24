@@ -1,22 +1,19 @@
-import Image from "next/image";
 import Link from "next/link";
 import { LogOut, Settings } from "lucide-react";
 import { signOut } from "@/app/(auth)/actions";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export function AppHeader() {
   return (
     <header className="flex h-14 items-center gap-3 border-b px-4 sm:px-6">
-      <Link href="/dashboard" aria-label="OWNA dashboard">
-        <Image
-          src="/assets/logo/logo-with-name.svg"
-          alt="OWNA"
-          width={90}
-          height={32}
-          priority
-          className="theme-logo"
-        />
+      <Link
+        href="/dashboard"
+        aria-label="OWNA dashboard"
+        className="text-foreground hover:text-logo-hover transition-colors"
+      >
+        <Logo className="h-8 w-auto" />
       </Link>
       <div className="ml-auto flex items-center gap-1">
         <ThemeToggle />
