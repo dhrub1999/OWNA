@@ -106,6 +106,9 @@ export function HeroFootage({
       // Above the fold and the subject of the section, so never lazy-loaded.
       aria-label="A published OWNA profile scrolling: a portrait and name, a short bio, social links, then a portfolio of project cards."
     >
+      {/* VP9 first — ~22% smaller — with H.264 behind it for Safari on iOS,
+          which does not decode VP9 in every version still in the wild. */}
+      <source src="/assets/hero-section/product-result.webm" type="video/webm" />
       <source src="/assets/hero-section/product-result.mp4" type="video/mp4" />
     </video>
   );

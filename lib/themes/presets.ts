@@ -131,7 +131,7 @@ export const THEME_PRESETS: ThemePreset[] = [
       },
       typography: {
         headingFont: "space-grotesk",
-        bodyFont: "dm-sans",
+        bodyFont: "plus-jakarta-sans",
         scale: 1.05,
         headingWeight: "700",
         letterSpacing: -0.03,
@@ -193,7 +193,7 @@ export const THEME_PRESETS: ThemePreset[] = [
       },
       typography: {
         headingFont: "playfair",
-        bodyFont: "dm-sans",
+        bodyFont: "plus-jakarta-sans",
         scale: 1.15,
         headingWeight: "700",
         letterSpacing: -0.02,
@@ -222,7 +222,7 @@ export const THEME_PRESETS: ThemePreset[] = [
         button: "#6151d8",
         buttonForeground: "#ffffff",
       },
-      typography: { headingFont: "dm-sans", bodyFont: "dm-sans", scale: 1, headingWeight: "700" },
+      typography: { headingFont: "plus-jakarta-sans", bodyFont: "plus-jakarta-sans", scale: 1, headingWeight: "700" },
       radius: { base: 20, button: 999, image: 22, card: 26, avatar: "circle" },
       spacing: { padding: 24, block: 24, section: 64 },
       background: { kind: "solid" },

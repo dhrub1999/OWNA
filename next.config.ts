@@ -22,10 +22,43 @@ const EMBED_FRAME_SRC = [
  * style custom properties.
  */
 
-const mediaSrc =
-  process.env.NODE_ENV === "development"
-    ? "media-src 'self' http: https:"
-    : "media-src 'self' https:";
+const isDev = process.env.NODE_ENV === "development";
+
+const connectSrc = [
+  "'self'",
+  "https://*.supabase.co",
+  "wss://*.supabase.co",
+  ...(isDev ? ["ws://localhost:*", "ws://127.0.0.1:*"] : []),
+].join(" ");
+
+// const securityHeaders = [
+//   { key: "X-Content-Type-Options", value: "nosniff" },
+//   { key: "X-Frame-Options", value: "SAMEORIGIN" },
+//   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+//   {
+//     key: "Permissions-Policy",
+//     value: "camera=(), microphone=(), geolocation=(), browsing-topics=()",
+//   },
+//   {
+//     key: "Content-Security-Policy",
+//     value: [
+//       "default-src 'self'",
+//       "base-uri 'self'",
+//       "form-action 'self'",
+//       "object-src 'none'",
+//       "frame-ancestors 'self'",
+//       `frame-src 'self' ${EMBED_FRAME_SRC}`,
+//       "img-src 'self' data: blob: https:",
+//       // "media-src 'self' https:",
+//       mediaSrc,
+//       "font-src 'self' data:",
+//       "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+//       "style-src 'self' 'unsafe-inline'",
+//       "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+//       "upgrade-insecure-requests",
+//     ].join("; "),
+//   },
+// ];
 
 const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -45,13 +78,12 @@ const securityHeaders = [
       "frame-ancestors 'self'",
       `frame-src 'self' ${EMBED_FRAME_SRC}`,
       "img-src 'self' data: blob: https:",
-      // "media-src 'self' https:",
-      mediaSrc,
+      "media-src 'self' https:",
       "font-src 'self' data:",
-      "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+      `connect-src ${connectSrc}`,
       "style-src 'self' 'unsafe-inline'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-      // "upgrade-insecure-requests",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com",
+      "upgrade-insecure-requests",
     ].join("; "),
   },
 ];

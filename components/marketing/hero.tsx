@@ -3,7 +3,7 @@ import { StartBuildingButton } from "@/components/marketing/start-building-butto
 import { HeroFootage } from "@/components/marketing/hero-footage";
 import { Button } from "@/components/ui/button";
 
-const POSTER = "/assets/hero-section/poster-frame.png";
+const POSTER = "/assets/hero-section/poster-frame.jpg";
 
 /**
  * The marketing hero.
@@ -26,7 +26,7 @@ export function Hero() {
             in light mode it would read as a stain rather than a light source. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute top-[180px] right-4 hidden h-[760px] w-[760px] rounded-full blur-[16px] xl:dark:block"
+          className="pointer-events-none absolute top-[180px] right-4 hidden h-[760px] w-[760px] rounded-full blur-[16px] lg:dark:block"
           style={{
             background:
               "radial-gradient(circle, rgba(184,240,60,0.14), rgba(184,240,60,0) 60%)",
@@ -35,7 +35,7 @@ export function Hero() {
 
         {/* Desktop device. `top` + its height overrun the section's height, and
             the section clips — the cut-off bottom is the composition. */}
-        <div className="pointer-events-none absolute top-[132px] right-12 hidden h-[760px] w-[384px] -rotate-2 rounded-[52px] bg-[#1A1A1C] p-[10px] shadow-[0_2px_0_rgba(255,255,255,0.16)_inset,0_46px_80px_-26px_rgba(20,18,14,0.5)] xl:block dark:shadow-[0_2px_0_rgba(255,255,255,0.16)_inset,0_50px_90px_-24px_rgba(0,0,0,0.75)]">
+        <div className="pointer-events-none absolute top-[132px] right-12 hidden h-[760px] w-[384px] -rotate-2 rounded-[52px] bg-[#1A1A1C] p-[10px] shadow-[0_2px_0_rgba(255,255,255,0.16)_inset,0_46px_80px_-26px_rgba(20,18,14,0.5)] lg:block dark:shadow-[0_2px_0_rgba(255,255,255,0.16)_inset,0_50px_90px_-24px_rgba(0,0,0,0.75)]">
           {/* Screen background matches the profile's own dark olive so there is
               no flash of a different colour before the first frame paints. */}
           <div className="relative h-full w-full overflow-hidden rounded-[43px] bg-[#14170F]">
@@ -84,8 +84,13 @@ export function Hero() {
         </div>
 
         {/* Mobile footage. The negative right inset plus the rotation are what
-            make the block bleed off the right edge. */}
-        <div className="pointer-events-none absolute right-[-60px] bottom-0 left-0 h-[470px] origin-bottom-left -rotate-2 overflow-hidden rounded-tl-[26px] bg-[#14170F] sm:h-[560px] xl:hidden">
+            make the block bleed off the right edge.
+
+            The width is capped from `sm` up and the block right-anchored: the
+            source is a 662x1426 portrait recording, so letting a short block run
+            the full width of a tablet makes `object-cover` scale the profile's
+            avatar up to several hundred pixels and nothing reads as a page. */}
+        <div className="pointer-events-none absolute right-[-60px] bottom-0 left-0 h-[470px] origin-bottom-left -rotate-2 overflow-hidden rounded-tl-[26px] bg-[#14170F] sm:left-auto sm:h-[540px] sm:w-[480px] sm:rounded-tl-[32px] lg:hidden">
           <HeroFootage
             poster={POSTER}
             className="h-full w-full scale-[1.06] object-cover object-top"
@@ -100,25 +105,34 @@ export function Hero() {
           />
         </div>
 
-        <div className="relative z-20 max-w-[840px] pt-[72px] pb-[400px] sm:pb-[500px] xl:pt-[176px] xl:pb-[208px]">
-          {/* Line breaks are explicit and differ between compositions: the
+        <div className="relative z-20 max-w-[840px] pt-[72px] pb-[400px] sm:pb-[600px] lg:pt-[176px] lg:pb-[208px]">
+          {/* `font-sans` is explicit, not inherited: the global base rule sets
+              headings to `font-heading`, and this headline is sized against
+              Parkinsans' metrics — the crossing below depends on them.
+
+              Line breaks are explicit and differ between compositions: the
               desktop breaks are tuned to cross the device's bezel, the mobile
               ones to the narrower column.
 
-              The desktop size is 82px rather than the spec's 76px: that number
-              was measured against Plus Jakarta Sans in a 1240px frame, and both
-              changed here (Parkinsans, and the site's 1280px container). 82px is
-              what reproduces the thing the number was for — the widest line
-              crossing onto the device's bezel by ~25px. */}
-          <h1 className="text-[42px] leading-[1.04] font-extrabold tracking-[-0.035em] [text-shadow:0_2px_24px_rgba(247,245,241,0.7)] sm:text-[56px] xl:text-[82px] xl:leading-[1.0] xl:tracking-[-0.038em] dark:[text-shadow:0_2px_24px_rgba(12,11,10,0.55)]">
-            <span className="xl:hidden">
+              The desktop size tops out at 82px rather than the spec's 76px:
+              that number was measured against Plus Jakarta Sans in a 1240px
+              frame, and both changed here (Parkinsans, and the site's 1280px
+              container). 82px is what reproduces the thing the number was for —
+              the widest line crossing onto the device's bezel.
+
+              It is fluid below 1280 because the device is a fixed 384px while
+              the container is not: a static size would let the crossing swing
+              from a 90px gap at 1024 to a hit at 1280. The slope holds the
+              overlap at roughly 30px across the whole range. */}
+          <h1 className="font-sans text-[42px] leading-[1.04] font-extrabold tracking-[-0.035em] [text-shadow:0_2px_24px_rgba(247,245,241,0.7)] sm:text-[56px] lg:text-[clamp(56px,calc(9.84vw_-_44px),82px)] lg:leading-[1.0] lg:tracking-[-0.038em] dark:[text-shadow:0_2px_24px_rgba(12,11,10,0.55)]">
+            <span className="lg:hidden">
               Your online
               <br />
               presence should
               <br />
               feel like you.
             </span>
-            <span className="hidden xl:inline">
+            <span className="hidden lg:inline">
               Your online presence
               <br />
               should feel
@@ -127,13 +141,13 @@ export function Hero() {
             </span>
           </h1>
 
-          <p className="mt-[22px] max-w-[300px] text-[16px] leading-[1.5] text-[#6E6C67] sm:max-w-[380px] sm:text-[18px] xl:mt-10 xl:max-w-[420px] xl:text-[21px] xl:tracking-[-0.01em] dark:text-[#94918A]">
+          <p className="mt-[22px] max-w-[300px] text-[16px] leading-[1.5] text-[#6E6C67] sm:max-w-[380px] sm:text-[18px] lg:mt-10 lg:max-w-[420px] lg:text-[21px] lg:tracking-[-0.01em] dark:text-[#94918A]">
             Create a professional digital presence without building a website
             from scratch.
           </p>
 
-          <div className="mt-[26px] flex flex-col gap-[10px] sm:flex-row sm:gap-[14px] xl:mt-11">
-            <StartBuildingButton className="h-[54px] w-full rounded-full bg-[#1B62F5] px-[34px] text-[16px] font-semibold text-white hover:bg-[#1450D8] sm:w-auto xl:h-[58px] xl:text-[17px] xl:tracking-[-0.01em]">
+          <div className="mt-[26px] flex flex-col gap-[10px] sm:flex-row sm:gap-[14px] lg:mt-11">
+            <StartBuildingButton className="h-[54px] w-full rounded-full bg-[#1B62F5] px-[34px] text-[16px] font-semibold text-white hover:bg-[#1450D8] sm:w-auto lg:h-[58px] lg:text-[17px] lg:tracking-[-0.01em]">
               Create your OWNA
             </StartBuildingButton>
 
@@ -143,7 +157,7 @@ export function Hero() {
                 apply where backdrop-filter actually exists. */}
             <Button
               variant="ghost"
-              className="h-[54px] w-full rounded-full border border-white/72 bg-white px-[30px] text-[16px] font-medium text-[#0C0B0A] shadow-[0_1px_0_rgba(255,255,255,0.7)_inset,0_10px_28px_-12px_rgba(20,18,14,0.42)] hover:bg-white hover:text-[#0C0B0A] supports-[backdrop-filter]:bg-white/58 supports-[backdrop-filter]:backdrop-blur-[24px] supports-[backdrop-filter]:backdrop-saturate-[1.6] supports-[backdrop-filter]:hover:bg-white/74 supports-[backdrop-filter]:hover:border-white/90 sm:w-auto xl:h-[58px] xl:text-[17px] xl:tracking-[-0.01em] dark:border-[#F8F6F2]/26 dark:bg-[#26251F] dark:text-[#F8F6F2] dark:shadow-[0_1px_0_rgba(255,255,255,0.22)_inset,0_10px_28px_-10px_rgba(0,0,0,0.55)] dark:hover:bg-[#2E2D27] dark:hover:text-[#F8F6F2] dark:supports-[backdrop-filter]:bg-[#F8F6F2]/10 dark:supports-[backdrop-filter]:hover:bg-[#F8F6F2]/17 dark:supports-[backdrop-filter]:hover:border-[#F8F6F2]/44"
+              className="h-[54px] w-full rounded-full border border-white/72 bg-white px-[30px] text-[16px] font-medium text-[#0C0B0A] shadow-[0_1px_0_rgba(255,255,255,0.7)_inset,0_10px_28px_-12px_rgba(20,18,14,0.42)] hover:bg-white hover:text-[#0C0B0A] supports-[backdrop-filter]:bg-white/58 supports-[backdrop-filter]:backdrop-blur-[24px] supports-[backdrop-filter]:backdrop-saturate-[1.6] supports-[backdrop-filter]:hover:bg-white/74 supports-[backdrop-filter]:hover:border-white/90 sm:w-auto lg:h-[58px] lg:text-[17px] lg:tracking-[-0.01em] dark:border-[#F8F6F2]/26 dark:bg-[#26251F] dark:text-[#F8F6F2] dark:shadow-[0_1px_0_rgba(255,255,255,0.22)_inset,0_10px_28px_-10px_rgba(0,0,0,0.55)] dark:hover:bg-[#2E2D27] dark:hover:text-[#F8F6F2] dark:supports-[backdrop-filter]:bg-[#F8F6F2]/10 dark:supports-[backdrop-filter]:hover:bg-[#F8F6F2]/17 dark:supports-[backdrop-filter]:hover:border-[#F8F6F2]/44"
               render={<Link href="#explore" />}
             >
               See real profiles

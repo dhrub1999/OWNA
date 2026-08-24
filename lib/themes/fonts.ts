@@ -1,12 +1,12 @@
 import {
   Bricolage_Grotesque,
-  DM_Sans,
   Geist,
   Instrument_Serif,
   Inter,
   JetBrains_Mono,
   Outfit,
   Playfair_Display,
+  Plus_Jakarta_Sans,
   Sora,
   Space_Grotesk,
 } from "next/font/google";
@@ -63,11 +63,11 @@ const spaceGrotesk = Space_Grotesk({
   preload: false,
   variable: "--font-space-grotesk",
 });
-const dmSans = DM_Sans({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   display: "swap",
   preload: false,
-  variable: "--font-dm-sans",
+  variable: "--font-plus-jakarta",
 });
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -150,12 +150,12 @@ export const FONTS: Record<FontKey, FontEntry> = {
     className: spaceGrotesk.variable,
     category: "display",
   },
-  "dm-sans": {
-    key: "dm-sans",
-    label: "DM Sans",
-    cssVar: "--font-dm-sans",
+  "plus-jakarta-sans": {
+    key: "plus-jakarta-sans",
+    label: "Plus Jakarta Sans",
+    cssVar: "--font-plus-jakarta",
     fallback: "system-ui, sans-serif",
-    className: dmSans.variable,
+    className: plusJakartaSans.variable,
     category: "sans",
   },
   bricolage: {

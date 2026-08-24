@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
-import { DM_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import { siteUrl } from "@/lib/site";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -18,7 +18,7 @@ const parkinsans = localFont({
   display: "swap",
 });
 
-const dmSans = DM_Sans({
+const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-display",
   subsets: ["latin"],
 });
@@ -37,7 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${parkinsans.variable} ${dmSans.variable} h-full antialiased`}
+      className={`${parkinsans.variable} ${plusJakartaSans.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       {/* suppressHydrationWarning: some browser extensions inject an attribute
