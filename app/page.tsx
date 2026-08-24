@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Hero } from "@/components/marketing/hero";
 import { StartBuildingButton } from "@/components/marketing/start-building-button";
 import { ProfileRenderer } from "@/components/public/profile-renderer";
 import { Button } from "@/components/ui/button";
@@ -68,58 +69,7 @@ export default function HomePage() {
 
       <main className="flex-1">
         {/* 2. Hero */}
-        <section className="relative overflow-hidden pt-20 pb-32 sm:pt-32 sm:pb-40">
-          <div className="mx-auto max-w-7xl px-6 sm:px-12">
-            <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-              <div className="lg:col-span-6 z-10 relative">
-                <h1 className="font-display text-[56px] sm:text-[72px] lg:text-[88px] font-bold leading-[1.05] tracking-tight">
-                  Your online presence
-                  <br />
-                  should feel like you.
-                </h1>
-                <p className="mt-8 text-xl sm:text-2xl text-muted-foreground max-w-lg leading-relaxed">
-                  Create a professional digital presence without building a
-                  website from scratch.
-                </p>
-                <div className="mt-12 flex flex-wrap gap-4">
-                  <StartBuildingButton
-                    size="lg"
-                    className="h-14 rounded-full px-8 text-lg font-medium"
-                  >
-                    Create your OWNA
-                  </StartBuildingButton>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="h-14 rounded-full px-8 text-lg font-medium border-border"
-                    render={<Link href="#explore" />}
-                  >
-                    Explore OWNA
-                  </Button>
-                </div>
-              </div>
-
-              <div className="lg:col-span-6 relative h-[600px] w-full hidden sm:block">
-                <div className="absolute top-0 right-0 w-[80%] rounded-[24px] overflow-hidden border border-border shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-700 ease-out z-10 bg-background">
-                  <div className="pointer-events-none h-[480px] overflow-hidden">
-                    <ProfileRenderer
-                      snapshot={demoProfiles.consultant}
-                      isPreview
-                    />
-                  </div>
-                </div>
-                <div className="absolute bottom-10 left-0 w-[70%] rounded-[24px] overflow-hidden border border-border shadow-xl -rotate-6 hover:-rotate-2 transition-transform duration-700 ease-out z-20 bg-background">
-                  <div className="pointer-events-none h-[400px] overflow-hidden">
-                    <ProfileRenderer
-                      snapshot={demoProfiles.jewellery}
-                      isPreview
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <Hero />
 
         {/* 3. More than a link */}
         <section className="py-24 sm:py-32 bg-secondary/50" id="product">

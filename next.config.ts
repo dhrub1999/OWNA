@@ -21,6 +21,12 @@ const EMBED_FRAME_SRC = [
  * user-supplied values only ever reach the DOM as text or as validated inline
  * style custom properties.
  */
+
+const mediaSrc =
+  process.env.NODE_ENV === "development"
+    ? "media-src 'self' http: https:"
+    : "media-src 'self' https:";
+
 const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
@@ -39,12 +45,13 @@ const securityHeaders = [
       "frame-ancestors 'self'",
       `frame-src 'self' ${EMBED_FRAME_SRC}`,
       "img-src 'self' data: blob: https:",
-      "media-src 'self' https:",
+      // "media-src 'self' https:",
+      mediaSrc,
       "font-src 'self' data:",
       "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
       "style-src 'self' 'unsafe-inline'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-      "upgrade-insecure-requests",
+      // "upgrade-insecure-requests",
     ].join("; "),
   },
 ];
