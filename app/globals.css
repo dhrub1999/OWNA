@@ -135,3 +135,14 @@
     @apply font-heading;
   }
 }
+
+/* Keeps native overflow scrolling (touch, trackpad, keyboard) while hiding
+   the scrollbar chrome, for rails where the scroll affordance is visual
+   (snap peeking, arrow controls) rather than the OS scrollbar itself. */
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

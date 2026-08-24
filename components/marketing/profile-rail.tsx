@@ -60,7 +60,7 @@ export function ProfileRail() {
       role="region"
       aria-label="Example OWNA profiles"
       tabIndex={0}
-      className="-mx-6 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth px-6 pb-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring sm:-mx-12 sm:px-12 lg:gap-6"
+      className="scrollbar-hide -mx-6 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth px-6 pb-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring sm:-mx-12 sm:px-12 lg:gap-6 scroll-pl-6 sm:scroll-pl-12"
     >
       {RAIL.map((entry) => (
         <figure

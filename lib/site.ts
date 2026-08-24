@@ -26,7 +26,7 @@ export function siteUrl(): string {
  * thing most likely to change before launch, and a stale support address in a
  * privacy policy is worse than no address at all.
  */
-export const CONTACT_EMAIL = "hello@owna.app";
+export const CONTACT_EMAIL = "social.owna@gmail.com";
 
 /** The public URL of a profile, e.g. `https://owna.app/tamal`. */
 export function profileUrl(username: string): string {
