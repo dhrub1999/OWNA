@@ -233,19 +233,40 @@ const galleryImageSchema = z.object({
   url: z.string().max(2048).catch(""),
   alt: z.string().max(200).catch("").prefault(""),
   caption: z.string().max(200).catch("").prefault(""),
+  // Bento-only; ignored by grid/masonry. Kept on every image regardless of
+  // the block's current layout so switching layouts never loses a choice.
+  shape: z.enum(["square", "landscape", "portrait"]).catch("square").prefault("square"),
+  position: z
+    .enum([
+      "top-left",
+      "top-center",
+      "top-right",
+      "center-left",
+      "center",
+      "center-right",
+      "bottom-left",
+      "bottom-center",
+      "bottom-right",
+    ])
+    .catch("center")
+    .prefault("center"),
 });
 
 export const galleryPropsSchema = z
   .object({
     heading: z.string().max(120).catch("").prefault(""),
     images: z.array(galleryImageSchema).max(60).catch([]).prefault([]),
-    layout: z.enum(["grid", "masonry"]).catch("grid").prefault("grid"),
+    layout: z.enum(["grid", "masonry", "bento"]).catch("grid").prefault("grid"),
     columns: z.union([z.literal(2), z.literal(3), z.literal(4)]).catch(3).prefault(3),
     gap: z.number().catch(8).prefault(8).transform((n) => Math.min(32, Math.max(0, n))),
     showCaptions: z.boolean().catch(false).prefault(false),
     lightbox: z.boolean().catch(true).prefault(true),
   })
   .prefault({});
+
+export type GalleryImage = z.infer<typeof galleryImageSchema>;
+export type GalleryImageShape = GalleryImage["shape"];
+export type GalleryImagePosition = GalleryImage["position"];
 
 // ---------------------------------------------------------------------------
 // embed
