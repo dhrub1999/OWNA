@@ -1,0 +1,94 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { StartBuildingButton } from "@/components/marketing/start-building-button";
+import { NAV_LINKS } from "@/components/marketing/nav-links";
+import { Logo } from "@/components/logo";
+
+/**
+ * The header's navigation below `md`.
+ *
+ * The desktop nav is `hidden md:flex`, which left small screens with no
+ * navigation at all — the anchors, the log-in link and the whole site map were
+ * simply absent. This restores them.
+ *
+ * Open state is local and explicit rather than left to the primitive: every
+ * item in here navigates, and a sheet that stays open behind an in-page anchor
+ * jump would cover the section it just scrolled to.
+ */
+export function MobileNav() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger
+        render={
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            aria-label="Open menu"
+          />
+        }
+      >
+        <Menu className="size-5" />
+      </SheetTrigger>
+
+      <SheetContent
+        side="right"
+        className="w-[86%] max-w-sm gap-0 bg-background p-0"
+      >
+        <SheetTitle className="sr-only">Navigation</SheetTitle>
+
+        <div className="flex h-20 items-center px-6">
+          <Link
+            href="/"
+            aria-label="OWNA home"
+            onClick={() => setOpen(false)}
+            className="text-foreground transition-colors hover:text-logo-hover"
+          >
+            <Logo className="h-8 w-auto" />
+          </Link>
+        </div>
+
+        {/* Divided rows rather than a stack of cards: this is a list of
+            destinations, and a border carries that without adding surfaces. */}
+        <nav className="flex flex-col border-y border-border">
+          {NAV_LINKS.map((link, i) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setOpen(false)}
+              style={{ transitionDelay: `${i * 20}ms` }}
+              className="flex items-center justify-between border-b border-border px-6 py-5 font-display text-2xl font-bold tracking-tight transition-colors last:border-b-0 hover:bg-secondary active:bg-secondary"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="mt-auto flex flex-col gap-3 p-6">
+          <StartBuildingButton className="h-13 w-full rounded-full text-base font-semibold">
+            Create your OWNA
+          </StartBuildingButton>
+          <Button
+            variant="ghost"
+            className="h-13 w-full rounded-full border border-border text-base font-medium"
+            render={<Link href="/login" onClick={() => setOpen(false)} />}
+          >
+            Log in
+          </Button>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
