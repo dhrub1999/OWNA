@@ -13,11 +13,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { draftToSnapshot, documentFromRows } from "@/lib/editor/document";
 import { profileUrl, profileUrlLabel } from "@/lib/site";
 import { getDraft, getPublicationState } from "@/lib/supabase/profile";
+import { getUser } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
 async function DashboardBody() {
-  const draft = await getDraft();
+  const [draft, user] = await Promise.all([getDraft(), getUser()]);
   if (!draft) redirect("/onboarding/username");
 
   const publication = await getPublicationState(draft.profile.id);
@@ -47,7 +48,10 @@ async function DashboardBody() {
             </span>
           </div>
           <div className="mt-4">
-            <PublishControls isLive={publication.isLive} />
+            <PublishControls
+              isLive={publication.isLive}
+              isAnonymous={Boolean(user?.is_anonymous)}
+            />
           </div>
         </div>
 

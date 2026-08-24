@@ -26,18 +26,20 @@ import { useAutosave } from "./use-autosave";
 export function EditorShell({
   document,
   revision,
+  isAnonymous,
 }: {
   document: EditorDocument;
   revision: string;
+  isAnonymous: boolean;
 }) {
   return (
     <EditorProvider document={document} revision={revision}>
-      <EditorLayout />
+      <EditorLayout isAnonymous={isAnonymous} />
     </EditorProvider>
   );
 }
 
-function EditorLayout() {
+function EditorLayout({ isAnonymous }: { isAnonymous: boolean }) {
   const { flush } = useAutosave();
   const [mobilePanel, setMobilePanel] = useState<"blocks" | "props" | null>(null);
 
@@ -57,7 +59,7 @@ function EditorLayout() {
 
   return (
     <div className="fixed inset-0 flex flex-col overflow-hidden bg-background">
-      <Toolbar flush={flush} />
+      <Toolbar flush={flush} isAnonymous={isAnonymous} />
       <ConflictBanner />
 
       <div className="flex min-h-0 flex-1 overflow-hidden">

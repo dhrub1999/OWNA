@@ -5,11 +5,12 @@ import { EditorShell } from "@/components/editor/editor-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { documentFromRows } from "@/lib/editor/document";
 import { getDraft } from "@/lib/supabase/profile";
+import { getUser } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Editor" };
 
 async function Editor() {
-  const draft = await getDraft();
+  const [draft, user] = await Promise.all([getDraft(), getUser()]);
   // No profile means the account never finished onboarding.
   if (!draft) redirect("/onboarding/username");
 
@@ -17,6 +18,7 @@ async function Editor() {
     <EditorShell
       document={documentFromRows(draft.profile, draft.blocks)}
       revision={draft.profile.updated_at}
+      isAnonymous={Boolean(user?.is_anonymous)}
     />
   );
 }

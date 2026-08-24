@@ -154,6 +154,24 @@ export type Database = {
           },
         ]
       }
+      onboarding_answers: {
+        Row: {
+          answers: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          answers?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       pages: {
         Row: {
           created_at: string

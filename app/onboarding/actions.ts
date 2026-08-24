@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { starterBlockProps } from "@/lib/blocks/definitions";
 import { createClient, requireUser } from "@/lib/supabase/server";
 import { usernameSchema } from "@/lib/validations/username";
+import type { Tables } from "@/types/database";
 
 /**
  * Claiming a username is the moment an account becomes a profile.
@@ -16,19 +17,18 @@ import { usernameSchema } from "@/lib/validations/username";
 
 export type ClaimResult = { error: string };
 
-export async function claimUsername(formData: FormData): Promise<ClaimResult> {
-  const user = await requireUser();
-
-  const parsed = usernameSchema.safeParse(formData.get("username"));
-  if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Pick another name" };
-  }
-
-  const supabase = await createClient();
-
+/**
+ * Call `claim_username` and translate its failure modes into copy a person can
+ * read. Shared with `app/onboarding/questionnaire/actions.ts`, which claims a
+ * name as one step of a bigger form instead of the whole submission.
+ */
+export async function claimUsernameRpc(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  username: string,
+): Promise<{ profile: Tables<"profiles"> } | { error: string }> {
   // The function returns a composite, not a set, so there is no .single() here.
   const { data: profile, error } = await supabase.rpc("claim_username", {
-    p_username: parsed.data,
+    p_username: username,
   });
 
   if (error || !profile) {
@@ -44,7 +44,22 @@ export async function claimUsername(formData: FormData): Promise<ClaimResult> {
     };
   }
 
-  await seedProfile(profile.id, user.user_metadata ?? {});
+  return { profile };
+}
+
+export async function claimUsername(formData: FormData): Promise<ClaimResult> {
+  const user = await requireUser();
+
+  const parsed = usernameSchema.safeParse(formData.get("username"));
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Pick another name" };
+  }
+
+  const supabase = await createClient();
+  const result = await claimUsernameRpc(supabase, parsed.data);
+  if ("error" in result) return result;
+
+  await seedProfile(result.profile.id, user.user_metadata ?? {});
 
   redirect("/editor");
 }

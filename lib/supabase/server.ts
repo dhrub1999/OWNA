@@ -2,6 +2,7 @@ import "server-only";
 
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { cache } from "react";
 import type { Database } from "@/types/database";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "./env";
 
@@ -43,14 +44,18 @@ export async function createClient() {
  * The signed-in user, or null. Always uses getUser(), which revalidates the
  * token with Supabase — getSession() only decodes the cookie and will happily
  * return a forged one.
+ *
+ * Wrapped in React's cache() so the several places in a single request that
+ * each want to know "who is this" (a layout, a page, a Server Action) share
+ * one token revalidation instead of one each.
  */
-export async function getUser() {
+export const getUser = cache(async () => {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   return user;
-}
+});
 
 /** The signed-in user, or throw. For Server Actions that must not run anonymously. */
 export async function requireUser() {

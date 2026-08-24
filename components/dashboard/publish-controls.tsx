@@ -1,15 +1,23 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Rocket, Undo2 } from "lucide-react";
 import { toast } from "sonner";
 import { publishProfile, unpublishProfile } from "@/app/(app)/actions";
+import { PublishAuthGate } from "@/components/editor/publish-auth-gate";
 import { Button } from "@/components/ui/button";
 
-export function PublishControls({ isLive }: { isLive: boolean }) {
+export function PublishControls({
+  isLive,
+  isAnonymous,
+}: {
+  isLive: boolean;
+  isAnonymous: boolean;
+}) {
   const router = useRouter();
   const [pending, start] = useTransition();
+  const [gateOpen, setGateOpen] = useState(false);
 
   function run(action: () => Promise<{ ok: boolean; message?: string }>, success: string) {
     start(async () => {
@@ -25,14 +33,29 @@ export function PublishControls({ isLive }: { isLive: boolean }) {
     });
   }
 
+  function onPublish() {
+    if (isAnonymous) {
+      setGateOpen(true);
+      return;
+    }
+    run(publishProfile, isLive ? "Republished." : "You're live.");
+  }
+
+  const gate = (
+    <PublishAuthGate
+      open={gateOpen}
+      onOpenChange={setGateOpen}
+      onAccountReady={() => {
+        setGateOpen(false);
+        run(publishProfile, "You're live.");
+      }}
+    />
+  );
+
   if (isLive) {
     return (
       <div className="flex flex-wrap gap-2">
-        <Button
-          size="sm"
-          disabled={pending}
-          onClick={() => run(publishProfile, "Republished.")}
-        >
+        <Button size="sm" disabled={pending} onClick={onPublish}>
           {pending ? <Loader2 className="animate-spin" /> : <Rocket />}
           Republish
         </Button>
@@ -45,14 +68,18 @@ export function PublishControls({ isLive }: { isLive: boolean }) {
           <Undo2 />
           Take offline
         </Button>
+        {gate}
       </div>
     );
   }
 
   return (
-    <Button size="sm" disabled={pending} onClick={() => run(publishProfile, "You're live.")}>
-      {pending ? <Loader2 className="animate-spin" /> : <Rocket />}
-      Publish
-    </Button>
+    <>
+      <Button size="sm" disabled={pending} onClick={onPublish}>
+        {pending ? <Loader2 className="animate-spin" /> : <Rocket />}
+        Publish
+      </Button>
+      {gate}
+    </>
   );
 }

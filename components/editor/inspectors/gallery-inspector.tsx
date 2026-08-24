@@ -3,6 +3,7 @@
 import { newItemId } from "@/lib/blocks/definitions";
 import { Input } from "@/components/ui/input";
 import { ImageField } from "../image-field";
+import { FocalPointField } from "../focal-point-field";
 import {
   PanelSection,
   SegmentedField,
@@ -15,10 +16,12 @@ import { useBlockProps, type InspectorProps } from "./use-block-props";
 
 export function GalleryInspector({ block }: InspectorProps) {
   const [props, set] = useBlockProps<"gallery">(block);
+  const isBento = props.layout === "bento";
 
   const missingAlt = props.images.filter(
     (image) => image.url.trim() && !image.alt.trim(),
   ).length;
+  const hiddenByBento = isBento ? Math.max(0, props.images.length - 6) : 0;
 
   return (
     <>
@@ -32,12 +35,19 @@ export function GalleryInspector({ block }: InspectorProps) {
         />
         <RepeatableList
           items={props.images}
-          max={60}
+          max={isBento ? 6 : 60}
           onChange={(images) => set("images", images)}
           onAdd={() =>
             set("images", [
               ...props.images,
-              { id: newItemId(), url: "", alt: "", caption: "" },
+              {
+                id: newItemId(),
+                url: "",
+                alt: "",
+                caption: "",
+                shape: "square",
+                position: "center",
+              },
             ])
           }
           addLabel="Add an image"
@@ -65,12 +75,39 @@ export function GalleryInspector({ block }: InspectorProps) {
                 maxLength={200}
                 className="text-xs"
               />
+              {isBento ? (
+                <div className="flex items-end gap-2">
+                  <div className="flex-1">
+                    <SegmentedField
+                      label="Shape"
+                      value={item.shape}
+                      onChange={(shape) => update({ shape })}
+                      options={[
+                        { value: "square", label: "Square" },
+                        { value: "landscape", label: "Landscape" },
+                        { value: "portrait", label: "Portrait" },
+                      ]}
+                    />
+                  </div>
+                  <FocalPointField
+                    label="Focal point"
+                    value={item.position}
+                    onChange={(position) => update({ position })}
+                  />
+                </div>
+              ) : null}
             </>
           )}
         />
         {missingAlt > 0 ? (
           <p className="text-[11px] text-amber-600 dark:text-amber-500">
             {missingAlt} image{missingAlt === 1 ? "" : "s"} without alt text.
+          </p>
+        ) : null}
+        {hiddenByBento > 0 ? (
+          <p className="text-muted-foreground text-[11px]">
+            Only the first 6 images show in Bento layout — the rest are still
+            saved.
           </p>
         ) : null}
       </PanelSection>
@@ -83,18 +120,21 @@ export function GalleryInspector({ block }: InspectorProps) {
           options={[
             { value: "grid", label: "Grid" },
             { value: "masonry", label: "Masonry" },
+            { value: "bento", label: "Bento" },
           ]}
         />
-        <SegmentedField
-          label="Columns"
-          value={props.columns}
-          onChange={(value) => set("columns", value)}
-          options={[
-            { value: 2, label: "2" },
-            { value: 3, label: "3" },
-            { value: 4, label: "4" },
-          ]}
-        />
+        {!isBento ? (
+          <SegmentedField
+            label="Columns"
+            value={props.columns}
+            onChange={(value) => set("columns", value)}
+            options={[
+              { value: 2, label: "2" },
+              { value: 3, label: "3" },
+              { value: 4, label: "4" },
+            ]}
+          />
+        ) : null}
         <SliderField
           label="Gap"
           value={props.gap}
