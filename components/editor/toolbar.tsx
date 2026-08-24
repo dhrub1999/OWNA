@@ -1,7 +1,6 @@
 "use client";
 
 import { Suspense, useEffect, useRef, useState, useTransition } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -19,6 +18,7 @@ import {
 import { toast } from "sonner";
 import { publishProfile } from "@/app/(app)/actions";
 import { Button } from "@/components/ui/button";
+import { LogoMark } from "@/components/logo";
 import { profileUrlLabel } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { useEditor, useEditorDispatch, type Device } from "./editor-store";
@@ -85,14 +85,12 @@ export function Toolbar({
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-2 border-b px-3">
-      <Link href="/dashboard" className="px-1" aria-label="OWNA dashboard">
-        <Image
-          src="/assets/logo/logo-only.svg"
-          alt="OWNA"
-          width={28}
-          height={28}
-          priority
-        />
+      <Link
+        href="/dashboard"
+        className="px-1 text-foreground hover:text-logo-hover transition-colors"
+        aria-label="OWNA dashboard"
+      >
+        <LogoMark className="h-7 w-7" />
       </Link>
 
       <div className="ml-1 flex items-center">

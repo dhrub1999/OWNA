@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { StartBuildingButton } from "@/components/marketing/start-building-button";
 import { ProfileRenderer } from "@/components/public/profile-renderer";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { demoProfiles } from "@/lib/demo-profiles";
 import { CheckCircle, Layers, Palette, Globe, ArrowRight } from "lucide-react";
@@ -18,15 +18,12 @@ export default function HomePage() {
       {/* 1. Navigation */}
       <header className="flex h-20 items-center justify-between px-6 sm:px-12 border-b border-border/40">
         <div className="flex items-center gap-12">
-          <Link href="/" aria-label="OWNA home">
-            <Image
-              src="/assets/logo/logo-with-name.svg"
-              alt="OWNA"
-              width={140}
-              height={50}
-              priority
-              className="theme-logo"
-            />
+          <Link
+            href="/"
+            aria-label="OWNA home"
+            className="text-foreground hover:text-logo-hover transition-colors"
+          >
+            <Logo className="h-[50px] w-auto" />
           </Link>
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
             <Link
@@ -433,15 +430,16 @@ export default function HomePage() {
       <footer className="py-20 px-6 sm:px-12 border-t border-border">
         <div className="mx-auto max-w-7xl grid grid-cols-2 md:grid-cols-5 gap-12 mb-16">
           <div className="col-span-2">
-            <Link href="/" aria-label="OWNA home" className="block mb-6">
-              <Image
-                src="/assets/logo/logo-with-name.svg"
-                alt="OWNA"
-                width={120}
-                height={42}
-                className="theme-logo"
-              />
+            <Link
+              href="/"
+              aria-label="OWNA home"
+              className="block mb-4 text-foreground hover:text-logo-hover transition-colors w-fit"
+            >
+              <Logo className="h-[42px] w-auto" />
             </Link>
+            <p className="text-muted-foreground text-sm max-w-xs">
+              Own your corner of the Internet
+            </p>
           </div>
           <div>
             <h4 className="font-bold mb-6">Product</h4>
