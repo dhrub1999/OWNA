@@ -18,7 +18,7 @@ import {
 import { toast } from "sonner";
 import { publishProfile } from "@/app/(app)/actions";
 import { Button } from "@/components/ui/button";
-import { LogoMark } from "@/components/logo";
+import { Logo } from "@/components/logo";
 import { profileUrlLabel } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { useEditor, useEditorDispatch, type Device } from "./editor-store";
@@ -90,7 +90,7 @@ export function Toolbar({
         className="px-1 text-foreground hover:text-logo-hover transition-colors"
         aria-label="OWNA dashboard"
       >
-        <LogoMark className="h-7 w-7" />
+        <Logo className="h-5 w-auto" />
       </Link>
 
       <div className="ml-1 flex items-center">

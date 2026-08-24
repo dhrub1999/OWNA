@@ -9,7 +9,7 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
         className="mb-10 text-foreground hover:text-logo-hover transition-colors"
         aria-label="OWNA home"
       >
-        <Logo className="h-8 w-auto" />
+        <Logo className="h-6 w-auto" />
       </Link>
       <div className="w-full max-w-sm">{children}</div>
     </main>

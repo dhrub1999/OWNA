@@ -13,7 +13,7 @@ export function AppHeader() {
         aria-label="OWNA dashboard"
         className="text-foreground hover:text-logo-hover transition-colors"
       >
-        <Logo className="h-8 w-auto" />
+        <Logo className="h-6 w-auto" />
       </Link>
       <div className="ml-auto flex items-center gap-1">
         <ThemeToggle />

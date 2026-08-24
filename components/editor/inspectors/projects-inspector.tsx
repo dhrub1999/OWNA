@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { newItemId } from "@/lib/blocks/definitions";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -71,22 +72,9 @@ export function ProjectsInspector({ block }: InspectorProps) {
                 spellCheck={false}
                 className="text-xs"
               />
-              <Input
-                // Tags are edited as a comma-separated string because that is
-                // how people type them; the schema stores an array.
-                value={item.tags.join(", ")}
-                onChange={(event) =>
-                  update({
-                    tags: event.target.value
-                      .split(",")
-                      .map((tag) => tag.trim())
-                      .filter(Boolean)
-                      .slice(0, 8),
-                  })
-                }
-                placeholder="Tags, comma separated"
-                aria-label="Tags"
-                className="text-xs"
+              <TagsInput
+                tags={item.tags}
+                onChange={(tags) => update({ tags })}
               />
               <ImageField
                 label="Cover"
@@ -142,5 +130,42 @@ export function ProjectsInspector({ block }: InspectorProps) {
         />
       </PanelSection>
     </>
+  );
+}
+
+/**
+ * Tags are edited as a comma-separated string because that is how people
+ * type them; the schema stores an array. The input keeps its own local text
+ * so an in-progress trailing comma (typed while starting the next tag) isn't
+ * immediately stripped by re-rendering from the parsed array.
+ */
+function TagsInput({
+  tags,
+  onChange,
+}: {
+  tags: string[];
+  onChange: (tags: string[]) => void;
+}) {
+  const [text, setText] = useState(tags.join(", "));
+
+  function handleChange(next: string) {
+    setText(next);
+    onChange(
+      next
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean)
+        .slice(0, 8),
+    );
+  }
+
+  return (
+    <Input
+      value={text}
+      onChange={(event) => handleChange(event.target.value)}
+      placeholder="Tags, comma separated"
+      aria-label="Tags"
+      className="text-xs"
+    />
   );
 }

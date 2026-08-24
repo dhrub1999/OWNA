@@ -23,7 +23,7 @@ export default function HomePage() {
             aria-label="OWNA home"
             className="text-foreground hover:text-logo-hover transition-colors"
           >
-            <Logo className="h-[50px] w-auto" />
+            <Logo className="h-9 w-auto" />
           </Link>
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
             <Link

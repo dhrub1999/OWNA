@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 
@@ -47,6 +48,7 @@ export function StartBuildingButton({
 
   return (
     <Button onClick={onClick} disabled={pending} className={className} size={size} variant={variant}>
+      {pending && <Loader2 className="animate-spin" />}
       {children}
     </Button>
   );
