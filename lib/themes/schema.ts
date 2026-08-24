@@ -22,7 +22,7 @@ export const FONT_KEYS = [
   "sora",
   "outfit",
   "space-grotesk",
-  "dm-sans",
+  "plus-jakarta-sans",
   "bricolage",
   "playfair",
   "instrument-serif",
