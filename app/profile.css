@@ -325,7 +325,7 @@
 }
 .profile-links[data-layout="grid"] {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 10px;
 }
 @container profile (min-width: 32rem) {
