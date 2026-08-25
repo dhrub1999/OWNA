@@ -2,7 +2,10 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { AlertCircle } from "lucide-react";
 import { upgradeAnonymousAccount } from "@/app/(auth)/actions";
+import { PasswordInput } from "@/components/auth/password-input";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,7 +26,14 @@ import { createClient } from "@/lib/supabase/client";
  * so the page just built stays owned by the same `auth.uid()`. "Log in"
  * switches to a different, already-registered account instead — the guest
  * draft does not follow, and the copy says so rather than pretending it will.
+ *
+ * The dialog has three faces, tracked by `view`. They are mutually exclusive
+ * screens rather than sections of one form because each asks a different
+ * question, and stacking them would bury the form under warnings that only
+ * apply to a minority of visitors.
  */
+type View = "create" | "confirm-login" | "email-taken";
+
 export function PublishAuthGate({
   open,
   onOpenChange,
@@ -31,14 +41,19 @@ export function PublishAuthGate({
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** Called once credentials are attached, so the caller can resume publishing. */
-  onAccountReady: () => void;
+  /**
+   * Called once credentials are attached, so the caller can resume
+   * publishing. `pendingConfirmation` is true when Supabase still needs the
+   * visitor to click a confirmation link — publishing proceeds either way,
+   * this is only for the caller's success message.
+   */
+  onAccountReady: (pendingConfirmation: boolean) => void;
 }) {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [googlePending, setGooglePending] = useState(false);
+  const [view, setView] = useState<View>("create");
 
   function onCreateAccount(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -46,11 +61,18 @@ export function PublishAuthGate({
     startTransition(async () => {
       const formData = new FormData(event.currentTarget);
       const result = await upgradeAnonymousAccount(formData);
-      if (result?.error) {
+      if (!result.ok) {
+        // A taken address is not a validation error to retype past — it means
+        // there is a second account in play, and the visitor has to decide
+        // which one they want. Nothing is lost yet either way.
+        if (result.emailTaken) {
+          setView("email-taken");
+          return;
+        }
         setError(result.error);
         return;
       }
-      onAccountReady();
+      onAccountReady(result.pendingConfirmation);
     });
   }
 
@@ -72,13 +94,110 @@ export function PublishAuthGate({
     });
 
     if (linkError) {
-      setError(linkError.message);
+      // The common failure is the same collision as the email path: that
+      // Google account is already an OWNA. Route it to the same explanation
+      // rather than showing a provider error string.
+      if (
+        linkError.code === "identity_already_exists" ||
+        linkError.code === "email_exists"
+      ) {
+        setView("email-taken");
+      } else {
+        setError(linkError.message);
+      }
       setGooglePending(false);
     }
   }
 
+  function handleOpenChange(next: boolean) {
+    if (!next) {
+      setView("create");
+      setError(null);
+    }
+    onOpenChange(next);
+  }
+
+  if (view === "confirm-login") {
+    return (
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Log in instead?</DialogTitle>
+            <DialogDescription>
+              Logging in switches to your existing account. This draft —
+              everything you just built here — won’t come with you, and there’s
+              no way to get it back afterward.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setView("create")}>
+              Cancel
+            </Button>
+            <Button render={<Link href="/login?next=/dashboard" />}>
+              Log in anyway
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  if (view === "email-taken") {
+    return (
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>That email already has an OWNA</DialogTitle>
+            <DialogDescription>
+              {email ? (
+                <>
+                  <span className="text-foreground font-medium">{email}</span> is
+                  already registered.
+                </>
+              ) : (
+                "That account is already registered."
+              )}{" "}
+              You can save this draft under a different address, or sign into the
+              account you already have.
+            </DialogDescription>
+          </DialogHeader>
+
+          <Alert variant="warning">
+            <AlertCircle />
+            <AlertTitle>Signing in leaves this draft behind</AlertTitle>
+            <AlertDescription>
+              <p>
+                Your existing account has its own page. This one can’t be moved
+                across, and it can’t be recovered once you switch.
+              </p>
+            </AlertDescription>
+          </Alert>
+
+          <div className="flex flex-col gap-2">
+            <Button
+              onClick={() => {
+                setEmail("");
+                setError(null);
+                setView("create");
+              }}
+            >
+              Use a different email
+            </Button>
+            <Button
+              variant="outline"
+              render={<Link href="/login?next=/dashboard" />}
+            >
+              Sign into my existing account
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Save your OWNA</DialogTitle>
@@ -125,15 +244,12 @@ export function PublishAuthGate({
               <Label htmlFor="gate-password">Password</Label>
               <span className="text-muted-foreground text-xs">8+ characters</span>
             </div>
-            <Input
+            <PasswordInput
               id="gate-password"
               name="password"
-              type="password"
               autoComplete="new-password"
               required
               minLength={8}
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
             />
           </div>
 
@@ -150,9 +266,13 @@ export function PublishAuthGate({
 
         <p className="text-muted-foreground text-center text-sm">
           Already have an account?{" "}
-          <Link href="/login?next=/dashboard" className="text-foreground underline underline-offset-4">
+          <button
+            type="button"
+            onClick={() => setView("confirm-login")}
+            className="text-foreground underline underline-offset-4"
+          >
             Log in
-          </Link>{" "}
+          </button>{" "}
           — this switches accounts, so this draft won’t come with you.
         </p>
       </DialogContent>

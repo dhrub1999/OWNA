@@ -3,7 +3,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { BarChart3, Paintbrush, PencilLine, Eye } from "lucide-react";
+import { ActivationChecklist } from "@/components/dashboard/activation-checklist";
 import { AppHeader } from "@/components/dashboard/app-header";
+import { ConfirmEmailBanner } from "@/components/dashboard/confirm-email-banner";
 import { PublishControls } from "@/components/dashboard/publish-controls";
 import { ShareCard } from "@/components/dashboard/share-card";
 import { ProfileRenderer } from "@/components/public/profile-renderer";
@@ -11,15 +13,20 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { draftToSnapshot, documentFromRows } from "@/lib/editor/document";
+import { activationSteps } from "@/lib/onboarding/activation";
 import { profileUrl, profileUrlLabel } from "@/lib/site";
 import { getDraft, getPublicationState } from "@/lib/supabase/profile";
-import { getUser } from "@/lib/supabase/server";
+import {
+  getUser,
+  isGuestSession,
+  needsEmailConfirmation,
+} from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
 async function DashboardBody() {
   const [draft, user] = await Promise.all([getDraft(), getUser()]);
-  if (!draft) redirect("/onboarding/username");
+  if (!draft) redirect("/onboarding/questionnaire");
 
   const publication = await getPublicationState(draft.profile.id);
   const document = documentFromRows(draft.profile, draft.blocks);
@@ -28,9 +35,26 @@ async function DashboardBody() {
   const url = profileUrl(draft.profile.username);
   const blockCount = draft.blocks.length;
 
+  // `new_email` is where Supabase parks an address that arrived through
+  // `updateUser()` — the publish gate's path — so it, not `email`, is the one
+  // the confirmation link was actually sent to.
+  const pendingEmail = needsEmailConfirmation(user)
+    ? (user?.new_email ?? user?.email ?? null)
+    : null;
+
   return (
     <div className="flex flex-1 flex-col lg:min-h-0 lg:flex-row">
       <div className="flex flex-col gap-6 p-4 sm:p-6 lg:min-h-0 lg:w-80 lg:shrink-0 lg:overflow-y-auto lg:border-r">
+        {pendingEmail ? <ConfirmEmailBanner email={pendingEmail} /> : null}
+
+        <ActivationChecklist
+          steps={activationSteps({
+            profile: draft.profile,
+            blocks: draft.blocks,
+            isLive: publication.isLive,
+          })}
+        />
+
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">
             {draft.profile.display_name || draft.profile.username}
@@ -50,7 +74,7 @@ async function DashboardBody() {
           <div className="mt-4">
             <PublishControls
               isLive={publication.isLive}
-              isAnonymous={Boolean(user?.is_anonymous)}
+              isAnonymous={isGuestSession(user)}
             />
           </div>
         </div>

@@ -63,3 +63,8 @@ export async function requireUser() {
   if (!user) throw new Error("Not authenticated");
   return user;
 }
+
+// Re-exported so the many existing `from "@/lib/supabase/server"` imports keep
+// working. The definitions live in lib/auth/session.ts, which is not
+// server-only, because they are pure functions over a plain object.
+export { isGuestSession, needsEmailConfirmation } from "@/lib/auth/session";

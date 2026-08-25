@@ -19,14 +19,18 @@ export function PublishControls({
   const [pending, start] = useTransition();
   const [gateOpen, setGateOpen] = useState(false);
 
-  function run(action: () => Promise<{ ok: boolean; message?: string }>, success: string) {
+  function run(
+    action: () => Promise<{ ok: boolean; message?: string }>,
+    success: string,
+    successDescription?: string,
+  ) {
     start(async () => {
       const result = await action();
       if (!result.ok) {
         toast.error(result.message ?? "Something went wrong.");
         return;
       }
-      toast.success(success);
+      toast.success(success, { description: successDescription });
       // The dashboard reads publication state on the server, so refresh rather
       // than mirroring it into client state that could drift.
       router.refresh();
@@ -45,9 +49,15 @@ export function PublishControls({
     <PublishAuthGate
       open={gateOpen}
       onOpenChange={setGateOpen}
-      onAccountReady={() => {
+      onAccountReady={(pendingConfirmation) => {
         setGateOpen(false);
-        run(publishProfile, "You're live.");
+        run(
+          publishProfile,
+          "You're live.",
+          pendingConfirmation
+            ? "Confirm your email to make sure you can always log back in."
+            : undefined,
+        );
       }}
     />
   );

@@ -1,17 +1,24 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { AuthForm } from "../auth-form";
+import { AuthScreen } from "../auth-screen";
+import { AuthFormSkeleton } from "../auth-form-skeleton";
 import { signInWithPassword } from "../actions";
 
 export const metadata: Metadata = { title: "Sign in" };
 
-export default function LoginPage() {
-  // AuthForm reads ?next= via useSearchParams, which is request data. With
-  // Cache Components on, that has to sit behind a Suspense boundary so the rest
-  // of the page can still be prerendered.
+/**
+ * `AuthScreen` reads the session and the query string, both of which are
+ * request data. With Cache Components on, that has to sit behind a Suspense
+ * boundary so the rest of the page can still be prerendered.
+ */
+export default function LoginPage(props: PageProps<"/login">) {
   return (
-    <Suspense fallback={<div className="h-96" />}>
-      <AuthForm mode="signin" action={signInWithPassword} />
+    <Suspense fallback={<AuthFormSkeleton mode="signin" />}>
+      <AuthScreen
+        mode="signin"
+        action={signInWithPassword}
+        searchParams={props.searchParams}
+      />
     </Suspense>
   );
 }

@@ -7,6 +7,13 @@ import { expect, test } from "@playwright/test";
  * Requires a Supabase project with the migrations applied, Anonymous
  * sign-ins and Manual linking enabled, and Email auth enabled:
  *
+ * Both of these drive the publish gate, which converts the anonymous session
+ * with `updateUser()`. With email confirmation on, Supabase sends a message as
+ * part of that call and fails the whole call if it cannot. So this test only
+ * passes when the project's SMTP sender can actually deliver to the generated
+ * address. A failure here reading "Error sending ... email" is a mail
+ * configuration problem, not a regression in the flow.
+ *
  *   OWNA_E2E=1 bun run test:e2e
  */
 const enabled = process.env.OWNA_E2E === "1";
@@ -32,10 +39,10 @@ test.describe("guest onboarding", () => {
 
     await page.getByRole("button", { name: /Coaching or consulting/ }).click();
 
-    await page.getByLabel("What’s your name?").fill(name);
+    await page.getByLabel("Name", { exact: true }).fill(name);
     await page.getByRole("button", { name: "Continue" }).click();
 
-    await page.getByLabel("Pick your handle").fill(username);
+    await page.getByLabel("Handle").fill(username);
     const createButton = page.getByRole("button", { name: "Create my OWNA" });
     // The availability check is debounced; the button unlocks when it lands.
     await expect(createButton).toBeEnabled({ timeout: 10_000 });
@@ -53,12 +60,18 @@ test.describe("guest onboarding", () => {
     await expect(gate.getByText("Save your OWNA")).toBeVisible();
 
     await gate.getByLabel("Email").fill(email);
-    await gate.getByLabel("Password").fill(password);
+    await gate.getByLabel("Password", { exact: true }).fill(password);
     await gate.getByRole("button", { name: "Create account & publish" }).click();
 
-    // The dialog closes and the interrupted publish resumes on its own —
-    // same session, same auth.uid(), nothing about the draft was lost.
-    await expect(page.getByText("You're live.")).toBeVisible({ timeout: 20_000 });
+    // The gate closes and the interrupted publish resumes on its own — same
+    // session, same auth.uid(), nothing about the draft was lost. A first
+    // publish is celebrated with a dialog rather than a toast.
+    const success = page.getByRole("dialog");
+    await expect(success.getByText("You're live")).toBeVisible({ timeout: 20_000 });
+    // The label is built from `siteUrl()`, which is localhost under test and
+    // the real domain in production. Only the handle is stable across both.
+    await expect(success.getByText(new RegExp(`/${username}$`))).toBeVisible();
+    await success.getByRole("button", { name: "Keep editing" }).click();
 
     // A brand new browser context: no cookies, no session — exactly what a
     // stranger following the shared link gets.

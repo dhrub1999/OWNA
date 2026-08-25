@@ -1,8 +1,11 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { StartBuildingButton } from "@/components/marketing/start-building-button";
-import { MobileNav } from "@/components/marketing/mobile-nav";
+import {
+  HeaderAuthSlot,
+  HeaderAuthSlotFallback,
+} from "@/components/marketing/header-auth-slot";
 import { NAV_LINKS } from "@/components/marketing/nav-links";
 
 /**
@@ -15,6 +18,10 @@ import { NAV_LINKS } from "@/components/marketing/nav-links";
  * fallback, and the translucent value only applies where `backdrop-filter`
  * actually exists, so the header never turns into a smear of unreadable text on
  * a browser that ignores the blur.
+ *
+ * The header itself reads no request data, so it stays in the prerendered
+ * shell. Only `HeaderAuthSlot` touches cookies, and it is isolated behind its
+ * own Suspense boundary for exactly that reason.
  */
 export function SiteHeader() {
   return (
@@ -43,16 +50,9 @@ export function SiteHeader() {
 
         <div className="flex items-center gap-2 sm:gap-4">
           <ThemeToggle />
-          <Link
-            href="/login"
-            className="hidden text-sm font-medium transition-colors hover:text-primary sm:block"
-          >
-            Log in
-          </Link>
-          <StartBuildingButton className="hidden rounded-full px-6 sm:inline-flex">
-            Create your OWNA
-          </StartBuildingButton>
-          <MobileNav />
+          <Suspense fallback={<HeaderAuthSlotFallback />}>
+            <HeaderAuthSlot />
+          </Suspense>
         </div>
       </div>
     </header>

@@ -4,21 +4,28 @@ import { redirect } from "next/navigation";
 import { EditorShell } from "@/components/editor/editor-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { documentFromRows } from "@/lib/editor/document";
-import { getDraft } from "@/lib/supabase/profile";
-import { getUser } from "@/lib/supabase/server";
+import { getDraft, getPublicationState } from "@/lib/supabase/profile";
+import { getUser, isGuestSession, needsEmailConfirmation } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Editor" };
 
 async function Editor() {
   const [draft, user] = await Promise.all([getDraft(), getUser()]);
   // No profile means the account never finished onboarding.
-  if (!draft) redirect("/onboarding/username");
+  if (!draft) redirect("/onboarding/questionnaire");
+
+  // Read once, on load. Publishing is what changes it, and the toolbar already
+  // knows when that happens — re-reading afterwards would only tell it what it
+  // just did.
+  const publication = await getPublicationState(draft.profile.id);
 
   return (
     <EditorShell
       document={documentFromRows(draft.profile, draft.blocks)}
       revision={draft.profile.updated_at}
-      isAnonymous={Boolean(user?.is_anonymous)}
+      isAnonymous={isGuestSession(user)}
+      hasEverPublished={publication.hasEverPublished}
+      needsConfirmation={needsEmailConfirmation(user)}
     />
   );
 }

@@ -401,6 +401,8 @@ export type Database = {
       }
       unpublish_profile: { Args: never; Returns: undefined }
       username_available: { Args: { candidate: string }; Returns: boolean }
+      email_claimed: { Args: { check_email: string }; Returns: boolean }
+      email_pending_confirmation: { Args: { check_email: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

@@ -27,19 +27,36 @@ export function EditorShell({
   document,
   revision,
   isAnonymous,
+  hasEverPublished,
+  needsConfirmation,
 }: {
   document: EditorDocument;
   revision: string;
   isAnonymous: boolean;
+  /** False means the next publish is this page's first, and gets celebrated. */
+  hasEverPublished: boolean;
+  needsConfirmation: boolean;
 }) {
   return (
     <EditorProvider document={document} revision={revision}>
-      <EditorLayout isAnonymous={isAnonymous} />
+      <EditorLayout
+        isAnonymous={isAnonymous}
+        hasEverPublished={hasEverPublished}
+        needsConfirmation={needsConfirmation}
+      />
     </EditorProvider>
   );
 }
 
-function EditorLayout({ isAnonymous }: { isAnonymous: boolean }) {
+function EditorLayout({
+  isAnonymous,
+  hasEverPublished,
+  needsConfirmation,
+}: {
+  isAnonymous: boolean;
+  hasEverPublished: boolean;
+  needsConfirmation: boolean;
+}) {
   const { flush } = useAutosave();
   const [mobilePanel, setMobilePanel] = useState<"blocks" | "props" | null>(null);
 
@@ -59,7 +76,12 @@ function EditorLayout({ isAnonymous }: { isAnonymous: boolean }) {
 
   return (
     <div className="fixed inset-0 flex flex-col overflow-hidden bg-background">
-      <Toolbar flush={flush} isAnonymous={isAnonymous} />
+      <Toolbar
+        flush={flush}
+        isAnonymous={isAnonymous}
+        hasEverPublished={hasEverPublished}
+        needsConfirmation={needsConfirmation}
+      />
       <ConflictBanner />
 
       <div className="flex min-h-0 flex-1 overflow-hidden">

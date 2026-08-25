@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: "Settings" };
 
 async function SettingsBody() {
   const [user, profile] = await Promise.all([getUser(), getOwnProfile()]);
-  if (!profile) redirect("/onboarding/username");
+  if (!profile) redirect("/onboarding/questionnaire");
 
   return (
     <div className="mx-auto w-full max-w-xl px-4 py-8 sm:px-6 sm:py-12">

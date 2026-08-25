@@ -52,8 +52,34 @@ export async function saveOnboardingAnswers(
   await supabase.from("onboarding_answers").upsert({ user_id: user.id, answers });
 }
 
+/**
+ * What Google already told us about this person.
+ *
+ * A first-time OAuth user arrives with a name and a picture in their token, and
+ * using them means the editor opens on something recognisable rather than on
+ * placeholder text. This used to live in the username route's `seedProfile`;
+ * folding it in here is what let that route go away without losing anything.
+ */
+function identityFromMetadata(metadata: Record<string, unknown>) {
+  const displayName =
+    typeof metadata.full_name === "string"
+      ? metadata.full_name
+      : typeof metadata.name === "string"
+        ? metadata.name
+        : null;
+
+  const avatarUrl =
+    typeof metadata.avatar_url === "string"
+      ? metadata.avatar_url
+      : typeof metadata.picture === "string"
+        ? metadata.picture
+        : null;
+
+  return { displayName, avatarUrl };
+}
+
 export async function completeOnboarding(formData: FormData): Promise<ClaimResult> {
-  await requireUser();
+  const user = await requireUser();
 
   const parsed = answersSchema.safeParse({
     purpose: formData.get("purpose"),
@@ -73,11 +99,15 @@ export async function completeOnboarding(formData: FormData): Promise<ClaimResul
 
   const { profile } = claimed;
   const template = templateForPurpose(parsed.data.purpose);
+  const { avatarUrl } = identityFromMetadata(user.user_metadata ?? {});
 
   await supabase
     .from("profiles")
     .update({
+      // The typed name wins over the one Google supplied — they were shown it
+      // as the default and edited it, so the edit is the answer.
       display_name: parsed.data.name,
+      ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
       theme: template.theme,
       layout: template.layout,
     })

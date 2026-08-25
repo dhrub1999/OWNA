@@ -45,3 +45,30 @@ export function safeNextPath(value: string | null | undefined): string | null {
   if (value.startsWith("//")) return null;
   return value;
 }
+
+/**
+ * `safeNextPath`, but it also accepts an absolute URL on our own origin.
+ *
+ * Email links need this. Supabase interpolates `{{ .RedirectTo }}` as the whole
+ * URL we handed to `emailRedirectTo`, not as a path, so a confirmation link
+ * arrives carrying `next=https://owna.app/dashboard`. `safeNextPath` rejects
+ * that — correctly, since it cannot tell our origin from an attacker's — and
+ * the visitor silently lands on the default instead of where they were going.
+ *
+ * Anything off-origin is still refused, so this stays closed to open redirects.
+ */
+export function safeNextTarget(
+  value: string | null | undefined,
+  origin: string,
+): string | null {
+  if (!value) return null;
+  if (value.startsWith("/")) return safeNextPath(value);
+
+  try {
+    const url = new URL(value);
+    if (url.origin !== origin) return null;
+    return `${url.pathname}${url.search}${url.hash}` || "/";
+  } catch {
+    return null;
+  }
+}

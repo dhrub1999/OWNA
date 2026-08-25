@@ -2,12 +2,14 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { AlertCircle, PencilLine } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/auth/password-input";
+import { authErrorCopy } from "@/lib/auth/errors";
 import { createClient } from "@/lib/supabase/client";
-import { safeNextPath } from "@/lib/validations/auth";
 import type { AuthResult } from "./actions";
 
 /**
@@ -17,22 +19,33 @@ import type { AuthResult } from "./actions";
  * redirect that a Server Action cannot perform. Email/password goes through a
  * Server Action so the password never lands in a client-side network log we
  * control.
+ *
+ * Request data (`next`, `error`, and whether the visitor is sitting on an
+ * unpublished guest draft) arrives as props rather than through
+ * `useSearchParams`. The server has to read the session here anyway to decide
+ * whether this page should render at all, so resolving the query string in the
+ * same pass costs nothing and keeps one source of truth.
  */
 export function AuthForm({
   mode,
   action,
+  next,
+  errorCode,
+  guestDraftUsername,
 }: {
   mode: "signin" | "signup";
   action: (formData: FormData) => Promise<AuthResult>;
+  next: string | null;
+  errorCode: string | null;
+  /** Set when an anonymous session already owns an unpublished draft. */
+  guestDraftUsername: string | null;
 }) {
-  const searchParams = useSearchParams();
-  const next = safeNextPath(searchParams.get("next"));
-
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [googlePending, setGooglePending] = useState(false);
 
   const isSignUp = mode === "signup";
+  const linkCopy = authErrorCopy(errorCode);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -77,6 +90,48 @@ export function AuthForm({
         </p>
       </div>
 
+      {/* Why they were sent here — an expired link, a half-finished OAuth
+          round trip. Without this the redirect is indistinguishable from
+          having navigated to /login on purpose. */}
+      {linkCopy ? (
+        <Alert variant="destructive">
+          <AlertCircle />
+          <AlertTitle>{linkCopy.title}</AlertTitle>
+          <AlertDescription>
+            <p>{linkCopy.body}</p>
+            {linkCopy.action ? (
+              <Button
+                variant="outline"
+                size="sm"
+                render={<Link href={linkCopy.action.href} />}
+              >
+                {linkCopy.action.label}
+              </Button>
+            ) : null}
+          </AlertDescription>
+        </Alert>
+      ) : null}
+
+      {/* Signing in from here replaces the anonymous session that owns the
+          draft, and nothing migrates across — same loss the publish gate warns
+          about, reachable by typing the URL. */}
+      {guestDraftUsername ? (
+        <Alert variant="warning">
+          <PencilLine />
+          <AlertTitle>You have an unpublished draft</AlertTitle>
+          <AlertDescription>
+            <p>
+              <span className="font-medium">owna/{guestDraftUsername}</span> is
+              still a guest draft. Signing into a different account leaves it
+              behind, and it can&rsquo;t be recovered afterwards.
+            </p>
+            <Button variant="outline" size="sm" render={<Link href="/editor" />}>
+              Back to my draft
+            </Button>
+          </AlertDescription>
+        </Alert>
+      ) : null}
+
       <Button
         type="button"
         variant="outline"
@@ -114,12 +169,18 @@ export function AuthForm({
             <Label htmlFor="password">Password</Label>
             {isSignUp ? (
               <span className="text-muted-foreground text-xs">8+ characters</span>
-            ) : null}
+            ) : (
+              <Link
+                href="/forgot-password"
+                className="text-muted-foreground hover:text-foreground text-xs underline underline-offset-4"
+              >
+                Forgot?
+              </Link>
+            )}
           </div>
-          <Input
+          <PasswordInput
             id="password"
             name="password"
-            type="password"
             autoComplete={isSignUp ? "new-password" : "current-password"}
             required
             minLength={isSignUp ? 8 : undefined}

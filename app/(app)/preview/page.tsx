@@ -20,7 +20,7 @@ export const metadata: Metadata = { title: "Preview", robots: { index: false } }
  */
 async function Preview() {
   const draft = await getDraft();
-  if (!draft) redirect("/onboarding/username");
+  if (!draft) redirect("/onboarding/questionnaire");
 
   const snapshot = draftToSnapshot(documentFromRows(draft.profile, draft.blocks));
   return <PreviewFrame snapshot={snapshot} />;
