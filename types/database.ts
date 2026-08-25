@@ -10,32 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.15"
-  }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
@@ -153,6 +128,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      feedback: {
+        Row: {
+          created_at: string
+          heard_about: string | null
+          id: string
+          message: string
+          profile_name: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          heard_about?: string | null
+          id?: string
+          message: string
+          profile_name?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          heard_about?: string | null
+          id?: string
+          message?: string
+          profile_name?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       onboarding_answers: {
         Row: {
@@ -353,6 +355,11 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      email_claimed: { Args: { check_email: string }; Returns: boolean }
+      email_pending_confirmation: {
+        Args: { check_email: string }
+        Returns: boolean
+      }
       publish_profile: {
         Args: never
         Returns: {
@@ -401,8 +408,6 @@ export type Database = {
       }
       unpublish_profile: { Args: never; Returns: undefined }
       username_available: { Args: { candidate: string }; Returns: boolean }
-      email_claimed: { Args: { check_email: string }; Returns: boolean }
-      email_pending_confirmation: { Args: { check_email: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
@@ -531,9 +536,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {},
   },

@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { profileUrl, profileUrlLabel } from "@/lib/site";
+import { FeedbackPrompt } from "./feedback-prompt";
 
 /**
  * The first time a page goes live.
@@ -137,6 +138,8 @@ export function PublishSuccessDialog({
             />
           </div>
         </div>
+
+        <FeedbackPrompt />
 
         <Button
           variant="ghost"
