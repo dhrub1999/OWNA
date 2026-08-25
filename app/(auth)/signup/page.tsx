@@ -1,14 +1,19 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { AuthForm } from "../auth-form";
+import { AuthScreen } from "../auth-screen";
+import { AuthFormSkeleton } from "../auth-form-skeleton";
 import { signUpWithPassword } from "../actions";
 
 export const metadata: Metadata = { title: "Create your profile" };
 
-export default function SignupPage() {
+export default function SignupPage(props: PageProps<"/signup">) {
   return (
-    <Suspense fallback={<div className="h-96" />}>
-      <AuthForm mode="signup" action={signUpWithPassword} />
+    <Suspense fallback={<AuthFormSkeleton mode="signup" />}>
+      <AuthScreen
+        mode="signup"
+        action={signUpWithPassword}
+        searchParams={props.searchParams}
+      />
     </Suspense>
   );
 }

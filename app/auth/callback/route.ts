@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { safeNextPath } from "@/lib/validations/auth";
+import { safeNextTarget } from "@/lib/validations/auth";
 
 /**
  * OAuth and magic-link landing.
@@ -12,7 +12,7 @@ import { safeNextPath } from "@/lib/validations/auth";
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = safeNextPath(searchParams.get("next"));
+  const next = safeNextTarget(searchParams.get("next"), origin);
 
   if (!code) {
     return NextResponse.redirect(`${origin}/login?error=missing_code`);
@@ -40,7 +40,7 @@ export async function GET(request: Request) {
     .maybeSingle();
 
   if (!profile) {
-    return NextResponse.redirect(`${origin}/onboarding/username`);
+    return NextResponse.redirect(`${origin}/onboarding/questionnaire`);
   }
 
   return NextResponse.redirect(`${origin}${next ?? "/dashboard"}`);

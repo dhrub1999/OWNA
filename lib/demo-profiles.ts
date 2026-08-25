@@ -65,7 +65,8 @@ export const demoProfiles: Record<DemoProfileId, ProfileSnapshot> = {
         headline: "Sarah Jenkins",
         tagline: "Strategic Growth Consultant",
         bio: "Helping B2B SaaS companies scale from $1M to $10M ARR through operational efficiency and go-to-market strategy.",
-        showAvatar: false,
+        avatarUrl: "https://i.pravatar.cc/480?img=47",
+        showAvatar: true,
         status: "Accepting new clients",
         location: "London",
       }),
@@ -98,6 +99,19 @@ export const demoProfiles: Record<DemoProfileId, ProfileSnapshot> = {
         status: "New collection live",
         location: "Paris",
       }),
+      block("gallery-2", "gallery", {
+        heading: "The Ethereal Collection",
+        images: [
+          { id: "g1", url: "https://picsum.photos/seed/aura-ring-gold/700/700", alt: "Gold ring", caption: "The Ethereal ring", shape: "square", position: "center" },
+          { id: "g2", url: "https://picsum.photos/seed/aura-necklace-pearl/700/700", alt: "Pearl necklace", caption: "Moonlit necklace", shape: "square", position: "center" },
+          { id: "g3", url: "https://picsum.photos/seed/aura-earrings-drop/700/700", alt: "Drop earrings", caption: "Tidal earrings", shape: "square", position: "center" },
+        ],
+        layout: "grid",
+        columns: 3,
+        gap: 8,
+        showCaptions: true,
+        lightbox: true,
+      }),
       block("links-2", "links", {
         items: [
           { id: "l1", label: "Shop the Ethereal Collection", url: "example.com", description: "Our newest arrivals", icon: "" },
@@ -123,9 +137,26 @@ export const demoProfiles: Record<DemoProfileId, ProfileSnapshot> = {
         headline: "Marc Dubois",
         tagline: "Editorial & Commercial Photographer",
         bio: "Capturing light and shadow. Selected clients include Vogue, GQ, and Nike.",
-        showAvatar: false,
+        avatarUrl: "https://i.pravatar.cc/480?img=13",
+        showAvatar: true,
         status: "Available for booking",
         location: "New York",
+      }),
+      block("gallery-3", "gallery", {
+        heading: "Selected work",
+        images: [
+          { id: "g1", url: "https://picsum.photos/seed/marc-portrait-editorial/700/900", alt: "Editorial portrait", caption: "", shape: "portrait", position: "center" },
+          { id: "g2", url: "https://picsum.photos/seed/marc-street-mono/900/700", alt: "Street photography", caption: "", shape: "landscape", position: "center" },
+          { id: "g3", url: "https://picsum.photos/seed/marc-studio-campaign/700/700", alt: "Studio campaign shot", caption: "", shape: "square", position: "center" },
+          { id: "g4", url: "https://picsum.photos/seed/marc-portrait-bw/700/900", alt: "Black and white portrait", caption: "", shape: "portrait", position: "center" },
+          { id: "g5", url: "https://picsum.photos/seed/marc-location-fashion/900/700", alt: "Location fashion shoot", caption: "", shape: "landscape", position: "center" },
+          { id: "g6", url: "https://picsum.photos/seed/marc-detail-shot/700/700", alt: "Detail shot", caption: "", shape: "square", position: "center" },
+        ],
+        layout: "bento",
+        columns: 3,
+        gap: 8,
+        showCaptions: false,
+        lightbox: true,
       }),
       block("social-3", "social", {
         links: [
@@ -152,9 +183,23 @@ export const demoProfiles: Record<DemoProfileId, ProfileSnapshot> = {
         headline: "Alex Chen",
         tagline: "Full-stack Developer",
         bio: "Specializing in React, Node, and Web3. Turning coffee into scalable applications.",
-        showAvatar: false,
+        avatarUrl: "https://i.pravatar.cc/480?img=68",
+        showAvatar: true,
         status: "Building things",
         location: "Remote",
+      }),
+      block("projects-4", "projects", {
+        heading: "Recent work",
+        items: [
+          { id: "p1", name: "Ledgerline", description: "Real-time expense tracking for small teams, built on Next.js and Postgres.", imageUrl: "https://picsum.photos/seed/alex-project-ledgerline/720/480", url: "example.com", tags: ["Next.js", "Postgres"] },
+          { id: "p2", name: "Kiln", description: "A queue-based image pipeline for a print-on-demand marketplace.", imageUrl: "https://picsum.photos/seed/alex-project-kiln/720/480", url: "example.com", tags: ["Node", "Redis"] },
+          { id: "p3", name: "Fielded", description: "Web3 attendance verification for hybrid meetups.", imageUrl: "https://picsum.photos/seed/alex-project-fielded/720/480", url: "example.com", tags: ["Solidity", "React"] },
+        ],
+        layout: "grid",
+        columns: 3,
+        imageRatio: "16:9",
+        showTags: true,
+        showDescription: true,
       }),
       block("links-4", "links", {
         items: [
@@ -181,9 +226,23 @@ export const demoProfiles: Record<DemoProfileId, ProfileSnapshot> = {
         headline: "Maya Chandra",
         tagline: "Type designer · Occasional developer",
         bio: "I draw letterforms and argue about kerning. Currently working on a variable serif for screens.",
-        showAvatar: false,
+        avatarUrl: "https://i.pravatar.cc/480?img=44",
+        showAvatar: true,
         status: "Open to commissions",
         location: "Bengaluru",
+      }),
+      block("gallery-5", "gallery", {
+        heading: "Recent work",
+        images: [
+          { id: "g1", url: "https://picsum.photos/seed/maya-specimen-serif/700/900", alt: "Kerala Serif specimen sheet", caption: "Kerala Serif, six optical sizes", shape: "portrait", position: "center" },
+          { id: "g2", url: "https://picsum.photos/seed/maya-sketchbook-letters/900/700", alt: "Letterform sketches", caption: "Sketchbook studies", shape: "landscape", position: "center" },
+          { id: "g3", url: "https://picsum.photos/seed/maya-poster-type/700/700", alt: "Type poster", caption: "Commissioned poster", shape: "square", position: "center" },
+        ],
+        layout: "masonry",
+        columns: 3,
+        gap: 8,
+        showCaptions: true,
+        lightbox: true,
       }),
       block("social-5", "social", {
         links: [

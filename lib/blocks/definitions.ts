@@ -473,6 +473,11 @@ export function starterBlockProps<T extends BlockType>(type: T): BlockPropsFor<T
           },
         ],
       } as BlockPropsFor<T>;
+    case "gallery":
+      return {
+        ...base,
+        heading: "Gallery",
+      } as BlockPropsFor<T>;
     default:
       return base;
   }

@@ -13,6 +13,7 @@ import {
 import { StartBuildingButton } from "@/components/marketing/start-building-button";
 import { NAV_LINKS } from "@/components/marketing/nav-links";
 import { Logo } from "@/components/logo";
+import type { Viewer } from "@/lib/auth/viewer";
 
 /**
  * The header's navigation below `md`.
@@ -24,8 +25,13 @@ import { Logo } from "@/components/logo";
  * Open state is local and explicit rather than left to the primitive: every
  * item in here navigates, and a sheet that stays open behind an in-page anchor
  * jump would cover the section it just scrolled to.
+ *
+ * `viewer` arrives as a prop rather than being read here, because this is a
+ * client component and the session read has to stay on the server inside the
+ * header's Suspense boundary. It must match the desktop actions — a header that
+ * says "Dashboard" over a drawer that says "Log in" is the same bug twice.
  */
-export function MobileNav() {
+export function MobileNav({ viewer }: { viewer: Viewer }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -77,16 +83,43 @@ export function MobileNav() {
         </nav>
 
         <div className="mt-auto flex flex-col gap-3 p-6">
-          <StartBuildingButton className="h-13 w-full rounded-full text-base font-semibold">
-            Create your OWNA
-          </StartBuildingButton>
-          <Button
-            variant="ghost"
-            className="h-13 w-full rounded-full border border-border text-base font-medium"
-            render={<Link href="/login" onClick={() => setOpen(false)} />}
-          >
-            Log in
-          </Button>
+          {viewer.state === "member" ? (
+            <Button
+              className="h-13 w-full rounded-full text-base font-semibold"
+              render={<Link href="/dashboard" onClick={() => setOpen(false)} />}
+            >
+              Dashboard
+            </Button>
+          ) : viewer.state === "guest-draft" ? (
+            <>
+              <Button
+                className="h-13 w-full rounded-full text-base font-semibold"
+                render={<Link href="/editor" onClick={() => setOpen(false)} />}
+              >
+                Continue building
+              </Button>
+              <Button
+                variant="ghost"
+                className="h-13 w-full rounded-full border border-border text-base font-medium"
+                render={<Link href="/login" onClick={() => setOpen(false)} />}
+              >
+                Log in
+              </Button>
+            </>
+          ) : (
+            <>
+              <StartBuildingButton className="h-13 w-full rounded-full text-base font-semibold">
+                Create your OWNA
+              </StartBuildingButton>
+              <Button
+                variant="ghost"
+                className="h-13 w-full rounded-full border border-border text-base font-medium"
+                render={<Link href="/login" onClick={() => setOpen(false)} />}
+              >
+                Log in
+              </Button>
+            </>
+          )}
         </div>
       </SheetContent>
     </Sheet>

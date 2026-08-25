@@ -236,7 +236,11 @@ path and passed throughout.)
 
 ---
 
-## 9. Product-first onboarding (this session)
+## 9. Product-first onboarding (earlier session)
+
+> **Stale in places — see §10.** `/onboarding/username` no longer exists, the
+> publish gate has changed, and §7.2's `mailer_autoconfirm` note is wrong
+> (it is `false` live). §10 wins wherever the two disagree.
 
 **Why:** every CTA used to route straight to `/signup` — a visitor had to
 create a full account before touching the product at all. The new flow is
@@ -299,3 +303,180 @@ with `PURPOSE_OPTIONS`/`templateForPurpose`); `app/onboarding/actions.ts`
 `app/(app)/dashboard/page.tsx` (pass `isAnonymous`); `lib/supabase/server.ts`
 (`getUser()` wrapped in `cache()`); `tests/e2e/guest-onboarding.spec.ts` (new,
 passes live).
+
+---
+
+## 10. Onboarding funnel: gap closure and redesign (2026-08-25)
+
+Supersedes §9 wherever the two disagree, and corrects §6/§7.2 on
+`mailer_autoconfirm`. §9 describes the guest path as it was first built; this
+section describes the funnel as it now stands.
+
+### 10.1 THE BLOCKER: outbound email is failing on the live project
+
+**Email auth is broken in production right now.** Verified live this session
+against `ccohfxrjpnrherqflpxa` with Playwright, on a clean build:
+
+- `/signup` → `Error sending confirmation email`. The account is not created
+  and the visitor cannot proceed.
+- Guest → Publish → account gate → `Error sending email change email`.
+  `updateUser()` fails as a whole, so the credentials are **not** attached and
+  **the page never publishes**. The guest funnel dead-ends at its most
+  important step.
+
+This is not a code regression, and it is the real reason the e2e suite has
+been red (the note blaming "provider config drift" was half right). Both
+entrances to the product are affected; only Google OAuth still works.
+
+Most likely cause, in order: (1) the Resend sending domain is unverified, which
+restricts delivery to the Resend account owner's own address and rejects
+everything else; (2) the SMTP credentials on the Supabase project are not
+actually saved. **Check Resend → Domains, then Supabase → Project Settings →
+Auth → SMTP.** Until this is fixed no amount of application code will make
+email signup work.
+
+The app now translates these into `"We couldn't send the confirmation email
+just now. Try again in a moment, or continue with Google instead."`
+(`friendlyAuthError` in `app/(auth)/actions.ts`) rather than showing the raw
+string, but that is damage control, not a fix.
+
+### 10.2 Live auth settings, confirmed
+
+`GET /auth/v1/settings` (unauthenticated, needs the anon key as `apikey`):
+`anonymous_users: true`, `email: true`, `google: true`,
+**`mailer_autoconfirm: false`**. §7.2 describes an earlier session that set it
+to `true`; it has since been flipped back. Confirmation emails are required and
+on the critical path.
+
+### 10.3 One onboarding path, not two
+
+`/onboarding/username` **is deleted**, along with `claimUsername` and
+`seedProfile`. Everything now routes through the questionnaire:
+`/auth/callback` with no profile, the post-confirmation landing, and the
+`!draft` fallbacks in editor/dashboard/preview/settings. `claimUsernameRpc`
+survives as the shared helper. The Google-metadata seeding `seedProfile` did
+now happens in `completeOnboarding`, and the questionnaire prefills its name
+step from the same metadata.
+
+Reason: signing up with email or Google produced a bare handle form and two
+placeholder blocks, while a guest who never made an account got a templated
+draft. The account-first user got the worse first run.
+
+### 10.4 Email templates are load-bearing
+
+`supabase/templates/{confirmation,recovery,email-change,magic-link}.html`,
+wired into `supabase/config.toml` for local. Each links to
+`{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=…&next={{ .RedirectTo }}`.
+
+Supabase's stock templates link to `/auth/v1/verify`, which **never reaches**
+`app/auth/confirm/route.ts` — so with the default templates, that route and all
+its `next` handling is dead code. Reverting a template to
+`{{ .ConfirmationURL }}` silently breaks the post-confirmation redirect.
+
+`{{ .RedirectTo }}` expands to a full URL, not a path, which is why
+`safeNextTarget()` (`lib/validations/auth.ts`) exists alongside
+`safeNextPath()`. It accepts same-origin absolute URLs and still refuses
+everything else.
+
+**MANUAL STEP, NOT DONE:** the hosted project keeps its own copies under
+Auth → Emails. Editing the files in this repo does not update it. Paste all
+four in, or the live flow keeps using the stock templates. No MCP tool exposes
+auth config, and the Management API needs a PAT that is not in `.env.local`.
+
+### 10.5 Rate limits
+
+Resend free tier: 100/day, 3,000/month, 2/sec — and Supabase's own
+`rate_limit_email_sent` sits in front of it. Every resend affordance goes
+through `components/auth/resend-button.tsx`: 60s cooldown persisted per address
+in `localStorage` (a reload is the obvious way to "retry", so an in-memory
+timer would reward it), a hard cap of 3 attempts, and never a send on mount.
+`seedCooldown` starts the clock for screens reached immediately after a send.
+
+`[auth.rate_limit] email_sent` in `config.toml` is raised to 30 for **local**
+Inbucket testing only. Do not read local headroom as production headroom.
+
+### 10.6 Local config now matches production
+
+`supabase/config.toml`: `enable_anonymous_sign_ins = true`,
+`enable_confirmations = true`, and `site_url` moved from `http://127.0.0.1:3000`
+to `http://localhost:3000` (Supabase matches redirect allow-list entries
+exactly, and the dev server plus Playwright both use the hostname). Previously
+the guest CTA, the confirmation banner, `email_not_confirmed` handling and
+`resendConfirmation` were all unreachable against a local stack.
+
+### 10.7 What was fixed, in one list
+
+- Marketing header was session-blind — a logged-in user still saw "Log in".
+  Now `components/marketing/header-auth-slot.tsx`, an async server component in
+  its own `<Suspense>` so `/` stays partially prerendered. Three states keyed on
+  profile presence, not `is_anonymous` (nearly every visitor has *some* session).
+  `MobileNav` takes the resolved state as a prop.
+- `/login` and `/signup` had no signed-in guard. `app/(auth)/auth-screen.tsx`
+  redirects a member, and *warns* a guest sitting on an unpublished draft
+  rather than silently stranding it.
+- Every `?error=` code the auth routes emit was dropped on the floor.
+  `lib/auth/errors.ts` + a new `components/ui/alert.tsx`; an expired link now
+  explains itself and offers a fresh one.
+- **No password reset existed at all.** `/forgot-password`,
+  `/forgot-password/sent`, `/reset-password`, plus `requestPasswordReset` /
+  `resendPasswordReset` / `updatePassword`. Neutral responses throughout, so the
+  form is not an account-existence oracle.
+- `/signup/check-email` was a dead end: no resend, no way to fix a typo.
+- `resendConfirmation` hardcoded `type: "email_change"`. It now picks from
+  `user.new_email ?? user.email` — Supabase parks an `updateUser()` address in
+  `new_email` and a `signUp()` one in `email`, and the wrong type fails silently.
+- Registered-email collision at the publish gate showed a raw Supabase string
+  with no way out. The gate now has an `email-taken` view offering both choices.
+- `next` was posted by the signup form and ignored by the action.
+- Banner and gate predicates were written separately at each call site. Both now
+  come from `lib/auth/session.ts` — moved out of `lib/supabase/server.ts`
+  because `server-only` made two pure functions untestable and unusable from a
+  client component. `server.ts` re-exports them.
+- **`Skeleton` was invisible in light mode.** `--muted` and `--background` are
+  both `#F7F6F2`, so every loading state in the app rendered as blank space.
+  Now tinted from `foreground`.
+
+### 10.8 The redesign
+
+- `components/onboarding/onboarding-shell.tsx` — two panes above `lg`,
+  questions left, live preview right. The preview drops out below `lg` rather
+  than stacking; a preview too small to read is worse than none.
+- `components/onboarding/live-preview.tsx` + `lib/onboarding/preview-snapshot.ts`
+  — mounts the real `ProfileRenderer`. An 840px stage at `scale-50` with
+  `origin-top-left` lands at exactly 420px; the full width has to be real
+  because the blocks are container-query driven and would otherwise re-flow to
+  mobile. **It shows curated demo content, not what gets seeded** —
+  `starterBlockProps` is near-empty by design and previewed as a blank page.
+  The caption says "Example content in this style" and that labelling is
+  load-bearing; do not quietly reword it.
+- Purpose cards carry each template's real `theme.colors`, read from the same
+  source that seeds the draft.
+- `components/editor/publish-success-dialog.tsx` — first publish only, gated on
+  `hasEverPublished` threaded from the server. Re-publishes keep the toast.
+- `components/dashboard/activation-checklist.tsx` + `lib/onboarding/activation.ts`
+  — derived from the draft's real contents, never a stored "completed steps"
+  list, and hides itself once complete.
+- `components/auth/password-input.tsx` — the gate asks people to invent a
+  password inside a modal in about four seconds.
+
+### 10.9 Verification status
+
+- `typecheck`, `lint`, `build` clean. 135 unit tests pass (27 new in
+  `tests/unit/onboarding.test.ts`).
+- `tests/e2e/account-first.spec.ts` (new, 4 tests) **passes live**: check-email
+  screen, expired link, malformed link, guest-draft login warning.
+- `core-loop.spec.ts` and `guest-onboarding.spec.ts` **fail at the publish
+  gate** solely because of §10.1. Both were rewritten for the questionnaire
+  path and are correct; they cannot pass until email delivery works.
+- Not verified: Google `linkIdentity()` (still needs a human at a consent
+  screen), and the confirmation link end to end (needs a deliverable inbox).
+
+### 10.10 Vercel checks for next session
+
+The Vercel MCP was not connected this session. When it is, confirm:
+1. `NEXT_PUBLIC_SITE_URL` is set on production — `siteUrl()` otherwise falls
+   back to `VERCEL_URL`, and every confirmation/recovery link is built from it.
+2. Every origin it can produce is in the Supabase redirect allow-list, preview
+   deployments included, or OAuth and email links break there only.
+3. The four email templates are pasted into Auth → Emails (§10.4).
+4. Resend domain verification (§10.1) before announcing anything.

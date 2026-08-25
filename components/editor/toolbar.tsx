@@ -23,6 +23,7 @@ import { profileUrlLabel } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { useEditor, useEditorDispatch, type Device } from "./editor-store";
 import { PublishAuthGate } from "./publish-auth-gate";
+import { PublishSuccessDialog } from "./publish-success-dialog";
 
 const DEVICES: { value: Device; label: string; icon: typeof Monitor }[] = [
   { value: "desktop", label: "Desktop", icon: Monitor },
@@ -33,19 +34,34 @@ const DEVICES: { value: Device; label: string; icon: typeof Monitor }[] = [
 export function Toolbar({
   flush,
   isAnonymous,
+  hasEverPublished,
+  needsConfirmation,
 }: {
   flush: () => Promise<boolean>;
   isAnonymous: boolean;
+  hasEverPublished: boolean;
+  needsConfirmation: boolean;
 }) {
   const state = useEditor();
   const dispatch = useEditorDispatch();
   const [publishing, startPublish] = useTransition();
   const [justPublished, setJustPublished] = useState(false);
   const [gateOpen, setGateOpen] = useState(false);
+  const [success, setSuccess] = useState<{ pendingConfirmation: boolean } | null>(
+    null,
+  );
+  // Tracked locally as well as from the server: after the first publish in this
+  // session, subsequent ones are no longer a first.
+  const celebrated = useRef(hasEverPublished);
+  // Same pattern, same reason: `isAnonymous` is the server's answer as of the
+  // last render, and nothing re-fetches it after the gate succeeds. Without
+  // this, a second Publish in the same tab reopens the gate the moment it
+  // just closed — the account is real, but the prop doesn't know that yet.
+  const anonymous = useRef(isAnonymous);
 
   const username = state.document.profile.username;
 
-  function runPublish() {
+  function runPublish(pendingConfirmation = false) {
     startPublish(async () => {
       // Publishing builds its snapshot from the database, so anything still
       // sitting in the debounce window has to land first or it silently
@@ -63,8 +79,21 @@ export function Toolbar({
       }
 
       setJustPublished(true);
+
+      // The first time a page goes live is worth stopping for. Every publish
+      // after it is a save, and a save gets a toast.
+      if (!celebrated.current) {
+        celebrated.current = true;
+        setSuccess({
+          pendingConfirmation: pendingConfirmation || needsConfirmation,
+        });
+        return;
+      }
+
       toast.success("You're live.", {
-        description: profileUrlLabel(result.username),
+        description: pendingConfirmation
+          ? "Confirm your email to make sure you can always log back in."
+          : profileUrlLabel(result.username),
         action: {
           label: "Copy link",
           onClick: () => {
@@ -76,7 +105,7 @@ export function Toolbar({
   }
 
   function onPublish() {
-    if (isAnonymous) {
+    if (anonymous.current) {
       setGateOpen(true);
       return;
     }
@@ -163,12 +192,22 @@ export function Toolbar({
         {justPublished && state.status === "saved" ? "Republish" : "Publish"}
       </Button>
 
+      <PublishSuccessDialog
+        open={success !== null}
+        onOpenChange={(open) => {
+          if (!open) setSuccess(null);
+        }}
+        username={username}
+        pendingConfirmation={success?.pendingConfirmation ?? false}
+      />
+
       <PublishAuthGate
         open={gateOpen}
         onOpenChange={setGateOpen}
-        onAccountReady={() => {
+        onAccountReady={(pendingConfirmation) => {
+          anonymous.current = false;
           setGateOpen(false);
-          runPublish();
+          runPublish(pendingConfirmation);
         }}
       />
 
