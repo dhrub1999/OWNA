@@ -1,0 +1,16 @@
+-- set_directory_status() picked up an anon EXECUTE grant automatically: this
+-- project's ALTER DEFAULT PRIVILEGES (on both `postgres` and `supabase_admin`)
+-- grants EXECUTE to anon/authenticated on every new function in `public` by
+-- default, and `revoke ... from public` in the function's own migration does
+-- not undo that — anon's grant is a separate ACL entry, not inherited from
+-- the PUBLIC pseudo-role. (This turns out to affect every existing RPC in
+-- this schema, not just this one — claim_username, rename_username,
+-- publish_profile and unpublish_profile are all already anon-executable in
+-- production too. Harmless in practice, since each checks auth.uid() is not
+-- null internally and anon's is always null, but worth a project-wide look
+-- separately from this migration.)
+--
+-- Closed explicitly here since this function is new and the intent (owner
+-- action, not a public one) should hold at the grant layer too, not just
+-- because anon's auth.uid() happens to never match an admin row.
+revoke execute on function public.set_directory_status(uuid, text) from anon;

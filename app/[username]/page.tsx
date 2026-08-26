@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProfileRenderer } from "@/components/public/profile-renderer";
 import { snapshotSeo } from "@/lib/blocks/snapshot";
+import { jsonLdScript, profileJsonLd } from "@/lib/seo/structured-data";
 import { getPublishedProfile } from "@/lib/supabase/queries";
 import { profileUrl } from "@/lib/site";
 
@@ -57,5 +58,13 @@ export default async function ProfilePage({ params }: PageProps<"/[username]">) 
 
   if (!snapshot) notFound();
 
-  return <ProfileRenderer snapshot={snapshot} />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(profileJsonLd(snapshot)) }}
+      />
+      <ProfileRenderer snapshot={snapshot} />
+    </>
+  );
 }

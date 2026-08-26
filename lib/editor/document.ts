@@ -45,6 +45,8 @@ export type EditorProfile = {
   seoDescription: string;
   ogImageUrl: string;
   visibility: "public" | "unlisted" | "private";
+  directoryOptIn: boolean;
+  directoryPersona: string;
 };
 
 export type EditorDocument = {
@@ -68,6 +70,10 @@ export const editorProfileSchema = z.object({
   seoDescription: text(300),
   ogImageUrl: text(2048),
   visibility: z.enum(["public", "unlisted", "private"]).catch("public"),
+  directoryOptIn: z.boolean().catch(false),
+  // Free-form here (validated against the persona set by the SelectField's
+  // own options and by the DB check constraint); "" means "not chosen yet".
+  directoryPersona: text(20),
 });
 
 export const editorBlockSchema = z.object({
@@ -126,6 +132,8 @@ export function documentFromRows(
       seoDescription: profile.seo_description ?? "",
       ogImageUrl: profile.og_image_url ?? "",
       visibility: profile.visibility as "public" | "unlisted" | "private",
+      directoryOptIn: profile.directory_opt_in,
+      directoryPersona: profile.directory_persona ?? "",
     },
     theme: parseTheme(profile.theme),
     layout: parseLayout(profile.layout),
