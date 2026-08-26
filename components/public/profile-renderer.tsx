@@ -38,7 +38,7 @@ export function ProfileRenderer({
   };
 
   return (
-    <div
+    <main
       className={`profile-root ${allFontClassNames}${className ? ` ${className}` : ""}`}
       style={
         {
@@ -61,6 +61,6 @@ export function ProfileRenderer({
           </p>
         ) : null}
       </div>
-    </div>
+    </main>
   );
 }

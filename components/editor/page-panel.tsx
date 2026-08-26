@@ -3,10 +3,13 @@
 import { profileUrlLabel } from "@/lib/site";
 import { snapshotSeo } from "@/lib/blocks/snapshot";
 import { draftToSnapshot } from "@/lib/editor/document";
+import { PURPOSE_OPTIONS } from "@/lib/demo-profiles";
 import { ImageField } from "./image-field";
 import {
   PanelSection,
   SegmentedField,
+  SelectField,
+  SwitchField,
   TextAreaField,
   TextField,
 } from "./controls";
@@ -92,6 +95,31 @@ export function PagePanel() {
         />
         <p className="text-muted-foreground text-[11px]">
           Leave the preview blank and we’ll generate one from your theme.
+        </p>
+      </PanelSection>
+
+      <PanelSection title="Directory" defaultOpen={false}>
+        <SwitchField
+          label="List me in the OWNA directory"
+          checked={profile.directoryOptIn}
+          onChange={(value) => set({ directoryOptIn: value }, "directoryOptIn")}
+        />
+        {profile.directoryOptIn ? (
+          <SelectField
+            label="Category"
+            value={profile.directoryPersona}
+            onChange={(value) => set({ directoryPersona: value }, "directoryPersona")}
+            options={[
+              { value: "", label: "Choose a category" },
+              ...PURPOSE_OPTIONS.map((option) => ({
+                value: option.id as string,
+                label: option.label,
+              })),
+            ]}
+          />
+        ) : null}
+        <p className="text-muted-foreground text-[11px]">
+          Reviewed before it appears — opting in doesn’t guarantee a listing.
         </p>
       </PanelSection>
 

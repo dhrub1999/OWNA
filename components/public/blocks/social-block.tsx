@@ -1,30 +1,13 @@
 import { SocialIcon } from "@/components/icons/social-icons";
 import { SOCIAL_META } from "@/lib/blocks/definitions";
-import { safeHref } from "@/lib/validations/url";
+import { resolveSocialHref } from "@/lib/blocks/social-links";
 import type { BlockRendererProps } from "./types";
 
 const ICON_SIZE = { sm: "1rem", md: "1.15rem", lg: "1.35rem" } as const;
 
-/**
- * Social links.
- *
- * An email platform value is turned into a mailto: here rather than being
- * stored that way, so the user types an address and gets a working link.
- */
-function hrefFor(platform: string, raw: string): string | undefined {
-  const value = raw.trim();
-  if (!value) return undefined;
-  if (platform === "email") {
-    return value.includes("@") && !value.startsWith("mailto:")
-      ? safeHref(`mailto:${value}`)
-      : safeHref(value);
-  }
-  return safeHref(value);
-}
-
 export function SocialBlock({ props }: BlockRendererProps<"social">) {
   const links = props.links
-    .map((link) => ({ ...link, href: hrefFor(link.platform, link.url) }))
+    .map((link) => ({ ...link, href: resolveSocialHref(link.platform, link.url) }))
     .filter((link) => link.href);
 
   if (links.length === 0) return null;

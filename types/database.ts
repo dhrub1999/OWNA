@@ -214,6 +214,9 @@ export type Database = {
       }
       profile_publications: {
         Row: {
+          directory_opt_in: boolean
+          directory_persona: string | null
+          directory_status: string
           is_live: boolean
           profile_id: string
           published_at: string
@@ -223,6 +226,9 @@ export type Database = {
           visibility: string
         }
         Insert: {
+          directory_opt_in?: boolean
+          directory_persona?: string | null
+          directory_status?: string
           is_live?: boolean
           profile_id: string
           published_at?: string
@@ -232,6 +238,9 @@ export type Database = {
           visibility?: string
         }
         Update: {
+          directory_opt_in?: boolean
+          directory_persona?: string | null
+          directory_status?: string
           is_live?: boolean
           profile_id?: string
           published_at?: string
@@ -255,6 +264,9 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           created_at: string
+          directory_opt_in: boolean
+          directory_persona: string | null
+          directory_status: string
           display_name: string | null
           id: string
           layout: Json
@@ -274,6 +286,9 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          directory_opt_in?: boolean
+          directory_persona?: string | null
+          directory_status?: string
           display_name?: string | null
           id?: string
           layout?: Json
@@ -293,6 +308,9 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          directory_opt_in?: boolean
+          directory_persona?: string | null
+          directory_status?: string
           display_name?: string | null
           id?: string
           layout?: Json
@@ -333,6 +351,9 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           created_at: string
+          directory_opt_in: boolean
+          directory_persona: string | null
+          directory_status: string
           display_name: string | null
           id: string
           layout: Json
@@ -363,6 +384,9 @@ export type Database = {
       publish_profile: {
         Args: never
         Returns: {
+          directory_opt_in: boolean
+          directory_persona: string | null
+          directory_status: string
           is_live: boolean
           profile_id: string
           published_at: string
@@ -384,6 +408,9 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           created_at: string
+          directory_opt_in: boolean
+          directory_persona: string | null
+          directory_status: string
           display_name: string | null
           id: string
           layout: Json
@@ -405,6 +432,10 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      set_directory_status: {
+        Args: { p_profile_id: string; p_status: string }
+        Returns: undefined
       }
       unpublish_profile: { Args: never; Returns: undefined }
       username_available: { Args: { candidate: string }; Returns: boolean }

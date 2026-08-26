@@ -44,7 +44,7 @@ export function ProjectsBlock({ props }: BlockRendererProps<"projects">) {
                 <div className="profile-project-media" style={{ aspectRatio }}>
                   <ProfileImage
                     src={item.imageUrl}
-                    alt=""
+                    alt={item.name}
                     width={720}
                     height={480}
                     sizes="(max-width: 640px) 90vw, 360px"

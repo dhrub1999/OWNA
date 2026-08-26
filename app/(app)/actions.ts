@@ -66,6 +66,8 @@ export async function saveDraft(
       seo_description: document.profile.seoDescription || null,
       og_image_url: document.profile.ogImageUrl || null,
       visibility: document.profile.visibility,
+      directory_opt_in: document.profile.directoryOptIn,
+      directory_persona: document.profile.directoryPersona || null,
       theme: document.theme,
       layout: document.layout,
     })
@@ -154,6 +156,7 @@ export async function publishProfile(): Promise<PublishResult> {
 
   revalidateProfile(data.username);
   revalidateTag("sitemap", "max");
+  revalidateTag("directory", "max");
 
   // Publishing is the one moment the set of images a profile actually uses is
   // settled, so it is the right moment to clean up the ones it does not. The
@@ -209,6 +212,7 @@ export async function unpublishProfile(): Promise<PublishResult> {
 
   revalidateProfile(profile?.username);
   revalidateTag("sitemap", "max");
+  revalidateTag("directory", "max");
 
   return { ok: true, username: profile?.username ?? "" };
 }
@@ -254,6 +258,7 @@ export async function renameUsername(next: string): Promise<RenameResult> {
 
   revalidateProfile(current?.username, data.username);
   revalidateTag("sitemap", "max");
+  revalidateTag("directory", "max");
 
   return { ok: true, username: data.username };
 }

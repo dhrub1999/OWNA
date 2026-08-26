@@ -110,6 +110,11 @@ export async function completeOnboarding(formData: FormData): Promise<ClaimResul
       ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
       theme: template.theme,
       layout: template.layout,
+      // Discarded before this session: the "what are you making this for?"
+      // answer is otherwise thrown away once it has picked the seed template.
+      // Persisting it here is what lets /discover/{persona} exist without a
+      // second, separate categorization step.
+      directory_persona: parsed.data.purpose,
     })
     .eq("id", profile.id);
 

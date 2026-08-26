@@ -2,6 +2,7 @@ import "server-only";
 
 import { cacheLife, cacheTag, revalidateTag } from "next/cache";
 import { type ProfileSnapshot, parseSnapshot } from "@/lib/blocks/snapshot";
+import type { DemoProfileId } from "@/lib/demo-profiles";
 import { createPublicClient } from "./public";
 
 /**
@@ -63,10 +64,33 @@ export function revalidateProfile(...usernames: (string | null | undefined)[]) {
   }
 }
 
-/** Usernames to include in the sitemap: live, public, not unlisted. */
-export async function getSitemapProfiles(): Promise<
-  { username: string; publishedAt: string }[]
-> {
+/** How many live, public profiles exist — drives sitemap sharding. */
+export async function getSitemapProfileCount(): Promise<number> {
+  "use cache";
+  cacheTag("sitemap");
+  cacheLife("hours");
+
+  const supabase = createPublicClient();
+  const { count } = await supabase
+    .from("profile_publications")
+    .select("username", { count: "exact", head: true })
+    .eq("is_live", true)
+    .eq("visibility", "public");
+
+  return count ?? 0;
+}
+
+/**
+ * A page of usernames to include in the sitemap: live, public, not unlisted.
+ *
+ * Offset-paginated rather than a single unbounded query — see
+ * app/sitemap.ts's generateSitemaps(), which shards on this so the sitemap
+ * keeps growing instead of silently truncating past one page size.
+ */
+export async function getSitemapProfiles(
+  offset: number,
+  limit: number,
+): Promise<{ username: string; publishedAt: string }[]> {
   "use cache";
   cacheTag("sitemap");
   cacheLife("hours");
@@ -78,7 +102,7 @@ export async function getSitemapProfiles(): Promise<
     .eq("is_live", true)
     .eq("visibility", "public")
     .order("published_at", { ascending: false })
-    .limit(10000);
+    .range(offset, offset + limit - 1);
 
   if (error || !data) return [];
 
@@ -86,4 +110,84 @@ export async function getSitemapProfiles(): Promise<
     username: row.username,
     publishedAt: row.published_at,
   }));
+}
+
+/**
+ * The public directory (/discover).
+ *
+ * A profile appears here only once it satisfies every one of: live, public,
+ * the owner opted in, AND an admin approved it (`directory_status =
+ * 'approved'`, writable only through set_directory_status() — see the
+ * directory migration). No completeness heuristic substitutes for that last
+ * check: nothing in this schema distinguishes today's internal test profiles
+ * from a future real one, so the gate has to be positive and manual, not a
+ * filter trying to exclude the bad ones.
+ */
+export async function getDirectoryProfileCount(
+  persona?: DemoProfileId,
+): Promise<number> {
+  "use cache";
+  cacheTag("directory");
+  cacheLife("hours");
+
+  const supabase = createPublicClient();
+  let query = supabase
+    .from("profile_publications")
+    .select("username", { count: "exact", head: true })
+    .eq("is_live", true)
+    .eq("visibility", "public")
+    .eq("directory_opt_in", true)
+    .eq("directory_status", "approved");
+
+  if (persona) query = query.eq("directory_persona", persona);
+
+  const { count } = await query;
+  return count ?? 0;
+}
+
+export type DirectoryEntry = {
+  username: string;
+  snapshot: ProfileSnapshot;
+  publishedAt: string;
+};
+
+export async function getDirectoryProfiles({
+  persona,
+  offset,
+  limit,
+}: {
+  persona?: DemoProfileId;
+  offset: number;
+  limit: number;
+}): Promise<DirectoryEntry[]> {
+  "use cache";
+  cacheTag("directory");
+  cacheLife("hours");
+
+  const supabase = createPublicClient();
+  let query = supabase
+    .from("profile_publications")
+    .select("username, snapshot, published_at")
+    .eq("is_live", true)
+    .eq("visibility", "public")
+    .eq("directory_opt_in", true)
+    .eq("directory_status", "approved")
+    .order("published_at", { ascending: false })
+    .range(offset, offset + limit - 1);
+
+  if (persona) query = query.eq("directory_persona", persona);
+
+  const { data, error } = await query;
+  if (error || !data) return [];
+
+  const entries: DirectoryEntry[] = [];
+  for (const row of data) {
+    const snapshot = parseSnapshot(row.snapshot);
+    // A row whose snapshot no longer parses is dropped rather than crashing
+    // the whole listing, the same trade-off getPublishedProfile makes.
+    if (snapshot) {
+      entries.push({ username: row.username, snapshot, publishedAt: row.published_at });
+    }
+  }
+  return entries;
 }

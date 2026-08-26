@@ -9,7 +9,18 @@ export default function robots(): MetadataRoute.Robots {
       // Everything behind auth. None of it is reachable to a crawler anyway —
       // the proxy redirects — but saying so avoids wasted crawl budget on
       // redirect chains.
-      disallow: ["/dashboard", "/editor", "/settings", "/preview", "/onboarding", "/auth/"],
+      disallow: [
+        "/dashboard",
+        "/editor",
+        "/settings",
+        "/preview",
+        "/onboarding",
+        "/auth/",
+        "/login",
+        "/signup",
+        "/forgot-password",
+        "/reset-password",
+      ],
     },
     sitemap: `${siteUrl()}/sitemap.xml`,
   };
