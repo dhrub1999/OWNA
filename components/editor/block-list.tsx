@@ -162,7 +162,7 @@ function SortableBlockRow({
         type="button"
         onClick={onSelect}
         aria-current={selected ? "true" : undefined}
-        className="flex min-w-0 flex-1 items-center gap-2 py-1.5 text-left text-xs focus-visible:outline-none"
+        className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 py-1.5 text-left text-xs focus-visible:outline-none"
       >
         <BlockIcon type={block.type} className="text-muted-foreground size-3.5 shrink-0" />
         <span className="truncate">{meta.label}</span>
@@ -208,7 +208,7 @@ function IconAction({
       aria-label={label}
       title={label}
       className={cn(
-        "text-muted-foreground focus-visible:ring-ring rounded p-1 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:outline-none",
+        "text-muted-foreground focus-visible:ring-ring cursor-pointer rounded p-1 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:outline-none",
         destructive ? "hover:text-destructive" : "hover:text-foreground",
       )}
     >

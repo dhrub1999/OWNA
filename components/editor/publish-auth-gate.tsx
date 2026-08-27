@@ -269,7 +269,7 @@ export function PublishAuthGate({
           <button
             type="button"
             onClick={() => setView("confirm-login")}
-            className="text-foreground underline underline-offset-4"
+            className="text-foreground cursor-pointer underline underline-offset-4"
           >
             Log in
           </button>{" "}

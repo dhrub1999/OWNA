@@ -20,7 +20,7 @@ import Link from "next/link";
  * debugging than a duplicate in the browser console.
  */
 const linkClass =
-  "inline-flex h-10 items-center justify-center rounded-lg px-5 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none";
+  "inline-flex h-10 cursor-pointer items-center justify-center rounded-lg px-5 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none";
 
 export default function AppError({
   error,

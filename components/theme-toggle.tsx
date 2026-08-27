@@ -1,25 +1,44 @@
 "use client"
 
-import * as React from "react"
-import { Moon, Sun } from "lucide-react"
+import { useEffect, useState } from "react"
 import { useTheme } from "next-themes"
-import { Button } from "@/components/ui/button"
+import { AnimatedThemeToggler } from "@/components/magicui/animated-theme-toggler"
+import { Button, buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+
+const TOGGLE_CLASS_NAME = cn(
+  buttonVariants({ variant: "ghost", size: "icon" }),
+  "rounded-full h-10 w-10 border border-border"
+)
 
 export function ThemeToggle() {
   const { setTheme, theme, resolvedTheme } = useTheme()
+  // AnimatedThemeToggler renders one of two icons depending on the resolved
+  // theme, which next-themes only knows client-side — rendering it before
+  // mount would mismatch the server's markup. A same-sized, inert button
+  // holds the layout until then, same as next-themes' own guidance.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
-  const currentTheme = theme === 'system' ? resolvedTheme : theme
+  if (!mounted) {
+    return (
+      <Button
+        variant="ghost"
+        size="icon"
+        className="rounded-full h-10 w-10 border border-border"
+        aria-hidden
+        tabIndex={-1}
+      />
+    )
+  }
+
+  const currentTheme = theme === "system" ? resolvedTheme : theme
 
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      className="rounded-full w-10 h-10 border border-border"
-      onClick={() => setTheme(currentTheme === "light" ? "dark" : "light")}
-    >
-      <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-      <span className="sr-only">Toggle theme</span>
-    </Button>
+    <AnimatedThemeToggler
+      theme={currentTheme === "dark" ? "dark" : "light"}
+      onThemeChange={setTheme}
+      className={TOGGLE_CLASS_NAME}
+    />
   )
 }

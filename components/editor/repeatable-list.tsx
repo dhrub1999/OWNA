@@ -146,7 +146,7 @@ function SortableRow({
           type="button"
           onClick={onRemove}
           aria-label={`Remove ${label}`}
-          className="text-muted-foreground hover:text-destructive focus-visible:ring-ring rounded p-1 focus-visible:ring-2 focus-visible:outline-none"
+          className="text-muted-foreground hover:text-destructive focus-visible:ring-ring cursor-pointer rounded p-1 focus-visible:ring-2 focus-visible:outline-none"
         >
           <Trash2 className="size-3.5" aria-hidden="true" />
         </button>

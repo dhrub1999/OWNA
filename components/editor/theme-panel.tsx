@@ -61,7 +61,7 @@ export function ThemePanel() {
               key={preset.id}
               type="button"
               onClick={() => dispatch({ type: "apply-preset", preset: preset.id })}
-              className="hover:border-foreground/30 focus-visible:ring-ring group rounded-lg border p-2 text-left transition-colors focus-visible:ring-2 focus-visible:outline-none"
+              className="hover:border-foreground/30 focus-visible:ring-ring group cursor-pointer rounded-lg border p-2 text-left transition-colors focus-visible:ring-2 focus-visible:outline-none"
             >
               <span
                 className="mb-2 flex h-10 items-center justify-center rounded"

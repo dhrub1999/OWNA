@@ -1,5 +1,7 @@
 import { Check } from "lucide-react";
 import { StartBuildingButton } from "@/components/marketing/start-building-button";
+import { BlurFade } from "@/components/magicui/blur-fade";
+import { BorderBeam } from "@/components/magicui/border-beam";
 
 /**
  * Pricing.
@@ -46,7 +48,11 @@ export function Pricing() {
     <section id="pricing" className="scroll-mt-20 py-32 sm:py-40">
       <div className="mx-auto max-w-7xl px-6 sm:px-12">
         {/* 5/7, not 6/6: the list is the substance and gets the wider half. */}
-        <div className="grid gap-16 lg:grid-cols-[5fr_7fr] lg:gap-24">
+        <BlurFade
+          inView
+          direction="up"
+          className="grid gap-16 lg:grid-cols-[5fr_7fr] lg:gap-24"
+        >
           <div className="lg:pt-2">
             <h2 className="font-display text-4xl font-bold tracking-tight sm:text-5xl">
               Free, for now.
@@ -63,8 +69,17 @@ export function Pricing() {
             </p>
           </div>
 
-          {/* One surface, divided — not five stacked cards. */}
-          <div className="rounded-[32px] border border-border bg-card">
+          {/* One surface, divided — not five stacked cards. There's only one
+              plan, so the beam is doing the job a "most popular" ribbon does
+              on a pricing ladder — pointing at the thing to look at — without
+              inventing a ladder to point along. */}
+          <div className="relative rounded-[32px] border border-border bg-card">
+            <BorderBeam
+              duration={8}
+              size={140}
+              colorFrom="var(--primary)"
+              colorTo="var(--logo-hover)"
+            />
             <div className="flex flex-wrap items-end justify-between gap-4 px-8 py-8 sm:px-10">
               <div>
                 <div className="font-display text-2xl font-bold">
@@ -106,7 +121,7 @@ export function Pricing() {
               </StartBuildingButton>
             </div>
           </div>
-        </div>
+        </BlurFade>
       </div>
     </section>
   );

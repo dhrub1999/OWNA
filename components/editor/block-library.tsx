@@ -55,7 +55,7 @@ export function BlockLibrary() {
                     "focus-visible:ring-ring flex items-center gap-2 rounded-md border px-2 py-2 text-left text-xs transition-colors focus-visible:ring-2 focus-visible:outline-none",
                     disabled
                       ? "text-muted-foreground cursor-not-allowed opacity-50"
-                      : "hover:border-foreground/25 hover:bg-muted/60",
+                      : "cursor-pointer hover:border-foreground/25 hover:bg-muted/60",
                   )}
                 >
                   <BlockIcon

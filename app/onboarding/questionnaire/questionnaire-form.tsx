@@ -244,7 +244,7 @@ function PurposeCard({
       onClick={onSelect}
       aria-pressed={selected}
       className={[
-        "group focus-visible:ring-ring/50 flex items-center gap-4 rounded-xl border p-4 text-left transition-all focus-visible:ring-3 focus-visible:outline-none",
+        "group focus-visible:ring-ring/50 flex cursor-pointer items-center gap-4 rounded-xl border p-4 text-left transition-all focus-visible:ring-3 focus-visible:outline-none",
         "active:scale-[0.99]",
         selected
           ? "border-primary bg-primary/5"

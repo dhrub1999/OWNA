@@ -100,7 +100,7 @@ export function GalleryLightbox({
             type="button"
             onClick={close}
             aria-label="Close"
-            className="absolute top-4 right-4 rounded-full bg-white/10 p-2 text-white hover:bg-white/20"
+            className="absolute top-4 right-4 cursor-pointer rounded-full bg-white/10 p-2 text-white hover:bg-white/20"
           >
             <X className="size-5" aria-hidden="true" />
           </button>
@@ -110,7 +110,7 @@ export function GalleryLightbox({
               type="button"
               onClick={() => step(-1)}
               aria-label="Previous image"
-              className="absolute left-2 rounded-full bg-white/10 p-2 text-white hover:bg-white/20 sm:left-6"
+              className="absolute left-2 cursor-pointer rounded-full bg-white/10 p-2 text-white hover:bg-white/20 sm:left-6"
             >
               <ChevronLeft className="size-6" aria-hidden="true" />
             </button>
@@ -135,7 +135,7 @@ export function GalleryLightbox({
               type="button"
               onClick={() => step(1)}
               aria-label="Next image"
-              className="absolute right-2 rounded-full bg-white/10 p-2 text-white hover:bg-white/20 sm:right-6"
+              className="absolute right-2 cursor-pointer rounded-full bg-white/10 p-2 text-white hover:bg-white/20 sm:right-6"
             >
               <ChevronRight className="size-6" aria-hidden="true" />
             </button>

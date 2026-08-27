@@ -62,7 +62,7 @@ export function ImageField({
               type="button"
               onClick={() => onChange("")}
               aria-label={`Remove ${label.toLowerCase()}`}
-              className="absolute top-1.5 right-1.5 rounded-full bg-black/60 p-1 text-white hover:bg-black/80"
+              className="absolute top-1.5 right-1.5 cursor-pointer rounded-full bg-black/60 p-1 text-white hover:bg-black/80"
             >
               <X className="size-3.5" aria-hidden="true" />
             </button>

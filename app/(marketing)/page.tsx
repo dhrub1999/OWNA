@@ -5,6 +5,7 @@ import { ProfileRail } from "@/components/marketing/profile-rail";
 import { StartBuildingButton } from "@/components/marketing/start-building-button";
 import { ProfileRenderer } from "@/components/public/profile-renderer";
 import { demoProfiles } from "@/lib/demo-profiles";
+import { BlurFade } from "@/components/magicui/blur-fade";
 import { CheckCircle, Layers, Palette, Globe } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -27,7 +28,11 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 lg:gap-16 items-stretch max-w-5xl mx-auto">
-            <div className="p-10 rounded-[32px] bg-background border border-border flex flex-col">
+            <BlurFade
+              inView
+              direction="up"
+              className="p-10 rounded-[32px] bg-background border border-border flex flex-col"
+            >
               <h3 className="font-display text-2xl font-bold mb-8">
                 Basic link page
               </h3>
@@ -49,9 +54,14 @@ export default function HomePage() {
                   social icons
                 </li>
               </ul>
-            </div>
+            </BlurFade>
 
-            <div className="p-10 rounded-[32px] bg-foreground text-background flex flex-col relative overflow-hidden">
+            <BlurFade
+              inView
+              direction="up"
+              delay={0.12}
+              className="p-10 rounded-[32px] bg-foreground text-background flex flex-col relative overflow-hidden"
+            >
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3" />
               <h3 className="font-display text-2xl font-bold mb-8 relative z-10 text-background">
                 OWNA
@@ -87,7 +97,7 @@ export default function HomePage() {
                   <CheckCircle className="w-5 h-5 text-primary" /> booking
                 </li>
               </ul>
-            </div>
+            </BlurFade>
           </div>
         </div>
       </section>
@@ -96,7 +106,7 @@ export default function HomePage() {
       <section className="py-32 sm:py-40">
         <div className="mx-auto max-w-7xl px-6 sm:px-12">
           <div className="grid lg:grid-cols-3 gap-16 lg:gap-12">
-            <div className="group">
+            <BlurFade inView direction="up" className="group">
               <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
                 <Layers className="w-8 h-8 text-foreground" />
               </div>
@@ -115,9 +125,9 @@ export default function HomePage() {
                   Add Block...
                 </div>
               </div>
-            </div>
+            </BlurFade>
 
-            <div className="group">
+            <BlurFade inView direction="up" delay={0.1} className="group">
               <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
                 <Palette className="w-8 h-8 text-foreground" />
               </div>
@@ -136,9 +146,9 @@ export default function HomePage() {
                   Layout
                 </div>
               </div>
-            </div>
+            </BlurFade>
 
-            <div className="group">
+            <BlurFade inView direction="up" delay={0.2} className="group">
               <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
                 <Globe className="w-8 h-8 text-foreground" />
               </div>
@@ -154,7 +164,7 @@ export default function HomePage() {
                   owna.app/yourname
                 </div>
               </div>
-            </div>
+            </BlurFade>
           </div>
         </div>
       </section>
@@ -174,26 +184,53 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
-            <div className="rounded-[24px] overflow-hidden h-[500px] border border-white/10 bg-background">
-              <div className="pointer-events-none h-full overflow-hidden">
-                <ProfileRenderer
-                  snapshot={demoProfiles.photographer}
-                  isPreview
-                />
-              </div>
+            {/* BlurFade nests inside the static translate-y wrapper rather than
+                carrying it directly — Motion drives `transform` via inline
+                style, which would otherwise silently override the Tailwind
+                translate-y utility that gives this grid its stagger. */}
+            <div>
+              <BlurFade
+                inView
+                direction="up"
+                className="rounded-[24px] overflow-hidden h-[500px] border border-white/10 bg-background"
+              >
+                <div className="pointer-events-none h-full overflow-hidden">
+                  <ProfileRenderer
+                    snapshot={demoProfiles.photographer}
+                    isPreview
+                  />
+                </div>
+              </BlurFade>
             </div>
-            <div className="rounded-[24px] overflow-hidden h-[500px] border border-white/10 bg-background md:translate-y-16">
-              <div className="pointer-events-none h-full overflow-hidden">
-                <ProfileRenderer
-                  snapshot={demoProfiles.freelancer}
-                  isPreview
-                />
-              </div>
+            <div className="md:translate-y-16">
+              <BlurFade
+                inView
+                direction="up"
+                delay={0.1}
+                className="rounded-[24px] overflow-hidden h-[500px] border border-white/10 bg-background"
+              >
+                <div className="pointer-events-none h-full overflow-hidden">
+                  <ProfileRenderer
+                    snapshot={demoProfiles.freelancer}
+                    isPreview
+                  />
+                </div>
+              </BlurFade>
             </div>
-            <div className="rounded-[24px] overflow-hidden h-[500px] border border-white/10 bg-background md:translate-y-32">
-              <div className="pointer-events-none h-full overflow-hidden">
-                <ProfileRenderer snapshot={demoProfiles.creative} isPreview />
-              </div>
+            <div className="md:translate-y-32">
+              <BlurFade
+                inView
+                direction="up"
+                delay={0.2}
+                className="rounded-[24px] overflow-hidden h-[500px] border border-white/10 bg-background"
+              >
+                <div className="pointer-events-none h-full overflow-hidden">
+                  <ProfileRenderer
+                    snapshot={demoProfiles.creative}
+                    isPreview
+                  />
+                </div>
+              </BlurFade>
             </div>
           </div>
         </div>
@@ -209,7 +246,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-y-16 gap-x-12 lg:gap-x-24">
-            <div>
+            <BlurFade inView direction="up">
               <h3 className="text-2xl font-bold mb-2">
                 Independent professionals
               </h3>
@@ -230,9 +267,9 @@ export default function HomePage() {
                   </span>
                 </div>
               </div>
-            </div>
+            </BlurFade>
 
-            <div>
+            <BlurFade inView direction="up" delay={0.1}>
               <h3 className="text-2xl font-bold mb-2">Small businesses</h3>
               <p className="text-muted-foreground text-lg mb-8">
                 Bring your brand beyond social media.
@@ -251,7 +288,7 @@ export default function HomePage() {
                   </span>
                 </div>
               </div>
-            </div>
+            </BlurFade>
           </div>
         </div>
       </section>
@@ -266,7 +303,11 @@ export default function HomePage() {
           for it end up in the same row. */}
       <section className="border-y border-border bg-secondary/30 py-24 sm:py-28">
         <div className="mx-auto max-w-7xl px-6 sm:px-12">
-          <div className="grid items-center gap-16 lg:grid-cols-[7fr_5fr] lg:gap-24">
+          <BlurFade
+            inView
+            direction="up"
+            className="grid items-center gap-16 lg:grid-cols-[7fr_5fr] lg:gap-24"
+          >
             <figure>
               <blockquote className="font-display text-3xl leading-[1.25] font-bold tracking-tight text-balance sm:text-[40px]">
                 &ldquo;We had Instagram, WhatsApp and a PDF catalogue. OWNA
@@ -306,7 +347,7 @@ export default function HomePage() {
                 owna.app/aura-jewellery
               </p>
             </div>
-          </div>
+          </BlurFade>
         </div>
       </section>
 
@@ -343,7 +384,7 @@ export default function HomePage() {
 
       {/* 9. Final Brand Statement */}
       <section className="py-40 bg-foreground text-background text-center">
-        <div className="mx-auto max-w-4xl px-6 sm:px-12">
+        <BlurFade inView direction="up" className="mx-auto max-w-4xl px-6 sm:px-12">
           <h2 className="font-display text-[64px] sm:text-[88px] font-bold leading-[1.05] tracking-tight mb-8">
             Own your corner
             <br />
@@ -358,7 +399,7 @@ export default function HomePage() {
           >
             Create your OWNA
           </StartBuildingButton>
-        </div>
+        </BlurFade>
       </section>
     </>
   );

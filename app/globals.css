@@ -48,6 +48,24 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes marquee-vertical {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
 }
 
 :root {
@@ -145,4 +163,39 @@
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+/* A barely-there drift for the hero's ambient glow — a couple of percent of
+   translate/scale over 13s, there to keep the hero from reading as a static
+   image rather than to be noticed on its own. Applied via `motion-safe:` at
+   the call site, so this never needs its own reduced-motion query. */
+@keyframes hero-glow-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-1.5%, 1.5%, 0) scale(1.03);
+  }
+}
+@utility animate-glow-drift {
+  animation: hero-glow-drift 13s ease-in-out infinite alternate;
+}
+
+/* The Explore rail's Marquee auto-scrolls continuously; freeze it for anyone
+   who has asked the OS for reduced motion, same as any other ambient loop. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .animate-marquee-vertical {
+    animation-play-state: paused;
+  }
+}
+
+/* AnimatedThemeToggler drives its own clip-path reveal via the View
+   Transitions API — the browser's default cross-fade would otherwise play
+   underneath it, muddying the shape. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
