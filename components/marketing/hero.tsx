@@ -42,8 +42,10 @@ export function Hero() {
             <HeroFootage
               poster={POSTER}
               // The 1.07 crop takes the source recording's scrollbar sliver off
-              // the right edge.
-              className="absolute top-1/2 left-1/2 h-full w-full -translate-x-1/2 -translate-y-1/2 scale-[1.07] object-cover"
+              // the right edge. `object-top` keeps the crop anchored to the top
+              // of the recording — the profile's avatar sits near the top of the
+              // page, and a center-anchored crop sliced into it under the notch.
+              className="absolute top-1/2 left-1/2 h-full w-full -translate-x-1/2 -translate-y-1/2 scale-[1.07] object-cover object-top"
             />
 
             {/* Hides the loop seam and seats the status bar. */}
