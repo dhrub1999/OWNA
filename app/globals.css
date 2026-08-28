@@ -199,3 +199,66 @@
   animation: none;
   mix-blend-mode: normal;
 }
+
+/* Driver.js custom theme matching Shadcn UI */
+.driverjs-theme {
+  --driver-popover-bg: var(--card);
+  --driver-popover-text: var(--card-foreground);
+  --driver-popover-border-color: var(--border);
+  --driver-popover-border-radius: var(--radius);
+}
+
+.driver-popover.driverjs-theme {
+  background-color: var(--driver-popover-bg);
+  color: var(--driver-popover-text);
+  border: 1px solid var(--driver-popover-border-color);
+  border-radius: var(--driver-popover-border-radius);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  font-family: inherit;
+}
+
+.driver-popover.driverjs-theme .driver-popover-title {
+  font-weight: 600;
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+}
+
+.driver-popover.driverjs-theme .driver-popover-description {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin-bottom: 1rem;
+}
+
+.driver-popover.driverjs-theme .driver-popover-footer button {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border: none;
+  border-radius: calc(var(--radius) - 2px);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-shadow: none;
+}
+
+.driver-popover.driverjs-theme .driver-popover-footer button.driver-popover-close-btn {
+  background-color: transparent;
+  color: var(--muted-foreground);
+  border: 1px solid var(--border);
+}
+
+.driver-popover.driverjs-theme .driver-popover-footer button:hover {
+  opacity: 0.9;
+}
+.driver-popover.driverjs-theme .driver-popover-footer button.driver-popover-close-btn:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.driver-popover.driverjs-theme .driver-popover-progress-text {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+.driver-popover.driverjs-theme .driver-popover-arrow {
+  border-color: var(--border);
+}
