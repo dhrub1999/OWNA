@@ -4,9 +4,13 @@ Handoff notes for whoever picks this up next. `README.md` covers how to run
 the repo; this file covers **why it is shaped the way it is**, what is proven
 versus assumed, and what to do next.
 
-- Built on branch `feat/landing-page`.
-- Product-first onboarding plan for this session: `~/.claude/plans/twinkly-shimmying-cerf.md`.
+- Currently on branch `chore/ui-bugs` (branched off `main`, no unique commits
+  yet — just uncommitted working-tree fixes, see §11).
+- `main` is at `9efbbe2` (2026-08-29), merged from `feat/explore-section`.
 - Live Supabase project: `ccohfxrjpnrherqflpxa`.
+- This file was last fully rewritten 2026-08-29. Sections older than that are
+  either folded into the current-state sections below or kept as dated
+  history where the reasoning is still worth having.
 
 ---
 
@@ -14,22 +18,56 @@ versus assumed, and what to do next.
 
 | Area | State |
 | --- | --- |
-| Schema, RLS, RPC, storage | **Applied to the live project.** All four original migrations plus `20260823120000_onboarding_answers.sql` are live. |
-| Public profile route + renderer | Done, verified rendering locally and via e2e |
-| Nine blocks | Done |
+| Schema, RLS, RPC, storage | **Applied to the live project.** 10 migrations, latest `20260828000000_grant_authenticated_profile_writes.sql`. |
+| Public profile route + renderer | Done |
+| Nine blocks | Done (`hero`, `text`, `social`, `links`, `projects`, `image`, `gallery`, `embed`, `divider`) |
 | Theme system + 10 presets | Done, contrast-tested |
 | Editor (canvas, outline, inspectors, autosave, undo) | Done |
-| Auth (Google + email/password + **anonymous**) | Done. See §10 for the current provider config and why it's provisional. |
-| Product-first onboarding (guest build → publish-gated account) | **Done and verified live**, see §10 |
+| Auth (Google + email/password + anonymous) | Done, hardened — see §9 |
+| Product-first onboarding (guest build → publish-gated account) | Done — see §9 |
+| Dashboard onboarding tour (driver.js) | Done — see §10.4 |
 | Uploads + quota + orphan sweep | Done |
 | Publish / unpublish / preview / dashboard / share | Done |
-| SEO, OG image, robots, sitemap | Done |
-| Unit tests | 108 passing across 8 files |
-| Playwright e2e | **Both specs pass live**: `core-loop.spec.ts` (signed-up flow) and `guest-onboarding.spec.ts` (new anonymous flow) |
+| Public discovery directory (`/discover`, opt-in) | Done — see §10.2 |
+| Persona landing pages (`/for/{persona}`), `/pricing` | Done — see §10.2 |
+| Marketing homepage: scroll-pinned build-flow preview | Done — see §10.3 |
+| First-publish feedback prompt + global error boundary | Done — see §10.1 |
+| SEO, OG image, robots, sitemap, JSON-LD | Done |
+| Unit tests | **148 passing across 10 files** (`bun run test`) |
+| Typecheck | **Clean** (`bun run typecheck`) |
+| Lint | **Not clean** — see §1.1, this is new since the last rewrite |
+| Playwright e2e | Both specs pass live once pointed at a real recipient — see §9.1 |
 | RLS integration tests | Written; not re-run this session (needs `OWNA_TEST_SUPABASE_*` env vars) |
 
-`bun run build`, `bun run typecheck`, `bun run lint`, `bun run test` are all
-green as of this session. `OWNA_E2E=1 bun run test:e2e` is green too.
+`bun run build` was not re-run this pass (no reason to expect it's broken —
+typecheck is clean and nothing touched build config besides `next.config.ts`'s
+image-domain addition in the marketing overhaul — but it hasn't been confirmed
+this session).
+
+### 1.1 Lint is currently red — new finding
+
+`bun run lint` reports 209 problems. Almost all of them (185+) are noise from
+`supabase/.temp/start-secrets/supabase_edge_runtime_owna/main/index.ts` — a
+generated file the Supabase CLI drops locally when you run `supabase start`,
+which ESLint's flat config isn't excluding. That directory should be in
+`.eslintignore`/the ignores array, not fixed line by line.
+
+Two **real** errors, unrelated to the temp file, both look like they landed in
+the 2026-08-27 Magic UI commit (`5743e48`) and haven't been touched since:
+- `components/theme-toggle.tsx:21` —
+  `react-hooks/set-state-in-effect`: a synchronous `setMounted(true)` inside a
+  `useEffect`. §3 already documents this rule as an error in this repo; this
+  file predates that being enforced, or was added without checking. Needs the
+  same derive-during-render treatment as `lib/hooks/use-username-availability.ts`.
+- `lib/demo-profiles.ts:21` — `no-explicit-any`.
+
+`test-dom.js` also fails `no-require-imports` — this is a loose top-level
+script (not part of `tests/`), predates this rewrite, and is a one-line fix
+(`import` instead of `require`) whenever someone touches it.
+
+**Do not report "lint is green" without re-running it** — the previous version
+of this file said typecheck/lint/build/test were "all green as of this
+session" and that had already gone stale by the time this rewrite happened.
 
 ---
 
@@ -47,9 +85,15 @@ server-side from the caller's own rows.
 **Debounced autosave, explicit publish.** 800 ms debounce, no manual save
 button. Publish is a separate, deliberate action.
 
-**Product-first onboarding.** As of this session, a visitor can build and see
-a fully curated page before ever creating an account. Publishing is the point
-an account becomes required — see §10.
+**Product-first onboarding.** A visitor can build and see a fully curated page
+before ever creating an account. Publishing is the point an account becomes
+required — see §9.
+
+**Directory listing is opt-in and admin-gated, never inferred.** Every
+published profile today is internal test data, and nothing in the schema
+distinguishes it from a future real one. Rather than filter out "obviously
+fake" profiles, `/discover` starts empty for everyone and only shows a profile
+once its owner opts in *and* an admin approves it (§10.2).
 
 ---
 
@@ -62,7 +106,7 @@ This is not the Next.js in most training data. All verified against
   Its matcher (`/dashboard`, `/editor`, `/settings`, `/onboarding`, `/preview`)
   only checks "is there a session" — it does not distinguish an anonymous
   session from a permanent one, and that turned out to be exactly right for
-  the guest flow (see §10) rather than something that needed changing.
+  the guest flow (§9) rather than something that needed changing.
 - **`params` and `searchParams` are Promises.** Use the generated
   `PageProps<'/[username]'>` / `LayoutProps<'/'>` types, don't hand-write them.
 - **`cacheComponents: true` is on.** Every request-time read must sit behind
@@ -80,7 +124,8 @@ This is not the Next.js in most training data. All verified against
   Composition is `<Button render={<Link href="…" />}>`, **not** `asChild`.
 - **`react-hooks/set-state-in-effect` and `react-hooks/refs` are errors.**
   See `lib/hooks/use-username-availability.ts` for the derive-during-render
-  pattern.
+  pattern — and see §1.1, `components/theme-toggle.tsx` currently violates
+  this and lint is red because of it.
 
 ---
 
@@ -92,7 +137,7 @@ Break any of these and the design stops working. The first two are enforced by
 1. **Block definitions are pure data.** `lib/blocks/definitions.ts` holds type,
    label, Zod schema and defaults — no React, no components. Imported by the
    editor, the public renderer, the save action, the onboarding template
-   seeder (§10), and the tests.
+   seeder (§9), the marketing build-flow preview (§10.3), and the tests.
 
 2. **The public surface imports no editor code.** `components/public/**`,
    `app/[username]/**` and `components/icons/**` may not import editor-only
@@ -100,16 +145,22 @@ Break any of these and the design stops working. The first two are enforced by
 
 3. **Block renderers are pure presentational components.** No `async`, no
    fetching. The server renders them for the public page and the editor
-   renders *the same components* client-side for the live preview and the
-   dashboard preview — "preview matches production" by construction.
+   renders *the same components* client-side for the live preview, the
+   dashboard preview, and now the marketing homepage's build-flow preview
+   (§10.3) — "preview matches production" by construction, extended to
+   marketing rather than broken by it.
 
 4. **The public page reads exactly one row**, `profile_publications.snapshot`.
+   The directory listing (§10.2) follows the same rule: it reads
+   `profile_publications` only, never joins back to `profiles`, which is why
+   the three directory flags (`directory_opt_in`/`_persona`/`_status`) are
+   denormalized onto both tables instead of living on `profiles` alone.
 
 5. **Nothing trusts the client.** The publish snapshot is built in SQL by
-   `publish_profile()` from `auth.uid()`'s own rows. This held up unchanged
-   for the guest flow: an anonymous session's `auth.uid()` works identically
-   to a permanent one everywhere in the schema, so no RLS/RPC change was
-   needed to support it (see §10).
+   `publish_profile()` from `auth.uid()`'s own rows. `directory_status` follows
+   the same rule one level further: it's admin-only, set exclusively via
+   `set_directory_status()`, and no client role is ever granted `UPDATE` on
+   that column directly (§10.2).
 
 ---
 
@@ -151,7 +202,7 @@ turns a second tab into a clean conflict banner instead of a silent overwrite.
 
 **Supabase anonymous sessions carry Postgres role `authenticated`, not
 `anon`.** This is the load-bearing fact behind the entire guest-onboarding
-design (§10): every RLS policy scoped `to authenticated` — which is all of
+design (§9): every RLS policy scoped `to authenticated` — which is all of
 them — already works for an anonymous session with zero changes. An anonymous
 user is a real row in `auth.users` (`is_anonymous: true`), not a special case.
 
@@ -160,59 +211,87 @@ the several places in one request that each need to know "who is this" — a
 page, a layout, a Server Action — share one token revalidation instead of
 paying for it repeatedly.
 
+**`updateUser({ email, password })` on an anonymous session does not populate
+`auth.users.email`** — only `email_change`/`user.new_email`, until the
+confirmation link is clicked. This bit three different things at once before
+it was understood; see §9.3 for the full story and the fix.
+
+**Table-level grants are not implied by RLS, and nothing in migration history
+revoked them — they can just be missing.** `authenticated` had no `INSERT`/
+`UPDATE` grant on `profiles` or `profile_publications` (every other public
+table had them), which failed writes before RLS was ever evaluated, as a flat
+"permission denied for table" rather than an RLS violation. Fixed in
+`20260828000000_grant_authenticated_profile_writes.sql`. Worth checking table
+grants directly (`information_schema.role_table_grants`) rather than assuming
+RLS policy presence is sufficient, if a similarly-flat permission error shows
+up again.
+
+**Resend rejects known-placeholder recipient domains outright** (`550`,
+`could not send email`), and Supabase turns that into a bare `500` with **no
+user row written** — not a config problem, a recipient problem. Cost two
+separate sessions before this was understood; see §9.1.
+
 ---
 
 ## 6. What is proven, and what is not
 
-**Verified this session, live against the real Supabase project:**
-- All migrations apply cleanly, including the new `onboarding_answers` table.
-- Both e2e specs pass: signed-up core loop, and the new anonymous
-  build → publish-gate → account-creation → live-page loop.
-- `mailer_autoconfirm` and the Email/Google/Anonymous provider toggles all
-  confirmed via `GET /auth/v1/settings` (a read-only, unauthenticated
-  endpoint — useful for verifying Auth config from a shell without a
-  dashboard round trip).
-- Production build succeeds with `cacheComponents: true`; `/onboarding/questionnaire`
-  and `/editor` render as Partial Prerenders like their siblings.
+**Verified this session (2026-08-29):**
+- `bun run test`: 148 passing, 10 files.
+- `bun run typecheck`: clean.
+- All 10 migrations present in `supabase/migrations/`, latest dated 2026-08-28.
 
-**Not verified:**
-- The Google `linkIdentity()` path in the publish gate (upgrading an
-  anonymous session to a permanent one via Google) is implemented and
-  typechecks, but was never driven through a real Google consent screen —
-  no browser extension was available this session, and headless automation
-  can't get through Google's real login. **Needs a manual click-through.**
-- RLS integration tests (`tests/integration`) were not re-run this session.
+**Verified in the sessions this file folds in (see §9, §10 for dates):**
+- Outbound auth email genuinely works on the live project — confirmed from
+  `auth_logs`/`auth.users`, not inferred (§9.1).
+- Both e2e specs pass live once they target a real acceptable recipient
+  instead of `@example.com` (§9.1).
+- `mailer_autoconfirm: false` live — confirmation emails are required and on
+  the critical path (§9.2).
+- Production build succeeds with `cacheComponents: true`.
 
-**Ruled out this session:** a report of "Create your OWNA" landing on the old
-`/onboarding/username` page and the dashboard instead of the new questionnaire
-was traced to a stale session/cache in the reporter's browser tab from earlier
-manual testing — confirmed by reproducing cleanly in an Incognito window. Not
-a code issue; no fix needed. (Automated fresh-session e2e already covered this
-path and passed throughout.)
+**Not verified, still open:**
+- **Lint has not been clean since at least 2026-08-27** (§1.1) — nobody has
+  re-run it end to end since the Magic UI commit landed.
+- **`bun run build` was not re-run this pass.**
+- The Google `linkIdentity()` path in the publish gate has never been driven
+  through a real Google consent screen — no browser extension has been
+  available in any session so far, and headless automation can't get through
+  Google's real login. **Still needs a manual click-through.**
+- RLS integration tests (`tests/integration`) have not been re-run recently.
+- The confirmation-link round trip has been observed via `auth_logs` timing
+  (§9.1) but never watched end-to-end through a real inbox in-session.
 
 ---
 
 ## 7. Next steps, in order
 
-1. **Manually verify the Google-linking path** in the publish gate.
-2. **Decide the email-confirmation story before real users sign up.** The
-   project currently has `mailer_autoconfirm: true` (confirmation off)
-   because there is no SMTP configured and confirmation emails were failing
-   outright (`500 Error sending confirmation email`) — this affected the
-   *pre-existing* plain `/signup` too, not just the new flow. Either configure
-   real SMTP and turn confirmation back on, or make peace with unconfirmed
-   email signups long-term. Don't leave this as an accidental side effect of
-   testing.
-3. **Decide what happens to abandoned anonymous drafts** — a visitor who
-   starts the questionnaire or builds a page and never creates an account
-   leaves a real (harmless, but unbounded) row in `auth.users` /`profiles`.
-   No cleanup job exists yet. Worth a scheduled sweep if volume grows.
+1. **Fix lint** (§1.1): exclude `supabase/.temp/**` from ESLint's scope, fix
+   `theme-toggle.tsx`'s effect-body `setState`, fix `demo-profiles.ts`'s `any`.
+   Cheap, and "lint is red" is currently the single biggest gap between this
+   file and reality.
+2. **Re-run `bun run build`** and confirm the marketing overhaul (§10.3),
+   directory routes (§10.2) and feedback/error-boundary additions (§10.1) all
+   still prerender cleanly under `cacheComponents: true`.
+3. **Manually verify the Google-linking path** in the publish gate — still
+   nobody has clicked through it as a human.
 4. **Run the RLS integration suite** against a scratch project:
    `OWNA_TEST_SUPABASE_URL=… OWNA_TEST_SUPABASE_PUBLISHABLE_KEY=… bun run test:integration`.
-5. **Lighthouse a published profile.** Targets: Performance ≥ 95,
-   Accessibility ≥ 95 on mobile.
-6. **Deploy to Vercel**, set env vars (including the same Supabase project),
-   confirm publishing invalidates the cache within seconds.
+5. **Decide what happens to abandoned anonymous drafts** — a visitor who
+   starts the questionnaire or builds a page and never creates an account
+   leaves a real (harmless, but unbounded) row in `auth.users`/`profiles`. No
+   cleanup job exists yet.
+6. **Decide the admin workflow for `directory_status`.** The schema and RPC
+   exist (§10.2) but there is no admin UI — approving a profile today means a
+   direct SQL update via `set_directory_status()`. Fine at zero volume, not at
+   scale.
+7. **Lighthouse a published profile and the new marketing pages** (`/`,
+   `/discover`, `/for/{persona}`, `/pricing`). Targets: Performance ≥ 95,
+   Accessibility ≥ 95 on mobile. Never benchmarked since the marketing
+   overhaul (§10.3) added a scroll-pinned, IntersectionObserver-driven section.
+8. **Deploy to Vercel**, set env vars (including the same Supabase project),
+   confirm publishing invalidates the cache within seconds, and confirm the
+   `next.config.ts` image-domain addition from the marketing overhaul is
+   correct for wherever product screenshots are actually served from.
 
 ---
 
@@ -227,150 +306,123 @@ path and passed throughout.)
 - No rate limiting on `username_available` beyond Supabase's own auth limits.
 - The orphan asset sweep runs fire-and-forget after publish, only touches
   uploads older than 24h. Move to `pg_cron` if storage costs grow.
-- **New this session:** no cleanup for abandoned anonymous accounts/drafts
-  (see §7.3). No merge path if someone builds anonymously, then logs into a
-  *different*, pre-existing account at the publish gate — the copy says the
-  guest draft won't come with them, but nothing prevents them from trying, and
-  the guest draft is simply orphaned under the anonymous user, not deleted.
-- No analytics, no discovery, no remix, no marketplace, no AI — out of scope.
+- No cleanup for abandoned anonymous accounts/drafts (§7.5). No merge path if
+  someone builds anonymously, then logs into a *different*, pre-existing
+  account at the publish gate — the copy says the guest draft won't come with
+  them, but nothing prevents them from trying, and the guest draft is simply
+  orphaned under the anonymous user, not deleted.
+- No admin UI for directory approval (§7.6) — `set_directory_status()` exists,
+  nothing calls it but a human running SQL.
+- `OWNA_E2E` / `OWNA_E2E_EMAIL_DOMAIN` are not documented in `.env.example` —
+  only the integration-test vars are. Someone running `bun run test:e2e` cold
+  has to find `tests/e2e/test-email.ts` to learn the recipient-domain trap.
+- `supabase/.temp/` is not excluded from ESLint (§1.1) — should be added to
+  the ignores list rather than left to be noticed again.
+- No analytics beyond a dashboard placeholder, no remix, no theme marketplace,
+  no AI — out of scope.
 
 ---
 
-## 9. Product-first onboarding (earlier session)
+## 9. Onboarding and auth: the full arc, condensed
 
-> **Stale in places — see §10.** `/onboarding/username` no longer exists, the
-> publish gate has changed, and §7.2's `mailer_autoconfirm` note is wrong
-> (it is `false` live). §10 wins wherever the two disagree.
+This folds together what were three separate sessions/sections in earlier
+versions of this file (product-first onboarding; the email-confirmation gap
+closure; the anonymous-upgrade bug hunt). All of it is now resolved and live;
+kept here because the reasoning explains code that would otherwise look
+overbuilt.
 
-**Why:** every CTA used to route straight to `/signup` — a visitor had to
-create a full account before touching the product at all. The new flow is
-land → "Create your OWNA" → short questionnaire → land in the editor
-pre-filled with a curated starting page → edit freely → **Publish is the
-moment an account becomes required**, not before and not only as an
-afterward nudge. Scoped to the free tier; pricing is future work.
+**The shape of the flow.** Land → "Create your OWNA" → anonymous sign-in
+(`supabase.auth.signInAnonymously()`, fired the moment the CTA is clicked, in
+`components/marketing/start-building-button.tsx`) → short questionnaire
+(purpose, name, handle-with-live-check) → land in `/editor` pre-filled with a
+curated starting page from `templateForPurpose()` (`lib/demo-profiles.ts`) →
+edit freely → **Publish is the moment an account becomes required.**
+`/onboarding/username` (the older, account-first-only entry point) was deleted
+outright — everyone now goes through the questionnaire, including a fresh
+email/Google signup, so the account-first path and the guest path produce the
+identical curated first page instead of the account-first user getting a bare
+handle form.
 
-**Architecture: Supabase anonymous auth**, not a client-only local draft.
-`supabase.auth.signInAnonymously()` fires the moment a visitor clicks
-"Create your OWNA" (`components/marketing/start-building-button.tsx`), before
-they ever reach the questionnaire. Because anonymous sessions are real,
-cookie-backed `auth.users` rows with Postgres role `authenticated` (see §5),
-every existing RLS policy, RPC and Server Action worked immediately with zero
-schema or policy changes — the only new schema is `onboarding_answers`, used
-purely so a reload mid-questionnaire restores progress instead of losing it.
+**Why anonymous auth, not a client-only draft.** Anonymous Supabase sessions
+are real, cookie-backed `auth.users` rows carrying Postgres role
+`authenticated` (§5) — every existing RLS policy, RPC and Server Action works
+on one immediately, with zero schema changes for the guest case itself. The
+only new schema for this was `onboarding_answers`, purely so a reload
+mid-questionnaire restores progress.
 
-**Flow, end to end:**
-1. `app/page.tsx` CTAs → `StartBuildingButton` → anonymous sign-in → `/onboarding/questionnaire`.
-2. `app/onboarding/questionnaire/` — 3 steps (purpose, name, handle-with-live-check),
-   each persisted immediately to `onboarding_answers` (`app/onboarding/questionnaire/actions.ts`).
-3. On submit: `claim_username` RPC (shared helper `claimUsernameRpc`, factored
-   out of `app/onboarding/actions.ts` so the original username-only onboarding
-   step and the new questionnaire share the exact same claim/error-translation
-   logic), then the draft is seeded from `templateForPurpose()`
-   (`lib/demo-profiles.ts`) — the matched persona's **theme and layout and
-   block-type structure**, but placeholder content via `starterBlockProps()`,
-   never the demo personas' own literal copy (a real bug caught during
-   testing: the first version put "Sarah Jenkins" verbatim on every new
-   consultant-purpose user's hero block).
-4. `/editor` — unchanged; autosave and the canvas work identically for an
-   anonymous session.
-5. **Publish gate** (`components/editor/publish-auth-gate.tsx`, wired into
-   both `components/editor/toolbar.tsx` and `components/dashboard/publish-controls.tsx`):
-   an anonymous user hitting Publish gets a dialog instead of publishing.
-   "Create free account" calls `upgradeAnonymousAccount()`
-   (`app/(auth)/actions.ts`, `supabase.auth.updateUser({email, password})`) —
-   deliberately **not** `signUpWithPassword`, which would mint a second,
-   unlinked user and orphan the draft. "Continue with Google" uses
-   `linkIdentity()` client-side (needs "Manual linking" enabled in Supabase
-   Auth settings), redirecting through `/auth/callback?next=/editor?publish=1`;
-   the toolbar's `PublishResumeWatcher` picks the interrupted publish back up
-   on return. Either way, the same `auth.uid()` carries the already-built
-   profile/blocks straight through — no migration.
+**The publish gate.** An anonymous user hitting Publish gets a dialog
+(`components/editor/publish-auth-gate.tsx`) instead of publishing.
+"Create free account" calls `upgradeAnonymousAccount()`
+(`supabase.auth.updateUser({email, password})`) — deliberately not
+`signUpWithPassword`, which would mint a second, unlinked user and orphan the
+draft. "Continue with Google" uses `linkIdentity()` client-side, redirecting
+through `/auth/callback?next=/editor?publish=1`; `PublishResumeWatcher` in the
+toolbar picks the interrupted publish back up on return.
 
-**Provider config required** (dashboard-only, not code — confirmed live this
-session via `GET /auth/v1/settings`): Anonymous sign-ins on, Manual linking
-on, Email and Google providers on. See §7.2 for the open `mailer_autoconfirm`
-decision.
+### 9.1 The email saga: three false leads, one real bug, one real non-bug
 
-**New/changed files:** `supabase/migrations/20260823120000_onboarding_answers.sql`;
-`app/onboarding/questionnaire/{page,actions,questionnaire-form}.tsx`;
-`components/marketing/start-building-button.tsx`;
-`components/editor/publish-auth-gate.tsx`; `lib/demo-profiles.ts` (extended
-with `PURPOSE_OPTIONS`/`templateForPurpose`); `app/onboarding/actions.ts`
-(extracted `claimUsernameRpc`); `app/(auth)/actions.ts` (added
-`upgradeAnonymousAccount`); `components/editor/toolbar.tsx` and
-`components/editor/editor-shell.tsx` (threaded `isAnonymous`,
-`PublishResumeWatcher`); `app/(app)/editor/page.tsx` and
-`app/(app)/dashboard/page.tsx` (pass `isAnonymous`); `lib/supabase/server.ts`
-(`getUser()` wrapped in `cache()`); `tests/e2e/guest-onboarding.spec.ts` (new,
-passes live).
+This is worth reading in order because each earlier conclusion was reasonable
+given what was known at the time, and got overturned by the next session:
 
----
+1. **First read: "email delivery is broken in production."** `/signup` and
+   the guest publish-gate both failed with `Error sending confirmation email` /
+   `Error sending email change email`. Reasonable next suspect: unverified
+   Resend sending domain, or SMTP credentials not actually saved on the
+   Supabase project.
+2. **Second read, closer but still wrong: a real bug in the upgrade path.**
+   `supabase.auth.updateUser({ email, password })` on an anonymous session
+   does **not** populate `auth.users.email` — only `email_change`/
+   `user.new_email`, until the confirmation link is clicked. This genuinely
+   broke three things: `signInWithPassword` couldn't find the user by `email`
+   and returned a generic "wrong password" instead of "confirm your email";
+   `isGuestSession()` checked `!user.email`, which never flips, so a same-tab
+   republish re-opened the account-creation gate right after it had just
+   succeeded; and worst, a fresh `/signup` or second anonymous upgrade with
+   that same pending address silently created a **second, unrelated**
+   `auth.users` row, permanently orphaning the first account's draft, since
+   nothing reserves an address until it's confirmed. **Fixed**:
+   `lib/auth/session.ts` now checks `user.new_email` too; migration
+   `20260825150000_email_claimed_rpc.sql` added `email_claimed()` and
+   `email_pending_confirmation()` (`SECURITY DEFINER`, same pattern as
+   `username_available()`) so sign-up and sign-in can tell the difference
+   between "taken", "pending", and "free" instead of guessing from a failed
+   insert.
+3. **Third read, the actual root cause of the *original* symptom: never a
+   bug at all.** Outbound email on the live project works — verified directly
+   from `auth_logs`: two different Gmail recipients had `confirmation_sent_at`
+   set with no error, one confirmed 21 seconds after send. The `550`s in the
+   logs were Resend refusing `@example.com` outright
+   (`Invalid \`to\` field... instead of domains like \`example.com\``), which
+   Supabase turns into an atomic `500` with **no user row written** — so it
+   looked exactly like server-side delivery failure from the outside. The
+   *only* place `@example.com` was ever used was the e2e suite.
+   **Fixed**: `tests/e2e/test-email.ts` now generates
+   `delivered+<tag>@resend.dev` (Resend's accept-always sink), with an
+   `OWNA_E2E_EMAIL_DOMAIN` override for non-Resend targets like a local
+   Inbucket.
 
-## 10. Onboarding funnel: gap closure and redesign (2026-08-25)
+Net effect: `friendlyAuthError()` (`app/(auth)/actions.ts`) still exists to
+turn raw Supabase strings into something a visitor can act on, but it is
+genuinely just UX polish now, not a workaround for broken delivery.
 
-Supersedes §9 wherever the two disagree, and corrects §6/§7.2 on
-`mailer_autoconfirm`. §9 describes the guest path as it was first built; this
-section describes the funnel as it now stands.
+### 9.2 Live auth settings
 
-### 10.1 THE BLOCKER: outbound email is failing on the live project
-
-**Email auth is broken in production right now.** Verified live this session
-against `ccohfxrjpnrherqflpxa` with Playwright, on a clean build:
-
-- `/signup` → `Error sending confirmation email`. The account is not created
-  and the visitor cannot proceed.
-- Guest → Publish → account gate → `Error sending email change email`.
-  `updateUser()` fails as a whole, so the credentials are **not** attached and
-  **the page never publishes**. The guest funnel dead-ends at its most
-  important step.
-
-This is not a code regression, and it is the real reason the e2e suite has
-been red (the note blaming "provider config drift" was half right). Both
-entrances to the product are affected; only Google OAuth still works.
-
-Most likely cause, in order: (1) the Resend sending domain is unverified, which
-restricts delivery to the Resend account owner's own address and rejects
-everything else; (2) the SMTP credentials on the Supabase project are not
-actually saved. **Check Resend → Domains, then Supabase → Project Settings →
-Auth → SMTP.** Until this is fixed no amount of application code will make
-email signup work.
-
-The app now translates these into `"We couldn't send the confirmation email
-just now. Try again in a moment, or continue with Google instead."`
-(`friendlyAuthError` in `app/(auth)/actions.ts`) rather than showing the raw
-string, but that is damage control, not a fix.
-
-### 10.2 Live auth settings, confirmed
-
-`GET /auth/v1/settings` (unauthenticated, needs the anon key as `apikey`):
+`GET /auth/v1/settings` (unauthenticated, needs the anon key as `apikey` — a
+useful way to check Auth config from a shell without a dashboard round trip):
 `anonymous_users: true`, `email: true`, `google: true`,
-**`mailer_autoconfirm: false`**. §7.2 describes an earlier session that set it
-to `true`; it has since been flipped back. Confirmation emails are required and
-on the critical path.
+`mailer_autoconfirm: false`. Confirmation emails are required and on the
+critical path. **Re-check this if email behavior is ever in question again —
+it has been silently flipped between sessions before.**
 
-### 10.3 One onboarding path, not two
-
-`/onboarding/username` **is deleted**, along with `claimUsername` and
-`seedProfile`. Everything now routes through the questionnaire:
-`/auth/callback` with no profile, the post-confirmation landing, and the
-`!draft` fallbacks in editor/dashboard/preview/settings. `claimUsernameRpc`
-survives as the shared helper. The Google-metadata seeding `seedProfile` did
-now happens in `completeOnboarding`, and the questionnaire prefills its name
-step from the same metadata.
-
-Reason: signing up with email or Google produced a bare handle form and two
-placeholder blocks, while a guest who never made an account got a templated
-draft. The account-first user got the worse first run.
-
-### 10.4 Email templates are load-bearing
+### 9.3 Email templates are load-bearing
 
 `supabase/templates/{confirmation,recovery,email-change,magic-link}.html`,
 wired into `supabase/config.toml` for local. Each links to
 `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=…&next={{ .RedirectTo }}`.
 
 Supabase's stock templates link to `/auth/v1/verify`, which **never reaches**
-`app/auth/confirm/route.ts` — so with the default templates, that route and all
-its `next` handling is dead code. Reverting a template to
+`app/auth/confirm/route.ts` — so with the default templates, that route and
+all its `next` handling is dead code. Reverting a template to
 `{{ .ConfirmationURL }}` silently breaks the post-confirmation redirect.
 
 `{{ .RedirectTo }}` expands to a full URL, not a path, which is why
@@ -378,12 +430,13 @@ its `next` handling is dead code. Reverting a template to
 `safeNextPath()`. It accepts same-origin absolute URLs and still refuses
 everything else.
 
-**MANUAL STEP, NOT DONE:** the hosted project keeps its own copies under
-Auth → Emails. Editing the files in this repo does not update it. Paste all
-four in, or the live flow keeps using the stock templates. No MCP tool exposes
-auth config, and the Management API needs a PAT that is not in `.env.local`.
+**The hosted project keeps its own copies under Auth → Emails** — editing the
+files in this repo does not update it. No MCP tool exposes auth config, and
+the Management API needs a PAT that is not in `.env.local`, so this has to be
+pasted in by hand whenever a template changes. Last known state: unverified
+whether this was ever confirmed done — re-check before relying on it.
 
-### 10.5 Rate limits
+### 9.4 Rate limits
 
 Resend free tier: 100/day, 3,000/month, 2/sec — and Supabase's own
 `rate_limit_email_sent` sits in front of it. Every resend affordance goes
@@ -395,88 +448,178 @@ timer would reward it), a hard cap of 3 attempts, and never a send on mount.
 `[auth.rate_limit] email_sent` in `config.toml` is raised to 30 for **local**
 Inbucket testing only. Do not read local headroom as production headroom.
 
-### 10.6 Local config now matches production
+### 9.5 What auth/onboarding hardening shipped, in one list
 
-`supabase/config.toml`: `enable_anonymous_sign_ins = true`,
-`enable_confirmations = true`, and `site_url` moved from `http://127.0.0.1:3000`
-to `http://localhost:3000` (Supabase matches redirect allow-list entries
-exactly, and the dev server plus Playwright both use the hostname). Previously
-the guest CTA, the confirmation banner, `email_not_confirmed` handling and
-`resendConfirmation` were all unreachable against a local stack.
+- Marketing header is session-aware: `components/marketing/header-auth-slot.tsx`,
+  an async server component in its own `<Suspense>` so `/` stays partially
+  prerendered. Three states keyed on profile presence, not `is_anonymous`
+  (nearly every visitor has *some* session).
+- `/login` and `/signup` guard against an already-signed-in visitor
+  (`app/(auth)/auth-screen.tsx`), and warn — rather than silently strand — a
+  guest sitting on an unpublished draft.
+- Every `?error=` code the auth routes emit is now handled
+  (`lib/auth/errors.ts` + `components/ui/alert.tsx`).
+- Full password reset flow: `/forgot-password`, `/forgot-password/sent`,
+  `/reset-password`, plus `requestPasswordReset`/`resendPasswordReset`/
+  `updatePassword`. Neutral responses throughout, so the form is not an
+  account-existence oracle.
+- `/signup/check-email` has a resend affordance instead of being a dead end.
+- Registered-email collision at the publish gate has an `email-taken` view
+  offering both choices, instead of a raw Supabase error string.
+- `lib/auth/session.ts` holds the shared banner/gate predicates
+  (`isGuestSession`, `needsEmailConfirmation`) — pulled out of
+  `lib/supabase/server.ts` because `server-only` made them untestable and
+  unusable from a client component; `server.ts` re-exports them.
+- **`Skeleton` was invisible in light mode** — `--muted` and `--background`
+  were both `#F7F6F2`. Now tinted from `foreground`.
 
-### 10.7 What was fixed, in one list
-
-- Marketing header was session-blind — a logged-in user still saw "Log in".
-  Now `components/marketing/header-auth-slot.tsx`, an async server component in
-  its own `<Suspense>` so `/` stays partially prerendered. Three states keyed on
-  profile presence, not `is_anonymous` (nearly every visitor has *some* session).
-  `MobileNav` takes the resolved state as a prop.
-- `/login` and `/signup` had no signed-in guard. `app/(auth)/auth-screen.tsx`
-  redirects a member, and *warns* a guest sitting on an unpublished draft
-  rather than silently stranding it.
-- Every `?error=` code the auth routes emit was dropped on the floor.
-  `lib/auth/errors.ts` + a new `components/ui/alert.tsx`; an expired link now
-  explains itself and offers a fresh one.
-- **No password reset existed at all.** `/forgot-password`,
-  `/forgot-password/sent`, `/reset-password`, plus `requestPasswordReset` /
-  `resendPasswordReset` / `updatePassword`. Neutral responses throughout, so the
-  form is not an account-existence oracle.
-- `/signup/check-email` was a dead end: no resend, no way to fix a typo.
-- `resendConfirmation` hardcoded `type: "email_change"`. It now picks from
-  `user.new_email ?? user.email` — Supabase parks an `updateUser()` address in
-  `new_email` and a `signUp()` one in `email`, and the wrong type fails silently.
-- Registered-email collision at the publish gate showed a raw Supabase string
-  with no way out. The gate now has an `email-taken` view offering both choices.
-- `next` was posted by the signup form and ignored by the action.
-- Banner and gate predicates were written separately at each call site. Both now
-  come from `lib/auth/session.ts` — moved out of `lib/supabase/server.ts`
-  because `server-only` made two pure functions untestable and unusable from a
-  client component. `server.ts` re-exports them.
-- **`Skeleton` was invisible in light mode.** `--muted` and `--background` are
-  both `#F7F6F2`, so every loading state in the app rendered as blank space.
-  Now tinted from `foreground`.
-
-### 10.8 The redesign
+### 9.6 Onboarding UX
 
 - `components/onboarding/onboarding-shell.tsx` — two panes above `lg`,
-  questions left, live preview right. The preview drops out below `lg` rather
-  than stacking; a preview too small to read is worse than none.
+  questions left, live preview right, dropping the preview below `lg` rather
+  than stacking it illegibly.
 - `components/onboarding/live-preview.tsx` + `lib/onboarding/preview-snapshot.ts`
-  — mounts the real `ProfileRenderer`. An 840px stage at `scale-50` with
-  `origin-top-left` lands at exactly 420px; the full width has to be real
-  because the blocks are container-query driven and would otherwise re-flow to
-  mobile. **It shows curated demo content, not what gets seeded** —
-  `starterBlockProps` is near-empty by design and previewed as a blank page.
-  The caption says "Example content in this style" and that labelling is
-  load-bearing; do not quietly reword it.
-- Purpose cards carry each template's real `theme.colors`, read from the same
-  source that seeds the draft.
-- `components/editor/publish-success-dialog.tsx` — first publish only, gated on
-  `hasEverPublished` threaded from the server. Re-publishes keep the toast.
-- `components/dashboard/activation-checklist.tsx` + `lib/onboarding/activation.ts`
-  — derived from the draft's real contents, never a stored "completed steps"
-  list, and hides itself once complete.
-- `components/auth/password-input.tsx` — the gate asks people to invent a
-  password inside a modal in about four seconds.
+  mount the real `ProfileRenderer` at a real 840px width scaled to fit — the
+  blocks are container-query driven and would otherwise re-flow to mobile at a
+  narrow width. **It shows curated demo content, not what actually gets
+  seeded** (`starterBlockProps` is near-empty by design); the caption "Example
+  content in this style" is load-bearing copy, not filler.
+- `components/editor/publish-success-dialog.tsx` — first publish only, gated
+  on `hasEverPublished`.
+- `components/dashboard/activation-checklist.tsx` +
+  `lib/onboarding/activation.ts` — derived from the draft's real contents,
+  never a stored "completed steps" list; hides itself once complete. **See
+  §11** for an in-progress fix to this file's avatar step.
 
-### 10.9 Verification status
+---
 
-- `typecheck`, `lint`, `build` clean. 135 unit tests pass (27 new in
-  `tests/unit/onboarding.test.ts`).
-- `tests/e2e/account-first.spec.ts` (new, 4 tests) **passes live**: check-email
-  screen, expired link, malformed link, guest-draft login warning.
-- `core-loop.spec.ts` and `guest-onboarding.spec.ts` **fail at the publish
-  gate** solely because of §10.1. Both were rewritten for the questionnaire
-  path and are correct; they cannot pass until email delivery works.
-- Not verified: Google `linkIdentity()` (still needs a human at a consent
-  screen), and the confirmation link end to end (needs a deliverable inbox).
+## 10. Discovery, feedback, and the marketing overhaul (2026-08-26 → 2026-08-29)
 
-### 10.10 Vercel checks for next session
+Everything in this section is new since the last version of this file and was
+not documented anywhere before this rewrite.
 
-The Vercel MCP was not connected this session. When it is, confirm:
-1. `NEXT_PUBLIC_SITE_URL` is set on production — `siteUrl()` otherwise falls
-   back to `VERCEL_URL`, and every confirmation/recovery link is built from it.
-2. Every origin it can produce is in the Supabase redirect allow-list, preview
-   deployments included, or OAuth and email links break there only.
-3. The four email templates are pasted into Auth → Emails (§10.4).
-4. Resend domain verification (§10.1) before announcing anything.
+### 10.1 First-publish feedback + a real error boundary
+
+`components/editor/feedback-prompt.tsx`, surfaced from
+`publish-success-dialog.tsx` on a user's first publish: an optional
+message, "where did you hear about us" and profile name, written via
+`app/(app)/feedback-actions.ts` to the new `feedback` table
+(`20260826120000_feedback.sql`). Write-only from the client's perspective —
+`authenticated` gets `INSERT` only, no `SELECT`/`UPDATE`/`DELETE`; identity and
+profile name are stamped server-side from the caller's own session, matching
+every other mutation in this codebase, not posted by the client.
+
+`app/error.tsx` and `app/global-error.tsx` are new — a root-level React error
+boundary and a `global-error` fallback for failures in the root layout itself
+(which `error.tsx` alone can't catch, since the layout that would render it is
+what failed). Previously an uncaught render error had no boundary at all above
+individual routes.
+
+### 10.2 Public discovery directory (`/discover`, `/for/{persona}`, `/pricing`)
+
+New route tree under `app/(marketing)/`. `/discover` and `/discover/[persona]`
+list published profiles that opted in; `/for/{persona}` are five static
+persona landing pages (consultant, photographer, freelancer, creative,
+jewellery) each rendering a live demo `ProfileRenderer` snapshot, indexed via
+a new `/for` directory page so they're reachable by more than search;
+`/pricing` gives pricing its own indexable URL instead of only existing as a
+`#pricing` anchor on the homepage — it renders the same `<Pricing />` section
+the anchor still scrolls to, so the two can never diverge.
+
+Schema: `20260826063655_directory.sql` adds `directory_opt_in` (boolean,
+owner-controlled from the editor's Sharing panel), `directory_persona` (one of
+the five personas above, seeded from the onboarding purpose, editable after),
+and `directory_status` (`pending`/`approved`/`rejected`, **admin-only**) to
+both `profiles` and `profile_publications` — denormalized onto the published
+table for the same reason every other public read avoids joining back to
+`profiles` (§4.4). A partial index
+(`profile_publications_directory_idx`) matches the directory query's exact
+filter (`is_live and visibility = 'public' and directory_opt_in and
+directory_status = 'approved'`) for an index-only lookup.
+`20260826063852_directory_admin_revoke_anon.sql` follows up by revoking
+whatever grant would have let `anon`/`authenticated` write `directory_status`
+directly — that column moves only through `set_directory_status()`.
+
+There is deliberately no filter trying to exclude "obviously fake" test
+profiles — every profile today *is* test data, and nothing distinguishes it
+from a future real one, so the directory is opt-in-and-approved rather than
+opt-out-if-suspicious (§2). This also means: **there is no admin UI yet** for
+approving profiles (§7.6, §8) — someone has to call `set_directory_status()`
+directly.
+
+`app/sitemap.ts` and `app/robots.ts` were extended: the sitemap now includes
+directory-eligible profiles and the new marketing routes; robots gained
+`/login`, `/signup`, `/forgot-password`, `/reset-password` to its disallow
+list (previously only the post-auth app routes were listed, even though these
+pre-auth routes are equally uncrawlable-usefully). `app/manifest.ts` is new
+(PWA manifest). `lib/seo/structured-data.ts` adds `jsonLdScript()` for
+JSON-LD, used on the directory and persona pages.
+
+### 10.3 Marketing homepage: scroll-pinned build-flow preview
+
+`components/marketing/build-flow.tsx` — a new homepage section, scroll-pinned
+above 1100px with the editor on the left and the live page it produces on the
+right. Three sentinels and a single `IntersectionObserver` decide which step
+is active; there is deliberately no scroll listener, because `scrollY` in
+React state re-renders on every frame and this stage re-renders a whole
+profile via the real block renderers (§4.3). `lib/marketing/build-flow-presets.ts`
+holds the three theme presets the "Customize" step offers and the demo profile
+it re-themes, reusing `lib/blocks/definitions.ts` and `lib/themes/presets.ts`
+directly rather than hand-rolling parallel demo data.
+`components/marketing/build-flow-preview.tsx` is the compact, non-interactive
+render used elsewhere (e.g. persona cards) so the same visual doesn't need two
+implementations.
+
+New product screenshots in `public/assets/products/` (`hero.jpg`,
+`gallery.jpg`, `embed.jpg`, `links.jpg`, `social-links.jpg`, `image.jpg`,
+`text.jpg`, `projects.jpg`) — real screenshots of each of the nine blocks
+rendered on an actual profile, used across the marketing pages and now also
+referenced from `README.md`'s block gallery.
+
+### 10.4 Dashboard onboarding tour
+
+`components/dashboard/dashboard-tour.tsx`, using `driver.js`: a one-time,
+`localStorage`-gated (`dashboard-tour-seen`) guided tour over the dashboard's
+activation checklist and live preview, wired in `app/(app)/dashboard/page.tsx`.
+Styling lives in `app/globals.css` under a `driverjs-theme` popover class
+rather than the library's own CSS being used unstyled.
+
+### 10.5 Magic UI + Base UI cursor polish
+
+`5743e48` vendored a handful of Magic UI components in
+(`components/magicui/{animated-theme-toggler,blur-fade,border-beam,marquee}.tsx`)
+and touched cursor interactivity across several existing editor/auth
+components (`image-field.tsx`, `repeatable-list.tsx`, `theme-panel.tsx`,
+`publish-auth-gate.tsx`, `block-library.tsx`, `block-list.tsx`,
+`password-input.tsx`, `button.tsx`). This is also the commit that introduced
+the `theme-toggle.tsx` lint regression in §1.1 — worth a look if that file is
+touched again, since it may be the source of other small regressions from the
+same pass that haven't surfaced yet.
+
+### 10.6 Grants fix
+
+`20260828000000_grant_authenticated_profile_writes.sql` — see §5, "Table-level
+grants are not implied by RLS."
+
+---
+
+## 11. In progress on `chore/ui-bugs` (uncommitted)
+
+Two small fixes sitting in the working tree as of this rewrite, not yet
+committed:
+
+- **`app/(app)/dashboard/page.tsx`** — the dashboard preview panel didn't fill
+  its column on desktop and could overflow instead of scrolling internally.
+  Now `flex flex-col` + `lg:h-full` on the frame, with the `ProfileRenderer`
+  wrapped in its own `min-h-0 flex-1 overflow-y-auto` region so a tall profile
+  scrolls inside the preview instead of pushing the dashboard layout around.
+- **`lib/onboarding/activation.ts`** — the "Add a photo" activation step only
+  checked `profile.avatar_url`, so a user who set a photo on the hero block
+  directly (rather than through Settings) never saw the step complete. Now
+  also checks `hasText(blocks, "hero", "avatarUrl")`, and its link changed
+  from `/settings` to `/editor` since that's the more common place people
+  actually add one.
+
+Neither has a test yet. Worth a quick manual pass on a narrow desktop window
+before committing, given the flex/overflow change is exactly the kind of thing
+that's easy to get subtly wrong across breakpoints.
