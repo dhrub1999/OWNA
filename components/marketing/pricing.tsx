@@ -29,7 +29,7 @@ const INCLUDED = [
   },
   {
     label: "Your own handle",
-    detail: "owna.app/yourname, yours the moment you claim it.",
+    detail: "owna.online/yourname, yours the moment you claim it.",
   },
   {
     label: "Publish and unpublish",
@@ -73,7 +73,12 @@ export function Pricing() {
               plan, so the beam is doing the job a "most popular" ribbon does
               on a pricing ladder — pointing at the thing to look at — without
               inventing a ladder to point along. */}
-          <div className="relative rounded-[32px] border border-border bg-card">
+          {/* `overflow-hidden` is not cosmetic: BorderBeam is an absolutely
+              positioned square that travels the border path, and without a
+              clipping container it escapes the card's right edge and widens the
+              document. That was the one thing making every page width below
+              1440 scroll sideways. */}
+          <div className="relative overflow-hidden rounded-[32px] border border-border bg-card">
             <BorderBeam
               duration={8}
               size={140}

@@ -8,6 +8,7 @@ import { AppHeader } from "@/components/dashboard/app-header";
 import { ConfirmEmailBanner } from "@/components/dashboard/confirm-email-banner";
 import { PublishControls } from "@/components/dashboard/publish-controls";
 import { ShareCard } from "@/components/dashboard/share-card";
+import { DashboardTour } from "@/components/dashboard/dashboard-tour";
 import { ProfileRenderer } from "@/components/public/profile-renderer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -47,13 +48,15 @@ async function DashboardBody() {
       <div className="flex flex-col gap-6 p-4 sm:p-6 lg:min-h-0 lg:w-80 lg:shrink-0 lg:overflow-y-auto lg:border-r">
         {pendingEmail ? <ConfirmEmailBanner email={pendingEmail} /> : null}
 
-        <ActivationChecklist
-          steps={activationSteps({
-            profile: draft.profile,
-            blocks: draft.blocks,
-            isLive: publication.isLive,
-          })}
-        />
+        <div id="tour-activation">
+          <ActivationChecklist
+            steps={activationSteps({
+              profile: draft.profile,
+              blocks: draft.blocks,
+              isLive: publication.isLive,
+            })}
+          />
+        </div>
 
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">
@@ -71,7 +74,7 @@ async function DashboardBody() {
               {blockCount} block{blockCount === 1 ? "" : "s"}
             </span>
           </div>
-          <div className="mt-4">
+          <div id="tour-publish" className="mt-4">
             <PublishControls
               isLive={publication.isLive}
               isAnonymous={isGuestSession(user)}
@@ -90,7 +93,7 @@ async function DashboardBody() {
       </div>
 
       <div className="bg-muted/40 flex flex-1 flex-col p-4 sm:p-8 lg:min-h-0 lg:min-w-0 lg:overflow-y-auto">
-        <div className="mx-auto w-full max-w-[390px] overflow-hidden rounded-xl border bg-background shadow-sm lg:max-w-md">
+        <div id="tour-preview" className="mx-auto w-full max-w-[390px] overflow-hidden rounded-xl border bg-background shadow-sm lg:max-w-md">
           <div className="bg-muted/40 flex items-center gap-2 border-b px-3 py-2">
             <span className="text-muted-foreground text-xs">Preview</span>
             <Button
@@ -110,7 +113,7 @@ async function DashboardBody() {
       </div>
 
       <div className="flex flex-col p-4 sm:p-6 lg:min-h-0 lg:w-72 lg:shrink-0 lg:overflow-y-auto lg:border-l">
-        <div className="flex flex-col gap-2">
+        <div id="tour-actions" className="flex flex-col gap-2">
           <Button className="justify-start" render={<Link href="/editor" />}>
             <PencilLine />
             Edit profile
@@ -166,6 +169,7 @@ export default function DashboardPage() {
       >
         <DashboardBody />
       </Suspense>
+      <DashboardTour />
     </div>
   );
 }

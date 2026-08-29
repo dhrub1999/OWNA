@@ -5,6 +5,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* The landing page's second step: below this the nine-block grid drops from six
+   tracks to four and the build-flow stage unpins. A registered breakpoint rather
+   than `min-[1100px]:`, so Tailwind sorts it between `lg` and `xl` instead of
+   emitting it ahead of `md` and losing the cascade at wide widths. */
+@theme {
+  --breakpoint-stage: 1100px;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -198,4 +206,124 @@
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
+}
+
+/* Driver.js custom theme matching Shadcn UI */
+.driverjs-theme {
+  --driver-popover-bg: var(--card);
+  --driver-popover-text: var(--card-foreground);
+  --driver-popover-border-color: var(--border);
+  --driver-popover-border-radius: var(--radius);
+}
+
+.driver-popover.driverjs-theme {
+  background-color: var(--driver-popover-bg);
+  color: var(--driver-popover-text);
+  border: 1px solid var(--driver-popover-border-color);
+  border-radius: var(--driver-popover-border-radius);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  font-family: inherit;
+}
+
+.driver-popover.driverjs-theme .driver-popover-title {
+  font-weight: 600;
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+}
+
+.driver-popover.driverjs-theme .driver-popover-description {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin-bottom: 1rem;
+}
+
+.driver-popover.driverjs-theme .driver-popover-footer button {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border: none;
+  border-radius: calc(var(--radius) - 2px);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-shadow: none;
+}
+
+.driver-popover.driverjs-theme .driver-popover-footer button.driver-popover-close-btn {
+  background-color: transparent;
+  color: var(--muted-foreground);
+  border: 1px solid var(--border);
+}
+
+.driver-popover.driverjs-theme .driver-popover-footer button:hover {
+  opacity: 0.9;
+}
+.driver-popover.driverjs-theme .driver-popover-footer button.driver-popover-close-btn:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.driver-popover.driverjs-theme .driver-popover-progress-text {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+.driver-popover.driverjs-theme .driver-popover-arrow {
+  border-color: var(--border);
+}
+/* ---------------------------------------------------------------------------
+   The landing page's build-flow preview (components/marketing/build-flow-preview).
+
+   Two effects the component cannot express in utilities, because both act on
+   markup that ProfileRenderer owns:
+
+   1. A block arriving is a fresh mount — `buildFlowSnapshot` slices the block
+      array rather than hiding blocks — so a plain CSS mount animation fires for
+      the new block and never re-runs for the ones already on screen.
+   2. Swapping preset rewrites the theme's custom properties. Transitioning the
+      properties themselves is not possible, so the transition goes on the
+      elements that read them.
+   --------------------------------------------------------------------------- */
+@keyframes build-flow-block-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.build-flow-preview .profile-block {
+  animation: build-flow-block-in 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* The Editorial preset's real layout is left-aligned (lib/themes/presets.ts),
+   which the hero block overrides but the social block does not. In the
+   preview that reads as a stray left-aligned row under a centered hero, so
+   pin the preview's row-layout blocks to center regardless of preset. */
+.build-flow-preview .profile-root {
+  --p-justify: center !important;
+}
+
+.build-flow-preview .profile-root,
+.build-flow-preview .profile-root *:not(img) {
+  transition:
+    background-color 500ms ease,
+    color 500ms ease,
+    border-color 500ms ease,
+    border-radius 500ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .build-flow-preview .profile-block {
+    animation: none;
+  }
+  .build-flow-preview .profile-root,
+  .build-flow-preview .profile-root *:not(img),
+  /* profile.css gives the editor canvas an outline transition at a higher
+     specificity than the line above; match it so nothing animates at all. */
+  .build-flow-preview .profile-root[data-editing="true"] .profile-block {
+    transition: none;
+  }
 }

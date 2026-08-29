@@ -28,12 +28,12 @@ export function siteUrl(): string {
  */
 export const CONTACT_EMAIL = "social.owna@gmail.com";
 
-/** The public URL of a profile, e.g. `https://owna.app/tamal`. */
+/** The public URL of a profile, e.g. `https://owna.online/tamal`. */
 export function profileUrl(username: string): string {
   return `${siteUrl()}/${username}`;
 }
 
-/** The same thing without a scheme, for display: `owna.app/tamal`. */
+/** The same thing without a scheme, for display: `owna.online/tamal`. */
 export function profileUrlLabel(username: string): string {
   return profileUrl(username).replace(/^https?:\/\//, "");
 }

@@ -1,6 +1,6 @@
 # OWNA
 
-A customizable digital profile platform. Every user gets `owna.app/{username}` — a
+A customizable digital profile platform. Every user gets `owna.online/{username}` — a
 page built from drag-and-drop blocks and a theme they control, with no code, no
 hosting and no deploys.
 

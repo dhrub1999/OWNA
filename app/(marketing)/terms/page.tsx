@@ -40,7 +40,7 @@ export default function TermsPage() {
             <>
               <p>
                 OWNA gives you a page at an address of the form{" "}
-                <strong>owna.app/yourhandle</strong>, an editor for it, and a
+                <strong>owna.online/yourhandle</strong>, an editor for it, and a
                 publish button. Every part of it is currently free, with no
                 usage limits beyond what is needed to keep the service standing
                 up.

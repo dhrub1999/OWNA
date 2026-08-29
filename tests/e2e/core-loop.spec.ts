@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { e2eEmail } from "./test-email";
 
 /**
  * The product loop, end to end: build, edit, theme, publish, share.
@@ -20,9 +21,10 @@ import { expect, test } from "@playwright/test";
  * Both of these drive the publish gate, which converts the anonymous session
  * with `updateUser()`. With email confirmation on, Supabase sends a message as
  * part of that call and fails the whole call if it cannot. So this test only
- * passes when the project's SMTP sender can actually deliver to the generated
- * address. A failure here reading "Error sending ... email" is a mail
- * configuration problem, not a regression in the flow.
+ * passes when the project's mail provider accepts the generated address — see
+ * ./test-email.ts, which exists because `@example.com` is rejected outright. A
+ * failure here reading "Error sending ... email" is a mail configuration
+ * problem, not a regression in the flow.
  *
  *   OWNA_E2E=1 bun run test:e2e
  */
@@ -33,7 +35,7 @@ test.describe("core loop", () => {
 
   const suffix = Math.random().toString(36).slice(2, 8);
   const name = `Loop ${suffix}`;
-  const email = `owna-e2e-${suffix}@example.com`;
+  const email = e2eEmail(`owna-e2e-${suffix}`);
   const password = `Test-${suffix}-password`;
   const username = `e2e${suffix}`;
 
