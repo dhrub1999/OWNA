@@ -93,7 +93,7 @@ async function DashboardBody() {
       </div>
 
       <div className="bg-muted/40 flex flex-1 flex-col p-4 sm:p-8 lg:min-h-0 lg:min-w-0 lg:overflow-y-auto">
-        <div id="tour-preview" className="mx-auto w-full max-w-[390px] overflow-hidden rounded-xl border bg-background shadow-sm lg:max-w-md">
+        <div id="tour-preview" className="mx-auto flex w-full max-w-[390px] flex-col overflow-hidden rounded-xl border bg-background shadow-sm lg:h-full lg:max-w-md">
           <div className="bg-muted/40 flex items-center gap-2 border-b px-3 py-2">
             <span className="text-muted-foreground text-xs">Preview</span>
             <Button
@@ -106,8 +106,12 @@ async function DashboardBody() {
               Full size
             </Button>
           </div>
-          <div className="pointer-events-none">
-            <ProfileRenderer snapshot={snapshot} isPreview className="min-h-[60vh]" />
+          <div className="scrollbar-hide min-h-0 flex-1 overflow-y-auto">
+            <ProfileRenderer
+              snapshot={snapshot}
+              isPreview
+              className="pointer-events-none min-h-[60vh]"
+            />
           </div>
         </div>
       </div>

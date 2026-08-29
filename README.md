@@ -1,8 +1,16 @@
-# OWNA
+<p align="center">
+  <img src="public/assets/logo/logo-with-name.svg" alt="OWNA" width="220">
+</p>
 
-A customizable digital profile platform. Every user gets `owna.online/{username}` — a
-page built from drag-and-drop blocks and a theme they control, with no code, no
-hosting and no deploys.
+<p align="center">
+  A customizable digital profile platform. Every user gets <code>owna.online/{username}</code> —
+  a page built from drag-and-drop blocks and a theme they control, with no code,
+  no hosting and no deploys.
+</p>
+
+<p align="center">
+  <img src="public/assets/hero-section/poster-frame.jpg" alt="An OWNA profile page, rendered from blocks" width="320">
+</p>
 
 One application, one renderer, many profiles. The username in the path selects
 which configuration to render; publishing an edit takes effect through cache
@@ -53,6 +61,53 @@ bun run dev
 The integration and e2e suites need a scratch Supabase project with email
 confirmation disabled; both skip themselves when their env vars are absent. See
 `.env.example`.
+
+## Blocks
+
+A profile is a sequence of blocks, each a pure data record (`lib/blocks/definitions.ts`)
+rendered by one shared component on both the editor canvas and the public page.
+
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <img src="public/assets/products/hero.jpg" alt="Hero block: avatar, name, bio, availability and links" width="240"><br>
+      <sub><b>Hero</b> — avatar, name, bio, availability, socials</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="public/assets/products/projects.jpg" alt="Projects block: a case study with gallery and description" width="240"><br>
+      <sub><b>Projects</b> — case studies with an image gallery</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="public/assets/products/links.jpg" alt="Links block: call-to-action cards" width="240"><br>
+      <sub><b>Links</b> — call-to-action cards</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="public/assets/products/gallery.jpg" alt="Gallery block: a grid of images" width="240"><br>
+      <sub><b>Gallery</b> — image grid</sub>
+    </td>
+    <td align="center">
+      <img src="public/assets/products/image.jpg" alt="Image block: a single full-width photo" width="240"><br>
+      <sub><b>Image</b> — single photo</sub>
+    </td>
+    <td align="center">
+      <img src="public/assets/products/text.jpg" alt="Text block: a heading and paragraph" width="240"><br>
+      <sub><b>Text</b> — heading and copy</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="public/assets/products/embed.jpg" alt="Embed block: a YouTube video embedded by URL" width="240"><br>
+      <sub><b>Embed</b> — YouTube/Spotify/etc. by URL</sub>
+    </td>
+    <td align="center">
+      <img src="public/assets/products/social-links.jpg" alt="Social links block: a row of platform icons" width="240"><br>
+      <sub><b>Social links</b> — a row of platform icons</sub>
+    </td>
+    <td></td>
+  </tr>
+</table>
 
 ## How it fits together
 

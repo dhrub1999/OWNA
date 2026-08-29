@@ -62,8 +62,12 @@ export function activationSteps({
     {
       id: "avatar",
       label: "Add a photo",
-      done: Boolean(profile.avatar_url?.trim()),
-      href: "/settings",
+      // Either place is a real answer: the account-level photo, or the
+      // hero block's own photo when it sets one instead.
+      done:
+        Boolean(profile.avatar_url?.trim()) ||
+        hasText(blocks, "hero", "avatarUrl"),
+      href: "/editor",
     },
     {
       id: "links",
