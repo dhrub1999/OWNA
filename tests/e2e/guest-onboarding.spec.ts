@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { e2eEmail } from "./test-email";
 
 /**
  * The product-first loop: build a page anonymously, then publish forces an
@@ -24,7 +25,7 @@ test.describe("guest onboarding", () => {
   const suffix = Math.random().toString(36).slice(2, 8);
   const name = `Guest ${suffix}`;
   const username = `guest${suffix}`;
-  const email = `owna-e2e-guest-${suffix}@example.com`;
+  const email = e2eEmail(`owna-e2e-guest-${suffix}`);
   const password = `Test-${suffix}-password`;
 
   test("anonymous build, publish gate, account creation, live page", async ({

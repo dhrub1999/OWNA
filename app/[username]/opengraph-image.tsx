@@ -118,7 +118,7 @@ export default async function OpengraphImage({
             color: colors.muted,
           }}
         >
-          <span>owna.app/{snapshot.profile.username}</span>
+          <span>owna.online/{snapshot.profile.username}</span>
           <span style={{ color: colors.accent, fontWeight: 600 }}>OWNA</span>
         </div>
       </div>

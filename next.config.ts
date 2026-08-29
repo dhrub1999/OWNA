@@ -95,6 +95,11 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
 
   images: {
+    // Quality values must be allowlisted, or `quality` on a next/image is
+    // silently ignored and the default 75 is served instead. The marketing
+    // block grid asks for 90: its images are screenshots of UI, and JPEG at 75
+    // turns small type inside them to mush in a way a photograph would hide.
+    qualities: [75, 90],
     remotePatterns: [
       {
         protocol: "https",

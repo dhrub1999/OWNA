@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { BlockGrid } from "@/components/marketing/block-grid";
+import { BuildFlow } from "@/components/marketing/build-flow";
 import { Hero } from "@/components/marketing/hero";
 import { Pricing } from "@/components/marketing/pricing";
 import { ProfileRail } from "@/components/marketing/profile-rail";
@@ -6,7 +8,6 @@ import { StartBuildingButton } from "@/components/marketing/start-building-butto
 import { ProfileRenderer } from "@/components/public/profile-renderer";
 import { demoProfiles } from "@/lib/demo-profiles";
 import { BlurFade } from "@/components/magicui/blur-fade";
-import { CheckCircle, Layers, Palette, Globe } from "lucide-react";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -18,156 +19,11 @@ export default function HomePage() {
       {/* 1. Hero */}
       <Hero />
 
-      {/* 2. More than a link */}
-      <section className="scroll-mt-20 py-24 sm:py-32 bg-secondary/50" id="product">
-        <div className="mx-auto max-w-7xl px-6 sm:px-12">
-          <div className="text-center max-w-3xl mx-auto mb-20">
-            <h2 className="font-display text-4xl sm:text-5xl font-bold tracking-tight">
-              You are more than a list of links.
-            </h2>
-          </div>
+      {/* 2. The nine blocks, and the one a link-in-bio tool gives you. */}
+      <BlockGrid />
 
-          <div className="grid md:grid-cols-2 gap-8 lg:gap-16 items-stretch max-w-5xl mx-auto">
-            <BlurFade
-              inView
-              direction="up"
-              className="p-10 rounded-[32px] bg-background border border-border flex flex-col"
-            >
-              <h3 className="font-display text-2xl font-bold mb-8">
-                Basic link page
-              </h3>
-              <ul className="space-y-4 text-muted-foreground text-lg flex-1">
-                <li className="flex items-center gap-4">
-                  <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50" />{" "}
-                  photo
-                </li>
-                <li className="flex items-center gap-4">
-                  <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50" />{" "}
-                  bio
-                </li>
-                <li className="flex items-center gap-4">
-                  <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50" />{" "}
-                  links
-                </li>
-                <li className="flex items-center gap-4">
-                  <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50" />{" "}
-                  social icons
-                </li>
-              </ul>
-            </BlurFade>
-
-            <BlurFade
-              inView
-              direction="up"
-              delay={0.12}
-              className="p-10 rounded-[32px] bg-foreground text-background flex flex-col relative overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3" />
-              <h3 className="font-display text-2xl font-bold mb-8 relative z-10 text-background">
-                OWNA
-              </h3>
-              <ul className="grid grid-cols-2 gap-x-4 gap-y-5 text-background font-medium text-lg relative z-10">
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary" /> identity
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary" />{" "}
-                  introduction
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary" /> services
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary" /> portfolio
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary" /> projects
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary" />{" "}
-                  testimonials
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary" /> gallery
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary" /> contact
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-primary" /> booking
-                </li>
-              </ul>
-            </BlurFade>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. Build, customize, publish */}
-      <section className="py-32 sm:py-40">
-        <div className="mx-auto max-w-7xl px-6 sm:px-12">
-          <div className="grid lg:grid-cols-3 gap-16 lg:gap-12">
-            <BlurFade inView direction="up" className="group">
-              <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
-                <Layers className="w-8 h-8 text-foreground" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">01 — Build</h3>
-              <p className="text-muted-foreground text-lg mb-8">
-                Choose what belongs on your page.
-              </p>
-              <div className="p-6 rounded-2xl bg-secondary/50 border border-border/50 text-sm font-medium space-y-3">
-                <div className="p-3 bg-background rounded-lg shadow-sm border border-border">
-                  Hero
-                </div>
-                <div className="p-3 bg-background rounded-lg shadow-sm border border-border">
-                  Projects
-                </div>
-                <div className="p-3 bg-background rounded-lg shadow-sm border border-border opacity-50 border-dashed">
-                  Add Block...
-                </div>
-              </div>
-            </BlurFade>
-
-            <BlurFade inView direction="up" delay={0.1} className="group">
-              <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
-                <Palette className="w-8 h-8 text-foreground" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">02 — Customize</h3>
-              <p className="text-muted-foreground text-lg mb-8">
-                Make it look like you.
-              </p>
-              <div className="p-6 rounded-2xl bg-secondary/50 border border-border/50 text-sm font-medium grid grid-cols-2 gap-3">
-                <div className="h-10 bg-background rounded-lg shadow-sm border border-border flex items-center px-3">
-                  Colors
-                </div>
-                <div className="h-10 bg-background rounded-lg shadow-sm border border-border flex items-center px-3">
-                  Type
-                </div>
-                <div className="h-10 bg-background rounded-lg shadow-sm border border-border flex items-center px-3 col-span-2">
-                  Layout
-                </div>
-              </div>
-            </BlurFade>
-
-            <BlurFade inView direction="up" delay={0.2} className="group">
-              <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
-                <Globe className="w-8 h-8 text-foreground" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">03 — Publish</h3>
-              <p className="text-muted-foreground text-lg mb-8">
-                Go live when you&rsquo;re ready.
-              </p>
-              <div className="p-6 rounded-2xl bg-secondary/50 border border-border/50 text-sm font-medium flex flex-col justify-center items-center h-[188px]">
-                <div className="w-full max-w-[200px] h-10 bg-primary text-primary-foreground rounded-full shadow-sm flex items-center justify-center mb-4">
-                  Publish to Web
-                </div>
-                <div className="text-muted-foreground font-mono text-xs">
-                  owna.app/yourname
-                </div>
-              </div>
-            </BlurFade>
-          </div>
-        </div>
-      </section>
+      {/* 3. Build, customize, publish — a scroll-pinned split above 1100px. */}
+      <BuildFlow />
 
       {/* 4. Your presence, your way */}
       <section className="py-32 sm:py-48 bg-foreground text-background">
@@ -344,7 +200,7 @@ export default function HomePage() {
                 </div>
               </div>
               <p className="mt-4 text-center text-sm text-muted-foreground lg:text-left">
-                owna.app/aura-jewellery
+                owna.online/aura-jewellery
               </p>
             </div>
           </BlurFade>

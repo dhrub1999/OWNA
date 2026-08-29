@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CheckCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft, CheckCircle } from "lucide-react";
+import { BlurFade } from "@/components/magicui/blur-fade";
 import { StartBuildingButton } from "@/components/marketing/start-building-button";
 import { ProfileRenderer } from "@/components/public/profile-renderer";
 import { demoProfiles, type DemoProfileId } from "@/lib/demo-profiles";
@@ -132,8 +132,20 @@ export default async function PersonaPage({
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-20 sm:px-12 sm:py-28">
-      <div className="grid items-center gap-16 lg:grid-cols-2 lg:gap-24">
-        <div>
+      <Link
+        href="/for"
+        className="group inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <ArrowLeft
+          aria-hidden
+          strokeWidth={2}
+          className="size-4 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-x-0.5"
+        />
+        Built for you
+      </Link>
+
+      <div className="mt-10 grid items-center gap-16 lg:grid-cols-2 lg:gap-24">
+        <BlurFade direction="up" duration={0.5} offset={10}>
           <p className="font-mono text-xs tracking-wide text-muted-foreground uppercase">
             {content.craft}
           </p>
@@ -167,23 +179,28 @@ export default async function PersonaPage({
               </li>
             ))}
           </ul>
-        </div>
+        </BlurFade>
 
-        <div className="h-[520px] overflow-hidden rounded-[24px] border border-border bg-background sm:h-[600px] [mask-image:linear-gradient(to_bottom,#000_88%,transparent_99%)]">
-          <div className="pointer-events-none h-full overflow-hidden">
-            <ProfileRenderer snapshot={demoProfiles[persona as DemoProfileId]} isPreview />
+        <BlurFade direction="up" duration={0.5} offset={10} delay={0.1}>
+          <div className="h-[520px] overflow-hidden rounded-[24px] border border-border bg-background sm:h-[600px] [mask-image:linear-gradient(to_bottom,#000_88%,transparent_99%)]">
+            <div className="pointer-events-none h-full overflow-hidden">
+              <ProfileRenderer snapshot={demoProfiles[persona as DemoProfileId]} isPreview />
+            </div>
           </div>
-        </div>
+        </BlurFade>
       </div>
 
       <div className="mt-24 border-t border-border pt-12">
         <p className="text-sm text-muted-foreground">Also built for</p>
-        <ul className="mt-4 flex flex-wrap gap-x-8 gap-y-3">
+        <ul className="mt-5 flex flex-wrap gap-3">
           {otherPersonas.map((id) => (
             <li key={id}>
-              <Button variant="link" className="px-0" render={<Link href={`/for/${id}`} />}>
+              <Link
+                href={`/for/${id}`}
+                className="inline-flex rounded-full border border-border bg-background px-4 py-1.5 text-sm transition-colors hover:border-foreground/30 hover:bg-secondary"
+              >
                 {PERSONAS[id].craft}
-              </Button>
+              </Link>
             </li>
           ))}
         </ul>
