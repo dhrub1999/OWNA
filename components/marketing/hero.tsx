@@ -2,7 +2,6 @@ import Link from "next/link";
 import { StartBuildingButton } from "@/components/marketing/start-building-button";
 import { HeroFootage } from "@/components/marketing/hero-footage";
 import { Button } from "@/components/ui/button";
-import { BlurFade } from "@/components/magicui/blur-fade";
 
 const POSTER = "/assets/hero-section/poster-frame.jpg";
 
@@ -127,51 +126,45 @@ export function Hero() {
               the container is not: a static size would let the crossing swing
               from a 90px gap at 1024 to a hit at 1280. The slope holds the
               overlap at roughly 30px across the whole range. */}
-          <BlurFade direction="up" duration={0.6} offset={10}>
-            <h1 className="font-sans text-[42px] leading-[1.04] font-extrabold tracking-[-0.035em] [text-shadow:0_2px_24px_rgba(247,245,241,0.7)] sm:text-[56px] lg:text-[clamp(56px,calc(9.84vw-44px),82px)] lg:leading-none lg:tracking-[-0.038em] dark:[text-shadow:0_2px_24px_rgba(12,11,10,0.55)]">
-              <span className="lg:hidden">
-                Your online
-                <br />
-                presence should
-                <br />
-                feel like you.
-              </span>
-              <span className="hidden lg:inline">
-                Your online presence
-                <br />
-                should feel
-                <br />
-                like you.
-              </span>
-            </h1>
-          </BlurFade>
+          <h1 className="font-sans text-[42px] leading-[1.04] font-extrabold tracking-[-0.035em] [text-shadow:0_2px_24px_rgba(247,245,241,0.7)] motion-safe:animate-hero-reveal sm:text-[56px] lg:text-[clamp(56px,calc(9.84vw-44px),82px)] lg:leading-none lg:tracking-[-0.038em] dark:[text-shadow:0_2px_24px_rgba(12,11,10,0.55)]">
+            <span className="lg:hidden">
+              Your online
+              <br />
+              presence should
+              <br />
+              feel like you.
+            </span>
+            <span className="hidden lg:inline">
+              Your online presence
+              <br />
+              should feel
+              <br />
+              like you.
+            </span>
+          </h1>
 
-          <BlurFade direction="up" duration={0.6} offset={10} delay={0.08}>
-            <p className="mt-5.5 max-w-75 text-[16px] leading-normal text-[#6E6C67] sm:max-w-95 sm:text-[18px] lg:mt-10 lg:max-w-105 lg:text-[21px] lg:tracking-[-0.01em] dark:text-[#94918A]">
-              Create a professional digital presence without building a
-              website from scratch.
-            </p>
-          </BlurFade>
+          <p className="mt-5.5 max-w-75 text-[16px] leading-normal text-[#6E6C67] motion-safe:animate-hero-reveal motion-safe:[animation-delay:0.12s] sm:max-w-95 sm:text-[18px] lg:mt-10 lg:max-w-105 lg:text-[21px] lg:tracking-[-0.01em] dark:text-[#94918A]">
+            Create a professional digital presence without building a
+            website from scratch.
+          </p>
 
-          <BlurFade direction="up" duration={0.6} offset={10} delay={0.16}>
-            <div className="mt-6.5 flex flex-col gap-2.5 sm:flex-row sm:gap-3.5 lg:mt-11">
-              <StartBuildingButton className="h-13.5 w-full rounded-full bg-[#1B62F5] px-8.5 text-[16px] font-semibold text-white hover:bg-[#1450D8] sm:w-auto lg:h-14.5 lg:text-[17px] lg:tracking-[-0.01em]">
-                Create your OWNA
-              </StartBuildingButton>
+          <div className="mt-6.5 flex flex-col gap-2.5 motion-safe:animate-hero-reveal motion-safe:[animation-delay:0.20s] sm:flex-row sm:gap-3.5 lg:mt-11">
+            <StartBuildingButton className="h-13.5 w-full rounded-full bg-[#1B62F5] px-8.5 text-[16px] font-semibold text-white hover:bg-[#1450D8] sm:w-auto lg:h-14.5 lg:text-[17px] lg:tracking-[-0.01em]">
+              Create your OWNA
+            </StartBuildingButton>
 
-              {/* Frosted rather than a flat fill because it sits over bright
-                  product footage on mobile and over the device's edge on desktop.
-                  The opaque values are the fallback; the translucent ones only
-                  apply where backdrop-filter actually exists. */}
-              <Button
-                variant="ghost"
-                className="h-13.5 w-full rounded-full border border-white/72 bg-white px-7.5 text-[16px] font-medium text-[#0C0B0A] shadow-[0_1px_0_rgba(255,255,255,0.7)_inset,0_10px_28px_-12px_rgba(20,18,14,0.42)] hover:bg-white hover:text-[#0C0B0A] supports-backdrop-filter:bg-white/58 supports-backdrop-filter:backdrop-blur-xl supports-backdrop-filter:backdrop-saturate-[1.6] supports-backdrop-filter:hover:bg-white/74 supports-backdrop-filter:hover:border-white/90 sm:w-auto lg:h-14.5 lg:text-[17px] lg:tracking-[-0.01em] dark:border-[#F8F6F2]/26 dark:bg-[#26251F] dark:text-[#F8F6F2] dark:shadow-[0_1px_0_rgba(255,255,255,0.22)_inset,0_10px_28px_-10px_rgba(0,0,0,0.55)] dark:hover:bg-[#2E2D27] dark:hover:text-[#F8F6F2] dark:supports-backdrop-filter:bg-[#F8F6F2]/10 dark:supports-backdrop-filter:hover:bg-[#F8F6F2]/17 dark:supports-backdrop-filter:hover:border-[#F8F6F2]/44"
-                render={<Link href="#explore" />}
-              >
-                See real profiles
-              </Button>
-            </div>
-          </BlurFade>
+            {/* Frosted rather than a flat fill because it sits over bright
+                product footage on mobile and over the device's edge on desktop.
+                The opaque values are the fallback; the translucent ones only
+                apply where backdrop-filter actually exists. */}
+            <Button
+              variant="ghost"
+              className="h-13.5 w-full rounded-full border border-white/72 bg-white px-7.5 text-[16px] font-medium text-[#0C0B0A] shadow-[0_1px_0_rgba(255,255,255,0.7)_inset,0_10px_28px_-12px_rgba(20,18,14,0.42)] hover:bg-white hover:text-[#0C0B0A] supports-backdrop-filter:bg-white/58 supports-backdrop-filter:backdrop-blur-xl supports-backdrop-filter:backdrop-saturate-[1.6] supports-backdrop-filter:hover:bg-white/74 supports-backdrop-filter:hover:border-white/90 sm:w-auto lg:h-14.5 lg:text-[17px] lg:tracking-[-0.01em] dark:border-[#F8F6F2]/26 dark:bg-[#26251F] dark:text-[#F8F6F2] dark:shadow-[0_1px_0_rgba(255,255,255,0.22)_inset,0_10px_28px_-10px_rgba(0,0,0,0.55)] dark:hover:bg-[#2E2D27] dark:hover:text-[#F8F6F2] dark:supports-backdrop-filter:bg-[#F8F6F2]/10 dark:supports-backdrop-filter:hover:bg-[#F8F6F2]/17 dark:supports-backdrop-filter:hover:border-[#F8F6F2]/44"
+              render={<Link href="#explore" />}
+            >
+              See real profiles
+            </Button>
+          </div>
         </div>
       </div>
     </section>

@@ -190,6 +190,27 @@
   animation: hero-glow-drift 13s ease-in-out infinite alternate;
 }
 
+/* The hero headline/subtext/CTA reveal upward on first paint. Pure CSS
+   (`both` fill-mode holds the `from` state until the animation starts) so it
+   plays as soon as the browser paints — it never waits on JS hydration the
+   way a motion-library-driven version would. Applied via `motion-safe:` at
+   the call site, same as the glow drift above. */
+@keyframes hero-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+@utility animate-hero-reveal {
+  animation: hero-reveal 0.6s 0.04s cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+
 /* The Explore rail's Marquee auto-scrolls continuously; freeze it for anyone
    who has asked the OS for reduced motion, same as any other ambient loop. */
 @media (prefers-reduced-motion: reduce) {
