@@ -1,6 +1,7 @@
 import "server-only";
 
-import { getOwnProfile } from "@/lib/supabase/profile";
+import { profileUrl } from "@/lib/site";
+import { getOwnProfile, getPublicationState } from "@/lib/supabase/profile";
 import { getUser, isGuestSession } from "@/lib/supabase/server";
 
 /**
@@ -25,8 +26,20 @@ import { getUser, isGuestSession } from "@/lib/supabase/server";
  */
 export type Viewer =
   | { state: "signed-out" }
-  | { state: "guest-draft"; username: string }
-  | { state: "member"; username: string | null };
+  | {
+      state: "guest-draft";
+      username: string;
+      avatarUrl: string | null;
+      displayName: string | null;
+      liveUrl: string | null;
+    }
+  | {
+      state: "member";
+      username: string | null;
+      avatarUrl: string | null;
+      displayName: string | null;
+      liveUrl: string | null;
+    };
 
 export async function getViewer(): Promise<Viewer> {
   const user = await getUser();
@@ -35,7 +48,15 @@ export async function getViewer(): Promise<Viewer> {
   const profile = await getOwnProfile();
   if (!profile) return { state: "signed-out" };
 
+  const publication = await getPublicationState(profile.id);
+
+  const identity = {
+    avatarUrl: profile.avatar_url,
+    displayName: profile.display_name,
+    liveUrl: publication.isLive ? profileUrl(profile.username) : null,
+  };
+
   return isGuestSession(user)
-    ? { state: "guest-draft", username: profile.username }
-    : { state: "member", username: profile.username };
+    ? { state: "guest-draft", username: profile.username, ...identity }
+    : { state: "member", username: profile.username, ...identity };
 }

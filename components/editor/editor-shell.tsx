@@ -139,7 +139,14 @@ function EditorLayout({
               <X />
             </Button>
           </div>
-          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
+          <div
+            className={cn(
+              "min-h-0 flex-1",
+              mobilePanel === "blocks"
+                ? "overflow-y-auto overscroll-contain"
+                : "flex flex-col overflow-hidden",
+            )}
+          >
             {mobilePanel === "blocks" ? <LeftPanel /> : <RightPanel />}
           </div>
         </div>

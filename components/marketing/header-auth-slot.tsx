@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { UserMenu } from "@/components/auth/user-menu";
+import { HeaderAuthRefresh } from "@/components/marketing/header-auth-refresh";
 import { MobileNav } from "@/components/marketing/mobile-nav";
 import { StartBuildingButton } from "@/components/marketing/start-building-button";
 import { getViewer, type Viewer } from "@/lib/auth/viewer";
@@ -15,15 +17,25 @@ import { getViewer, type Viewer } from "@/lib/auth/viewer";
  *
  * One accepted imprecision: `proxy.ts` does not match `/`, so no refresh runs
  * here and a Server Component cannot write the rotated cookie back anyway. A
- * session whose access token expired mid-visit therefore renders as signed-out.
- * That is a display-only wrong answer — the first click into `/dashboard` or
- * `/editor` passes through the proxy, refreshes, and corrects itself.
+ * session whose access token expired mid-visit can therefore render as
+ * signed-out on the very first paint. `HeaderAuthRefresh` corrects that
+ * client-side once the browser's own Supabase client confirms the session is
+ * still good, so it never survives past the initial render.
+ *
+ * That correction — and the loading-fallback-to-resolved swap on a normal
+ * load — can still visibly nudge `ThemeToggle`, since the signed-out pair and
+ * the member avatar are very different widths sharing one flex row. An
+ * earlier version of this file reserved a fixed-width box to kill that
+ * motion entirely, but that left a permanent empty gap next to the avatar on
+ * every load, which is worse than the rare, brief nudge it prevented. Content
+ * sizes to itself instead.
  */
 export async function HeaderAuthSlot() {
   const viewer = await getViewer();
 
   return (
     <>
+      <HeaderAuthRefresh signedOut={viewer.state === "signed-out"} />
       <DesktopActions viewer={viewer} />
       <MobileNav viewer={viewer} />
     </>
@@ -33,12 +45,13 @@ export async function HeaderAuthSlot() {
 function DesktopActions({ viewer }: { viewer: Viewer }) {
   if (viewer.state === "member") {
     return (
-      <Button
-        className="hidden rounded-full px-6 sm:inline-flex"
-        render={<Link href="/dashboard" />}
-      >
-        Dashboard
-      </Button>
+      <div className="hidden sm:inline-flex">
+        <UserMenu
+          avatarUrl={viewer.avatarUrl}
+          displayName={viewer.displayName}
+          liveUrl={viewer.liveUrl}
+        />
+      </div>
     );
   }
 
