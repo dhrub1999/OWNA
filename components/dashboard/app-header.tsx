@@ -1,9 +1,9 @@
+import { Suspense } from "react";
 import Link from "next/link";
-import { LogOut, Settings } from "lucide-react";
-import { signOut } from "@/app/(auth)/actions";
-import { Button } from "@/components/ui/button";
+import { UserMenu } from "@/components/auth/user-menu";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { getViewer } from "@/lib/auth/viewer";
 
 export function AppHeader() {
   return (
@@ -15,22 +15,39 @@ export function AppHeader() {
       >
         <Logo className="h-6 w-auto" />
       </Link>
-      <div className="ml-auto flex items-center gap-1">
+      <div className="ml-auto flex items-center gap-2">
         <ThemeToggle />
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          render={<Link href="/settings" />}
-          aria-label="Settings"
+        <Suspense
+          fallback={
+            <div
+              aria-hidden="true"
+              className="size-6 animate-pulse rounded-full bg-muted"
+            />
+          }
         >
-          <Settings />
-        </Button>
-        <form action={signOut}>
-          <Button variant="ghost" size="icon-sm" type="submit" aria-label="Sign out">
-            <LogOut />
-          </Button>
-        </form>
+          <HeaderAccountMenu />
+        </Suspense>
       </div>
     </header>
+  );
+}
+
+/**
+ * The only part of `AppHeader` that reads cookies (via `getViewer`), so it is
+ * isolated in its own Suspense boundary the same way `HeaderAuthSlot` is on
+ * the marketing header — otherwise the whole header would need to wait on a
+ * database round trip just to show the logo and theme toggle.
+ */
+async function HeaderAccountMenu() {
+  const viewer = await getViewer();
+  if (viewer.state === "signed-out") return null;
+
+  return (
+    <UserMenu
+      avatarSize="sm"
+      avatarUrl={viewer.avatarUrl}
+      displayName={viewer.displayName}
+      liveUrl={viewer.liveUrl}
+    />
   );
 }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Menu } from "lucide-react";
+import { signOut } from "@/app/(auth)/actions";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -10,6 +11,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { UserAvatar } from "@/components/ui/user-avatar";
 import { StartBuildingButton } from "@/components/marketing/start-building-button";
 import { NAV_LINKS } from "@/components/marketing/nav-links";
 import { Logo } from "@/components/logo";
@@ -84,12 +86,60 @@ export function MobileNav({ viewer }: { viewer: Viewer }) {
 
         <div className="mt-auto flex flex-col gap-3 p-6">
           {viewer.state === "member" ? (
-            <Button
-              className="h-13 w-full rounded-full text-base font-semibold"
-              render={<Link href="/dashboard" onClick={() => setOpen(false)} />}
-            >
-              Dashboard
-            </Button>
+            <>
+              <div className="flex items-center gap-3 px-1 pb-1">
+                <UserAvatar
+                  avatarUrl={viewer.avatarUrl}
+                  name={viewer.displayName}
+                />
+                <span className="truncate text-sm font-medium">
+                  {viewer.displayName ?? "Your account"}
+                </span>
+              </div>
+              <Button
+                className="h-13 w-full rounded-full text-base font-semibold"
+                render={
+                  <Link href="/dashboard" onClick={() => setOpen(false)} />
+                }
+              >
+                Dashboard
+              </Button>
+              <Button
+                variant="ghost"
+                className="h-13 w-full rounded-full border border-border text-base font-medium"
+                render={
+                  <Link href="/settings" onClick={() => setOpen(false)} />
+                }
+              >
+                Settings
+              </Button>
+              {viewer.liveUrl ? (
+                <Button
+                  variant="ghost"
+                  className="h-13 w-full rounded-full border border-border text-base font-medium"
+                  render={
+                    <a
+                      href={viewer.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setOpen(false)}
+                    />
+                  }
+                >
+                  Visit live site
+                </Button>
+              ) : null}
+              <Button
+                variant="ghost"
+                className="h-13 w-full rounded-full text-base font-medium text-destructive hover:bg-destructive/10"
+                onClick={() => {
+                  setOpen(false);
+                  signOut();
+                }}
+              >
+                Log out
+              </Button>
+            </>
           ) : viewer.state === "guest-draft" ? (
             <>
               <Button
