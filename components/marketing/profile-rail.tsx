@@ -12,9 +12,13 @@ import { demoProfiles, type DemoProfileId } from "@/lib/demo-profiles";
  * section's own copy makes, and a mockup would undercut it.
  *
  * Nothing links out: these personas are illustrations, not published rows, so
- * a tile that looked clickable would land on a 404. The tiles are inert and
+ * a tile that looked clickable would land on a 404. The tiles are `inert` and
  * `aria-hidden` — `Marquee` repeats its children to loop seamlessly, and
- * without that a screen reader would hear each profile announced twice over.
+ * without `aria-hidden` a screen reader would hear each profile announced
+ * twice over. `inert` is the other half of that: `aria-hidden` alone hides the
+ * gallery blocks' "Enlarge" buttons from assistive tech but leaves them
+ * keyboard-focusable, so a Tab-only visitor could still land on a control for
+ * a tile that goes nowhere.
  */
 const RAIL: { id: DemoProfileId; name: string; craft: string; theme: string }[] = [
   {
@@ -72,7 +76,7 @@ export function ProfileRail() {
           plus Marquee's own --gap, and repeat={2} gives it exactly the second
           copy it needs to slide into as the first exits — the loop is one
           full copy-width, not a fraction tuned to the tile count. */}
-      <div aria-hidden="true" className="mt-12 px-[clamp(16px,4vw,48px)]">
+      <div aria-hidden="true" inert className="mt-12 px-[clamp(16px,4vw,48px)]">
         <Marquee pauseOnHover repeat={2} className="p-0 [--duration:70s] [--gap:24px]">
           {RAIL.map((entry) => (
             <figure key={entry.id} className="w-[300px] shrink-0">
