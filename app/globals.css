@@ -8,8 +8,17 @@
 /* The landing page's second step: below this the nine-block grid drops from six
    tracks to four and the build-flow stage unpins. A registered breakpoint rather
    than `min-[1100px]:`, so Tailwind sorts it between `lg` and `xl` instead of
-   emitting it ahead of `md` and losing the cascade at wide widths. */
+   emitting it ahead of `md` and losing the cascade at wide widths.
+
+   The other three are the marketing header and the hero's live editor stage,
+   registered for the same reason: `--breakpoint-xs` is where the header's "Log
+   in" link and CTA padding change, `--breakpoint-nav` is where the header nav
+   collapses into the sheet menu, and `--breakpoint-editor` is where the editor
+   stage's sidebar drops below its canvas. */
 @theme {
+  --breakpoint-xs: 480px;
+  --breakpoint-editor: 760px;
+  --breakpoint-nav: 880px;
   --breakpoint-stage: 1100px;
 }
 
@@ -96,6 +105,22 @@
   --input: #E4E2DC;
   --ring: #0055FF;
   --logo-hover: #7DA1F2;
+  /* No repo token covers these three: the hero editor's grip/lock glyphs, its
+     selected theme-chip fill, and its drop shadow. Referenced via arbitrary
+     Tailwind values (`var(--ow-faint)` etc.), not registered as `--color-*`
+     utilities, since nothing else on the page needs a `bg-ow-faint` class. */
+  --ow-faint: #C6C3BB;
+  --ow-accent-soft: rgba(0, 85, 255, 0.07);
+  --ow-shadow: rgba(17, 17, 17, 0.25);
+  /* The closing CTA panel inverts against its surroundings in both themes —
+     a black panel on the cream page in light mode, a cream panel on the black
+     page in dark mode — which is why these are their own tokens rather than a
+     reference to --foreground/--background: swapping to those would make the
+     panel match its surroundings instead of inverting against them. */
+  --ow-invert-bg: #111111;
+  --ow-invert-ink: #F7F6F2;
+  --ow-invert-muted: rgba(247, 246, 242, 0.7);
+  --ow-invert-faint: rgba(247, 246, 242, 0.55);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -132,6 +157,13 @@
   --input: #292929;
   --ring: #0055FF;
   --logo-hover: #9DB8FF;
+  --ow-faint: #454542;
+  --ow-accent-soft: rgba(0, 85, 255, 0.2);
+  --ow-shadow: rgba(0, 0, 0, 0.7);
+  --ow-invert-bg: #F5F4EF;
+  --ow-invert-ink: #111111;
+  --ow-invert-muted: rgba(17, 17, 17, 0.74);
+  --ow-invert-faint: rgba(17, 17, 17, 0.64);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);

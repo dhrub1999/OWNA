@@ -18,9 +18,9 @@ import { Logo } from "@/components/logo";
 import type { Viewer } from "@/lib/auth/viewer";
 
 /**
- * The header's navigation below `md`.
+ * The header's navigation below `nav` (880px).
  *
- * The desktop nav is `hidden md:flex`, which left small screens with no
+ * The desktop nav is `hidden nav:flex`, which left small screens with no
  * navigation at all — the anchors, the log-in link and the whole site map were
  * simply absent. This restores them.
  *
@@ -43,7 +43,7 @@ export function MobileNav({ viewer }: { viewer: Viewer }) {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="nav:hidden"
             aria-label="Open menu"
           />
         }

@@ -1,42 +1,40 @@
 import Image from "next/image";
-import { BlurFade } from "@/components/magicui/blur-fade";
 import {
   BLOCK_META,
   BLOCK_TYPES,
   SOCIAL_PLATFORMS,
+  type BlockType,
 } from "@/lib/blocks/definitions";
 import { THEME_PRESETS } from "@/lib/themes/presets";
 import { cn } from "@/lib/utils";
 
 /**
- * Section 2: the nine blocks that build an OWNA page.
+ * Section 4: "Nine blocks. A link list gives you one." — the block grid.
  *
- * The argument is structural rather than written down: eight lit cells against
- * one dead one. `Links` is the only block a link-in-bio tool gives you, so it is
- * the only cell rendered as an empty shell — dashed, quieter, three flat pills
- * and a full stop. There is no second card and no checkmark list.
- *
- * Every title and body sentence comes from BLOCK_META, so a block renamed in
- * lib/blocks/definitions.ts renames itself here. The counts in the footer are
- * read from BLOCK_TYPES and THEME_PRESETS for the same reason.
+ * Titles come from `BLOCK_META[type].label` — a block renamed in
+ * lib/blocks/definitions.ts renames itself here — but the body copy below is
+ * written out in full rather than derived. An earlier version built each
+ * sentence from `BLOCK_META[type].description` plus one appended clause; that
+ * makes maintenance easier but can't reproduce this copy's own punctuation
+ * (an em dash mid-sentence, not two sentences stitched together), and the
+ * design handoff calls this copy final. `social`'s count is the one line kept
+ * dynamic — SOCIAL_PLATFORMS is still the authority on how many platforms
+ * exist, so this can't go stale the way a hand-typed "Thirteen" could.
  */
+const SOCIAL_COUNT_WORD =
+  SOCIAL_PLATFORMS.length === 13 ? "Thirteen" : String(SOCIAL_PLATFORMS.length);
 
-/** The one extra sentence per cell that BLOCK_META does not carry. */
-const EXTRA: Partial<Record<(typeof BLOCK_TYPES)[number], string>> = {
-  hero: "Plus availability and location, which a bio link flattens into the same single line as everything else.",
-  gallery: "Tap one, it opens full size.",
-  // SOCIAL_PLATFORMS is the authority; email is one of the thirteen, not a
-  // fourteenth, so this does not say "plus email".
-  social: `${SOCIAL_PLATFORMS.length === 13 ? "Thirteen" : String(SOCIAL_PLATFORMS.length)} to choose from, email included.`,
-  embed: "Paste the URL, it plays in place.",
+const BODY: Record<BlockType, string> = {
+  hero: "Your photo, name and one line about you — plus availability and location, which a bio link flattens into the same row as everything else.",
+  gallery: "A grid of images. Tap one, it opens full size.",
+  projects: "Cards for the things you've made, with the story behind each one.",
+  links: "Buttons pointing anywhere you like — the one block a link-in-bio tool gives you.",
+  social: `Icons for the platforms you're on. ${SOCIAL_COUNT_WORD} to choose from, email included.`,
+  embed: "A Spotify or YouTube player. Paste the URL, it plays in place.",
+  text: "A heading and a paragraph, in your own words.",
+  image: "A single picture, optionally linked.",
+  divider: "A line or a gap.",
 };
-
-function body(type: (typeof BLOCK_TYPES)[number]) {
-  const extra = EXTRA[type];
-  return extra
-    ? `${BLOCK_META[type].description} ${extra}`
-    : BLOCK_META[type].description;
-}
 
 /**
  * Screenshots of the real blocks, rendered on real pages, rather than the
@@ -44,53 +42,53 @@ function body(type: (typeof BLOCK_TYPES)[number]) {
  * profile surfaces, not page chrome, so they keep their own colours in both
  * light and dark mode the same way the theme presets in section 3 do.
  *
- * All six thumbnails are cropped to exactly 16:9 at the same source width, and
- * every card renders them at the card's full width. Two consequences, both of
- * which earlier drafts got wrong:
- *
- *   * the UI inside each screenshot appears at the same scale, because the
- *     sources are all crops of the same page render shown at the same width;
- *   * `object-cover` crops nothing, because the frame's ratio already matches
- *     the file's. Nothing is letterboxed and no frame background is visible.
- *
- * Cropping at render time instead is what made the scale look arbitrary: each
- * cell cut a different amount, from 27% of one block to 100% of another, and
- * the amount changed again at every breakpoint.
+ * All thumbnails are cropped to exactly 16:9 at the same source width, and
+ * every card renders them at the card's full width, so the UI inside each
+ * screenshot appears at the same scale and `object-cover` crops nothing.
  */
 const SHOT = "/assets/products";
 
-/**
- * Card, copy, and image.
- *
- * The image is full bleed — flush to the card's left, right and bottom edges,
- * with the card's `overflow-hidden` rounding its bottom corners. It carries no
- * padding, border or radius of its own. A padded, separately-bordered frame put
- * two nested rectangles around every screenshot, which is what read as heavy.
- */
-const CARD =
-  "flex h-full flex-col overflow-hidden rounded-[28px] border border-border bg-card";
-const COPY = "flex flex-col gap-2.5 px-7 pt-7 pb-6";
-const TITLE = "text-[21px] font-bold tracking-[-0.02em]";
+/** The one type whose screenshot file doesn't share its block-type name. */
+const FILE: Partial<Record<BlockType, string>> = { social: "social-links" };
+
+const ALT: Record<Exclude<BlockType, "hero">, string> = {
+  gallery: "A gallery block laid out as a grid of photographs",
+  projects: "A project card with an image, a name and a description",
+  links: "A list of link buttons, each with a title, subtitle and arrow",
+  social: "A row of social platform icons under a heading",
+  embed: "A YouTube player embedded in a page under its own heading",
+  text: "A text block with a heading and a paragraph",
+  image: "A single image block showing one photograph",
+  divider: "",
+};
+
+/** The seven standard cards, in the design handoff's own order. */
+const STANDARD_TYPES: Exclude<BlockType, "hero" | "divider">[] = [
+  "gallery",
+  "projects",
+  "links",
+  "social",
+  "embed",
+  "text",
+  "image",
+];
+
+const CARD = "flex flex-col overflow-hidden rounded-[24px] border border-border bg-card";
+const CARD_TEXT = "flex flex-col gap-2 px-6 pt-6 pb-5";
+const TITLE = "text-xl font-bold tracking-[-0.02em]";
 const LEAD = "text-[15px] leading-[1.55] text-muted-foreground";
 
 // The image spans the whole card, so these are card widths, not content widths.
-const THUMB_SIZES =
-  "(max-width: 768px) calc(100vw - 48px), (max-width: 1100px) 46vw, 400px";
-const HERO_SIZES = "(max-width: 768px) calc(100vw - 48px), 300px";
+const THUMB_SIZES = "(max-width: 640px) calc(100vw - 32px), (max-width: 1280px) 30vw, 380px";
+const HERO_SIZES = "(max-width: 640px) calc(100vw - 32px), 280px";
 
 /** A 16:9 block screenshot, full bleed at the foot of its card. */
-function Thumb({
-  src,
-  alt,
-}: {
-  src: string;
-  alt: string;
-}) {
+function Thumb({ type }: { type: Exclude<BlockType, "hero" | "divider"> }) {
   return (
-    <div className="mt-auto aspect-16/9 w-full bg-secondary">
+    <div className="mt-auto aspect-16/9 w-full bg-background">
       <Image
-        src={src}
-        alt={alt}
+        src={`${SHOT}/${FILE[type] ?? type}.jpg`}
+        alt={ALT[type]}
         width={974}
         height={548}
         sizes={THUMB_SIZES}
@@ -103,177 +101,66 @@ function Thumb({
 
 export function BlockGrid() {
   return (
-    <section
-      className="scroll-mt-20 border-b border-border bg-secondary/50 py-28 sm:py-32"
-      id="product"
-    >
-      <div className="mx-auto max-w-7xl px-6 sm:px-12">
-        <BlurFade inView direction="up" className="flex max-w-[900px] flex-col gap-5">
-          <h2 className="font-display max-w-[20ch] text-[clamp(34px,4.6vw,56px)] leading-[1.03] font-extrabold tracking-[-0.035em] text-balance">
-            You are more than a list of links.
+    <section className="scroll-mt-20 border-t border-border py-[clamp(64px,8vw,112px)]" id="product">
+      <div className="mx-auto max-w-7xl px-[clamp(16px,4vw,48px)]">
+        <div className="flex max-w-[900px] flex-col gap-4.5">
+          <h2 className="font-display max-w-[22ch] text-[clamp(27px,4vw,52px)] leading-[1.05] font-extrabold tracking-[-0.035em] text-balance">
+            Nine blocks. A link list gives you one.
           </h2>
-          <p className="max-w-[52ch] text-[clamp(17px,1.6vw,20px)] leading-[1.5] text-muted-foreground">
-            Nine blocks build an OWNA page. A link-in-bio tool gives you one of
-            them.
+          <p className="max-w-[54ch] text-[clamp(16px,1.5vw,19px)] leading-[1.55] text-muted-foreground">
+            Each block is real content — a gallery, a case study, a player, a bio that carries
+            availability and location. Not a button pointing at content somewhere else.
           </p>
-        </BlurFade>
-
-        {/* Six tracks above 1100px, four between 768 and 1100, one below.
-            Every cell spans at least two tracks: the handoff gave Image and
-            Divider one track each, which measured out at ~184px and left them
-            with 84px and 169px of dead space under their copy while every other
-            cell sat at 16px. */}
-        <div className="mt-14 grid grid-cols-1 gap-4 md:max-stage:grid-cols-4 stage:grid-cols-6">
-          {/* Hero. The one portrait card: a 16:9 window would cut the
-              availability and location chips, which are exactly what its copy
-              promises. Side by side from md up so the shot stays a tall,
-              legible card rather than a wide sliver. */}
-          <BlurFade inView direction="up" className="md:col-span-4">
-            <div className={cn(CARD, "md:flex-row")}>
-              <div className={cn(COPY, "flex-1 justify-center md:py-7")}>
-                <h3 className={TITLE}>{BLOCK_META.hero.label}</h3>
-                <p className={cn(LEAD, "max-w-[34ch]")}>{body("hero")}</p>
-              </div>
-              <div className="aspect-[922/1206] w-full shrink-0 bg-secondary md:w-[300px]">
-                <Image
-                  src={`${SHOT}/hero.jpg`}
-                  alt="A profile hero with a photo, name, role, bio, availability and location"
-                  width={922}
-                  height={1206}
-                  sizes={HERO_SIZES}
-                  quality={90}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            </div>
-          </BlurFade>
-
-          <BlurFade inView direction="up" delay={0.04} className="md:col-span-2">
-            <div className={CARD}>
-              <div className={COPY}>
-                <h3 className={TITLE}>{BLOCK_META.links.label}</h3>
-                <p className={LEAD}>{body("links")}</p>
-              </div>
-              <Thumb
-                src={`${SHOT}/links.jpg`}
-                alt="A list of link buttons, each with a title, subtitle and arrow"
-              />
-            </div>
-          </BlurFade>
-
-          <BlurFade inView direction="up" delay={0.08} className="md:col-span-2">
-            <div className={CARD}>
-              <div className={COPY}>
-                <h3 className={TITLE}>{BLOCK_META.projects.label}</h3>
-                <p className={LEAD}>{body("projects")}</p>
-              </div>
-              <Thumb
-                src={`${SHOT}/projects.jpg`}
-                alt="A project card with an image, a name and a description"
-              />
-            </div>
-          </BlurFade>
-
-          <BlurFade inView direction="up" delay={0.12} className="md:col-span-2">
-            <div className={CARD}>
-              <div className={COPY}>
-                <h3 className={TITLE}>{BLOCK_META.gallery.label}</h3>
-                <p className={LEAD}>{body("gallery")}</p>
-              </div>
-              <Thumb
-                src={`${SHOT}/gallery.jpg`}
-                alt="A gallery block laid out as a grid of photographs"
-              />
-            </div>
-          </BlurFade>
-
-          <BlurFade inView direction="up" delay={0.16} className="md:col-span-2">
-            <div className={CARD}>
-              <div className={COPY}>
-                <h3 className={TITLE}>{BLOCK_META.social.label}</h3>
-                <p className={LEAD}>{body("social")}</p>
-              </div>
-              <Thumb
-                src={`${SHOT}/social-links.jpg`}
-                alt="A row of social platform icons under a heading"
-              />
-            </div>
-          </BlurFade>
-
-          <BlurFade inView direction="up" delay={0.2} className="md:col-span-2">
-            <div className={CARD}>
-              <div className={COPY}>
-                <h3 className={TITLE}>{BLOCK_META.text.label}</h3>
-                <p className={LEAD}>{body("text")}</p>
-              </div>
-              <Thumb
-                src={`${SHOT}/text.jpg`}
-                alt="A text block with a heading and a paragraph"
-              />
-            </div>
-          </BlurFade>
-
-          <BlurFade inView direction="up" delay={0.24} className="md:col-span-2">
-            <div className={CARD}>
-              <div className={COPY}>
-                <h3 className={TITLE}>{BLOCK_META.embed.label}</h3>
-                <p className={LEAD}>{body("embed")}</p>
-              </div>
-              <Thumb
-                src={`${SHOT}/embed.jpg`}
-                alt="A YouTube player embedded in a page under its own heading"
-              />
-            </div>
-          </BlurFade>
-
-          <BlurFade inView direction="up" delay={0.28} className="md:col-span-2">
-            <div className={CARD}>
-              <div className={COPY}>
-                <h3 className={TITLE}>{BLOCK_META.image.label}</h3>
-                <p className={LEAD}>{body("image")}</p>
-              </div>
-              <Thumb
-                src={`${SHOT}/image.jpg`}
-                alt="A single image block showing one photograph"
-              />
-            </div>
-          </BlurFade>
-
-          {/* Divider — a full-width strip above 1100px. A block that renders as
-              a line reads better as one long rule than as a tall card with a
-              short line marooned at the bottom.
-
-              Between 768 and 1100 it shares a row with Image, whose screenshot
-              makes that row tall; `self-start` stops this card stretching to
-              match and opening a gap above its rule. */}
-          <BlurFade
-            inView
-            direction="up"
-            delay={0.3}
-            className="md:max-stage:col-span-2 md:max-stage:self-start stage:col-span-6"
-          >
-            <div
-              className={cn(CARD, "stage:flex-row stage:items-center stage:gap-10")}
-            >
-              <div className={cn(COPY, "stage:shrink-0 stage:py-7")}>
-                <h3 className={TITLE}>{BLOCK_META.divider.label}</h3>
-                <p className={LEAD}>{body("divider")}</p>
-              </div>
-              <div
-                className="mt-auto flex min-h-[48px] items-center px-7 pb-7 stage:mt-0 stage:min-h-0 stage:flex-1 stage:pb-0 stage:pl-0"
-                aria-hidden="true"
-              >
-                <div className="h-px w-full bg-border" />
-              </div>
-            </div>
-          </BlurFade>
         </div>
 
-        <div className="mt-10 flex flex-col items-start gap-6 border-t border-border pt-7 md:flex-row md:flex-wrap md:items-baseline md:justify-between">
-          <p className="max-w-[62ch] text-[17px] leading-[1.55] text-muted-foreground">
-            Drop in what you need, leave out what you don&rsquo;t. Freelancers,
-            studios, shops and students all end up with pages that look nothing
-            alike.
+        <div className="mt-12 flex flex-wrap gap-4">
+          {/* Hero: the one portrait card, so a 16:9 window never cuts the
+              availability/location chips its own copy promises. */}
+          <div className={cn(CARD, "flex-[3_1_520px] flex-row flex-wrap")}>
+            <div className={cn(CARD_TEXT, "min-w-0 flex-[1_1_240px] justify-center p-[clamp(20px,3vw,28px)]")}>
+              <h3 className={TITLE}>{BLOCK_META.hero.label}</h3>
+              <p className={cn(LEAD, "max-w-[34ch]")}>{BODY.hero}</p>
+            </div>
+            <div className="aspect-[922/1206] w-[min(280px,100%)] shrink-0 bg-background">
+              <Image
+                src={`${SHOT}/hero.jpg`}
+                alt="A profile hero with a photo, name, role, bio, availability and location"
+                width={922}
+                height={1206}
+                sizes={HERO_SIZES}
+                quality={90}
+                className="h-full w-full object-cover"
+              />
+            </div>
+          </div>
+
+          {STANDARD_TYPES.map((type) => (
+            <div key={type} className={cn(CARD, "flex-[1_1_260px]")}>
+              <div className={CARD_TEXT}>
+                <h3 className={TITLE}>{BLOCK_META[type].label}</h3>
+                <p className={LEAD}>{BODY[type]}</p>
+              </div>
+              <Thumb type={type} />
+            </div>
+          ))}
+
+          {/* Divider — a full-width strip. A block that renders as a line
+              reads better as one long rule than as a tall card with a short
+              line marooned at the bottom. */}
+          <div className={cn(CARD, "flex-[1_1_100%] flex-row flex-wrap items-center gap-4")}>
+            <div className="flex flex-[1_1_200px] flex-col gap-2 px-7 py-6">
+              <h3 className={TITLE}>{BLOCK_META.divider.label}</h3>
+              <p className={LEAD}>{BODY.divider}</p>
+            </div>
+            <div aria-hidden="true" className="flex flex-1 items-center pr-7">
+              <div className="h-px w-full bg-border" />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-9 flex flex-wrap items-baseline justify-between gap-5 border-t border-border pt-6">
+          <p className="max-w-[60ch] text-base leading-[1.55] text-muted-foreground">
+            Use what you need, leave out the rest. Nothing you don&rsquo;t add ever renders.
           </p>
           <p className="font-mono text-xs text-muted-foreground">
             {BLOCK_TYPES.length} blocks / {THEME_PRESETS.length} themes / 1 page

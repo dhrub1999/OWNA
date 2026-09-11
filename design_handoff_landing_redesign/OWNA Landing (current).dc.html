@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700&family=Outfit:wght@400;600;700&family=Playfair+Display:wght@400;700&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;700&family=Bricolage+Grotesque:wght@400;800&display=swap" rel="stylesheet" />
+<style>
+@font-face {
+  font-family: "Parkinsans";
+  src: url("assets/fonts/parkinsans-variable.woff2") format("woff2");
+  font-weight: 300 800;
+  font-display: swap;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: #F7F6F2; color: #111111; font-family: "Parkinsans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+a:hover { color: #0055FF; }
+h1, h2, h3, h4 { font-family: "Plus Jakarta Sans", system-ui, sans-serif; margin: 0; }
+p { margin: 0; }
+@keyframes hero-reveal { from { opacity: 0; transform: translateY(10px); filter: blur(6px); } to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes rail-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+</style>
+</helmet>
+
+<div style="background: #F7F6F2; color: #111111; min-width: 0;">
+
+  <header style="position: sticky; top: 0; z-index: 40; border-bottom: 1px solid rgba(228,226,220,0.4); background: rgba(247,246,242,0.72); backdrop-filter: blur(16px) saturate(1.5);">
+    <div style="display: flex; height: 80px; align-items: center; justify-content: space-between; padding: 0 clamp(24px, 4vw, 48px);">
+      <div style="display: flex; align-items: center; gap: 48px;">
+        <a href="#" aria-label="OWNA home" style="display: flex; align-items: center;">
+          <svg viewBox="0 0 141 48" fill="none" style="height: 36px; width: auto;" aria-hidden="true">
+            <path d="M132.616 8.21157C132.153 9.13728 131.896 10.7316 131.896 11.5544V34.543C131.896 35.3659 132.256 38.6059 132.616 39.7887C132.616 39.943 132.667 40.0459 132.667 40.1487C132.667 40.5601 132.359 40.9201 131.947 40.9201C130.867 40.7659 129.736 40.7144 128.656 40.7144C127.524 40.7144 126.444 40.7659 125.364 40.9201C124.953 40.9201 124.593 40.5601 124.593 40.1487C124.593 40.0973 124.593 39.9944 124.644 39.943C125.261 38.0916 125.364 36.1373 125.364 34.183V28.6801C125.364 28.2687 125.056 27.9601 124.644 27.9601C124.593 27.9601 124.49 27.9601 124.387 28.0116L114.77 31.5601C114.153 31.7659 113.793 32.383 113.793 33.0516V33.3087C114.204 35.3659 114.461 37.6287 114.461 40.1487C114.461 40.3544 114.41 40.5601 114.256 40.7144C114.101 40.8173 113.947 40.9201 113.741 40.9201C112.61 40.8173 111.53 40.7144 110.45 40.7144C109.319 40.7144 108.239 40.8173 107.159 40.9201C106.953 40.9201 106.747 40.8173 106.593 40.7144C106.49 40.5601 106.387 40.3544 106.387 40.1487C106.387 40.0459 106.387 39.9944 106.439 39.8916C106.747 39.0173 107.056 38.0401 107.056 37.1144C107.056 30.3259 105.719 27.8059 105.719 23.1259V22.8687C105.821 14.1259 113.021 7.08014 121.764 7.08014H132.05C132.41 7.08014 132.667 7.38871 132.667 7.80014V7.85157C132.667 8.00585 132.667 8.10871 132.616 8.21157ZM112.301 24.5659C112.301 24.9773 112.61 25.2344 112.97 25.2344C113.021 25.2344 113.124 25.2344 113.227 25.183L124.387 21.0173C125.004 20.8116 125.364 20.2459 125.364 19.5773V14.5373C125.364 14.023 124.953 13.6116 124.439 13.6116H122.176C116.724 13.6116 112.25 17.983 112.25 23.383V23.5887C112.25 23.8973 112.25 24.2573 112.301 24.5659Z" fill="currentColor" />
+            <path d="M102.074 8.21157C101.662 8.93157 101.354 9.703 101.354 10.5259V37.4744C101.354 38.2973 101.662 39.0687 102.074 39.7887C102.125 39.8916 102.125 40.0459 102.125 40.1487C102.125 40.5601 101.817 40.9201 101.405 40.9201H95.2852C94.6166 40.9201 94.0509 40.4059 94.0509 39.7373C93.6909 31.663 90.0395 20.503 82.9424 17.263C82.8395 17.2116 82.7366 17.2116 82.6338 17.2116C82.1195 17.2116 81.7081 17.5716 81.7081 18.0859V34.0801C81.7081 36.0859 82.1195 38.0401 82.4795 40.0459V40.1487C82.4795 40.3544 82.4281 40.5601 82.2738 40.7144C82.1195 40.8173 81.9652 40.9201 81.7595 40.9201C80.6281 40.8173 79.5481 40.7144 78.4681 40.7144C77.3366 40.7144 76.2566 40.8173 75.1766 40.9201C74.9709 40.9201 74.7652 40.8173 74.6109 40.7144C74.5081 40.5601 74.4052 40.3544 74.4052 40.1487C74.4052 40.0459 74.4052 39.9944 74.4566 39.8916C75.0738 38.0916 75.1766 36.1373 75.1766 34.183V13.8173C75.1766 11.863 74.8681 9.90871 74.4052 8.00585V7.85157C74.4052 7.44014 74.7138 7.08014 75.1766 7.08014H75.2281C76.1024 7.08014 76.9766 7.183 77.7995 7.28585C79.3938 7.49157 80.9366 7.85157 82.4281 8.41728C87.2109 10.2173 91.3766 13.7659 94.3595 18.3944C94.4109 18.4459 94.5138 18.4973 94.5652 18.4973C94.7195 18.4973 94.8738 18.3944 94.8738 18.2401V13.9201C94.8738 11.9144 94.4109 9.96014 94.0509 8.00585V7.85157C94.0509 7.38871 94.4109 7.08014 94.8738 7.08014C96.0052 7.23443 97.1366 7.33728 98.2681 7.33728C98.8338 7.33728 99.3995 7.28585 99.9652 7.23443L101.405 7.08014H101.508C101.868 7.08014 102.125 7.38871 102.125 7.80014V7.85157C102.125 8.00585 102.125 8.10871 102.074 8.21157Z" fill="currentColor" />
+            <path d="M70.802 40.2516C70.802 40.6116 70.4935 40.9201 70.1335 40.9201H69.722C62.3163 40.9201 56.8135 35.7259 55.2706 32.4859C55.2192 32.3316 55.1163 32.2801 55.0135 32.2801C54.8592 32.2801 54.7563 32.3316 54.7049 32.4859C53.2649 35.6744 47.6077 40.9201 40.3049 40.9201V40.8687C40.202 40.8687 40.1506 40.8687 40.0477 40.9201H39.9449C39.5335 40.9201 39.2249 40.6116 39.2249 40.1487V39.9944C39.6363 38.0916 39.9963 36.1373 39.9963 34.1316V13.8173C39.9963 11.9144 39.8935 9.90871 39.2249 8.10871V7.85157C39.2249 7.64586 39.2763 7.44014 39.4306 7.33728C39.5849 7.183 39.7392 7.08014 39.9449 7.08014C41.0763 7.23443 42.1563 7.28585 43.2363 7.28585C44.3677 7.28585 45.4477 7.23443 46.5277 7.08014C46.7335 7.08014 46.9392 7.183 47.0935 7.33728C47.1963 7.44014 47.2992 7.64586 47.2992 7.85157V7.95443C46.9392 9.96014 46.4763 11.9144 46.4763 13.9716V29.503C46.4763 29.9144 46.8363 30.223 47.1963 30.223C47.2992 30.223 47.402 30.1716 47.5049 30.1201C50.4363 28.3201 52.9049 22.5087 53.882 18.7544C54.0363 18.1887 54.4992 17.9316 54.962 17.9316C55.4249 17.9316 55.8877 18.1887 56.042 18.7544C56.9677 22.303 59.3849 28.2687 62.4192 30.8916C62.522 30.9944 62.6763 31.0459 62.8306 31.0459C63.1906 31.0459 63.4992 30.7887 63.4992 30.3773V13.8173C63.4992 11.9144 63.3963 9.90871 62.7277 8.10871V7.85157C62.7277 7.64586 62.7792 7.44014 62.9335 7.33728C63.0877 7.183 63.242 7.08014 63.4477 7.08014C64.5792 7.23443 65.6592 7.28585 66.7392 7.28585C67.8706 7.28585 68.9506 7.23443 70.0306 7.08014C70.2363 7.08014 70.442 7.183 70.5963 7.33728C70.6992 7.44014 70.802 7.64586 70.802 7.85157V7.95443C70.442 9.96014 70.0306 11.9144 70.0306 13.9716V34.1316C70.0306 36.0859 70.3392 38.0401 70.802 39.9944V40.2516Z" fill="currentColor" />
+            <path d="M21.2571 7.08002C30.1543 7.08002 35.6057 14.6914 35.6057 24C35.6057 33.36 30.1543 40.92 21.2571 40.92C12.36 40.92 6.85712 33.36 6.85712 24C6.85712 14.6914 12.36 7.08002 21.2571 7.08002ZM21.2571 34.3886C26.4514 34.3886 28.92 29.76 28.92 24C28.92 18.24 26.4514 13.6114 21.2571 13.6114C16.0114 13.6114 13.5428 18.24 13.5428 24C13.5428 29.76 16.0114 34.3886 21.2571 34.3886Z" fill="currentColor" />
+          </svg>
+        </a>
+        <nav style="display: flex; align-items: center; gap: 32px; font-size: 14px; font-weight: 500;">
+          <a href="#product">Product</a>
+          <a href="#explore">Explore</a>
+          <a href="#for">For you</a>
+          <a href="#pricing">Pricing</a>
+        </nav>
+      </div>
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <a href="#" style="font-size: 14px; font-weight: 500;">Log in</a>
+        <a href="#" style="display: inline-flex; align-items: center; height: 36px; padding: 0 24px; border-radius: 999px; background: #0055FF; color: #FFFFFF; font-size: 14px; font-weight: 500;">Create your OWNA</a>
+      </div>
+    </div>
+  </header>
+
+  <section style="position: relative; isolation: isolate; overflow: hidden; background: #F7F5F1; color: #0C0B0A;">
+    <div style="position: relative; max-width: 1280px; margin: 0 auto; padding: 0 clamp(24px, 4vw, 48px);">
+      <div style="pointer-events: none; position: absolute; top: 132px; right: 48px; height: 760px; width: 384px; transform: rotate(-2deg); border-radius: 52px; background: #1A1A1C; padding: 10px; box-shadow: 0 2px 0 rgba(255,255,255,0.16) inset, 0 46px 80px -26px rgba(20,18,14,0.5);">
+        <div style="position: relative; height: 100%; width: 100%; overflow: hidden; border-radius: 43px; background: #14170F;">
+          <img src="assets/hero-section/poster-frame.jpg" alt="" style="position: absolute; top: 50%; left: 50%; height: 100%; width: 100%; transform: translate(-50%, -50%) scale(1.07); object-fit: cover; object-position: top;" />
+          <div aria-hidden="true" style="pointer-events: none; position: absolute; left: 0; right: 0; top: 0; height: 80px; background: linear-gradient(to bottom, #14170F 34%, rgba(20,23,15,0));"></div>
+          <div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 0; display: flex; height: 48px; align-items: center; justify-content: space-between; padding: 0 30px;">
+            <span style="font-size: 14px; font-weight: 600; color: #F8F6F2;">9:41</span>
+            <span style="display: flex; align-items: center; gap: 6px;">
+              <span style="display: flex; align-items: flex-end; gap: 2px;">
+                <span style="height: 4px; width: 3px; border-radius: 999px; background: #F8F6F2;"></span>
+                <span style="height: 6px; width: 3px; border-radius: 999px; background: #F8F6F2;"></span>
+                <span style="height: 8px; width: 3px; border-radius: 999px; background: #F8F6F2;"></span>
+                <span style="height: 10px; width: 3px; border-radius: 999px; background: #F8F6F2; opacity: 0.4;"></span>
+              </span>
+              <span style="display: flex; height: 12px; width: 23px; align-items: center; border-radius: 3px; border: 1px solid rgba(248,246,242,0.55); padding: 1.5px;">
+                <span style="height: 100%; width: 70%; border-radius: 1px; background: #F8F6F2;"></span>
+              </span>
+            </span>
+          </div>
+          <div aria-hidden="true" style="position: absolute; top: 12px; left: 50%; height: 32px; width: 116px; transform: translateX(-50%); border-radius: 999px; background: #000000;"></div>
+        </div>
+      </div>
+
+      <div style="position: relative; z-index: 20; max-width: 840px; padding: 176px 0 208px;">
+        <h1 style="font-family: 'Parkinsans', system-ui, sans-serif; font-size: clamp(56px, calc(9.84vw - 44px), 82px); line-height: 1; font-weight: 800; letter-spacing: -0.038em; text-shadow: 0 2px 24px rgba(247,245,241,0.7); animation: hero-reveal 0.6s 0.04s cubic-bezier(0.25,1,0.5,1) both;">
+          Your online presence<br />should feel<br />like you.
+        </h1>
+        <p style="margin-top: 40px; max-width: 420px; font-size: 21px; line-height: 1.5; letter-spacing: -0.01em; color: #6E6C67; animation: hero-reveal 0.6s 0.16s cubic-bezier(0.25,1,0.5,1) both;">
+          Create a professional digital presence without building a website from scratch.
+        </p>
+        <div style="margin-top: 44px; display: flex; gap: 14px; animation: hero-reveal 0.6s 0.24s cubic-bezier(0.25,1,0.5,1) both;">
+          <a href="#" style="display: inline-flex; align-items: center; justify-content: center; height: 58px; padding: 0 34px; border-radius: 999px; background: #1B62F5; color: #FFFFFF; font-size: 17px; font-weight: 600; letter-spacing: -0.01em;">Create your OWNA</a>
+          <a href="#explore" style="display: inline-flex; align-items: center; justify-content: center; height: 58px; padding: 0 30px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.72); background: rgba(255,255,255,0.58); backdrop-filter: blur(20px) saturate(1.6); color: #0C0B0A; font-size: 17px; font-weight: 500; letter-spacing: -0.01em; box-shadow: 0 1px 0 rgba(255,255,255,0.7) inset, 0 10px 28px -12px rgba(20,18,14,0.42);">See real profiles</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="product" style="border-bottom: 1px solid #E4E2DC; background: rgba(247,246,242,0.5); padding: 128px 0;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(24px, 4vw, 48px);">
+      <div style="display: flex; max-width: 900px; flex-direction: column; gap: 20px;">
+        <h2 style="max-width: 20ch; font-size: clamp(34px, 4.6vw, 56px); line-height: 1.03; font-weight: 800; letter-spacing: -0.035em; text-wrap: balance;">You are more than a list of links.</h2>
+        <p style="max-width: 52ch; font-size: clamp(17px, 1.6vw, 20px); line-height: 1.5; color: #6B6B67;">Nine blocks build an OWNA page. A link-in-bio tool gives you one of them.</p>
+      </div>
+
+      <div style="margin-top: 56px; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px;">
+        <div style="grid-column: span 4; display: flex; height: 100%; flex-direction: row; overflow: hidden; border-radius: 28px; border: 1px solid #E4E2DC; background: #FFFFFF;">
+          <div style="display: flex; flex: 1; flex-direction: column; gap: 10px; justify-content: center; padding: 28px;">
+            <h3 style="font-size: 21px; font-weight: 700; letter-spacing: -0.02em;">Hero</h3>
+            <p style="max-width: 34ch; font-size: 15px; line-height: 1.55; color: #6B6B67;">Your photo, name and one line about you. Plus availability and location, which a bio link flattens into the same single line as everything else.</p>
+          </div>
+          <div style="width: 300px; flex-shrink: 0; aspect-ratio: 922 / 1206; background: #F7F6F2;">
+            <img src="assets/products/hero.jpg" alt="A profile hero with a photo, name, role, bio, availability and location" style="height: 100%; width: 100%; object-fit: cover; display: block;" />
+          </div>
+        </div>
+
+        <div style="grid-column: span 2; display: flex; height: 100%; flex-direction: column; overflow: hidden; border-radius: 28px; border: 1px solid #E4E2DC; background: #FFFFFF;">
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 28px 28px 24px;">
+            <h3 style="font-size: 21px; font-weight: 700; letter-spacing: -0.02em;">Links</h3>
+            <p style="font-size: 15px; line-height: 1.55; color: #6B6B67;">Buttons pointing anywhere you like.</p>
+          </div>
+          <div style="margin-top: auto; aspect-ratio: 16 / 9; width: 100%; background: #F7F6F2;">
+            <img src="assets/products/links.jpg" alt="A list of link buttons, each with a title, subtitle and arrow" style="height: 100%; width: 100%; object-fit: cover; display: block;" />
+          </div>
+        </div>
+
+        <div style="grid-column: span 2; display: flex; height: 100%; flex-direction: column; overflow: hidden; border-radius: 28px; border: 1px solid #E4E2DC; background: #FFFFFF;">
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 28px 28px 24px;">
+            <h3 style="font-size: 21px; font-weight: 700; letter-spacing: -0.02em;">Projects</h3>
+            <p style="font-size: 15px; line-height: 1.55; color: #6B6B67;">Cards for the things you've made.</p>
+          </div>
+          <div style="margin-top: auto; aspect-ratio: 16 / 9; width: 100%; background: #F7F6F2;">
+            <img src="assets/products/projects.jpg" alt="A project card with an image, a name and a description" style="height: 100%; width: 100%; object-fit: cover; display: block;" />
+          </div>
+        </div>
+
+        <div style="grid-column: span 2; display: flex; height: 100%; flex-direction: column; overflow: hidden; border-radius: 28px; border: 1px solid #E4E2DC; background: #FFFFFF;">
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 28px 28px 24px;">
+            <h3 style="font-size: 21px; font-weight: 700; letter-spacing: -0.02em;">Gallery</h3>
+            <p style="font-size: 15px; line-height: 1.55; color: #6B6B67;">A grid of images. Tap one, it opens full size.</p>
+          </div>
+          <div style="margin-top: auto; aspect-ratio: 16 / 9; width: 100%; background: #F7F6F2;">
+            <img src="assets/products/gallery.jpg" alt="A gallery block laid out as a grid of photographs" style="height: 100%; width: 100%; object-fit: cover; display: block;" />
+          </div>
+        </div>
+
+        <div style="grid-column: span 2; display: flex; height: 100%; flex-direction: column; overflow: hidden; border-radius: 28px; border: 1px solid #E4E2DC; background: #FFFFFF;">
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 28px 28px 24px;">
+            <h3 style="font-size: 21px; font-weight: 700; letter-spacing: -0.02em;">Social links</h3>
+            <p style="font-size: 15px; line-height: 1.55; color: #6B6B67;">Icons for the platforms you're on. Thirteen to choose from, email included.</p>
+          </div>
+          <div style="margin-top: auto; aspect-ratio: 16 / 9; width: 100%; background: #F7F6F2;">
+            <img src="assets/products/social-links.jpg" alt="A row of social platform icons under a heading" style="height: 100%; width: 100%; object-fit: cover; display: block;" />
+          </div>
+        </div>
+
+        <div style="grid-column: span 2; display: flex; height: 100%; flex-direction: column; overflow: hidden; border-radius: 28px; border: 1px solid #E4E2DC; background: #FFFFFF;">
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 28px 28px 24px;">
+            <h3 style="font-size: 21px; font-weight: 700; letter-spacing: -0.02em;">Text</h3>
+            <p style="font-size: 15px; line-height: 1.55; color: #6B6B67;">A heading and a paragraph.</p>
+          </div>
+          <div style="margin-top: auto; aspect-ratio: 16 / 9; width: 100%; background: #F7F6F2;">
+            <img src="assets/products/text.jpg" alt="A text block with a heading and a paragraph" style="height: 100%; width: 100%; object-fit: cover; display: block;" />
+          </div>
+        </div>
+
+        <div style="grid-column: span 2; display: flex; height: 100%; flex-direction: column; overflow: hidden; border-radius: 28px; border: 1px solid #E4E2DC; background: #FFFFFF;">
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 28px 28px 24px;">
+            <h3 style="font-size: 21px; font-weight: 700; letter-spacing: -0.02em;">Embed</h3>
+            <p style="font-size: 15px; line-height: 1.55; color: #6B6B67;">A Spotify or YouTube player. Paste the URL, it plays in place.</p>
+          </div>
+          <div style="margin-top: auto; aspect-ratio: 16 / 9; width: 100%; background: #F7F6F2;">
+            <img src="assets/products/embed.jpg" alt="A YouTube player embedded in a page under its own heading" style="height: 100%; width: 100%; object-fit: cover; display: block;" />
+          </div>
+        </div>
+
+        <div style="grid-column: span 2; display: flex; height: 100%; flex-direction: column; overflow: hidden; border-radius: 28px; border: 1px solid #E4E2DC; background: #FFFFFF;">
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 28px 28px 24px;">
+            <h3 style="font-size: 21px; font-weight: 700; letter-spacing: -0.02em;">Image</h3>
+            <p style="font-size: 15px; line-height: 1.55; color: #6B6B67;">A single picture, optionally linked.</p>
+          </div>
+          <div style="margin-top: auto; aspect-ratio: 16 / 9; width: 100%; background: #F7F6F2;">
+            <img src="assets/products/image.jpg" alt="A single image block showing one photograph" style="height: 100%; width: 100%; object-fit: cover; display: block;" />
+          </div>
+        </div>
+
+        <div style="grid-column: span 6; display: flex; flex-direction: row; align-items: center; gap: 40px; overflow: hidden; border-radius: 28px; border: 1px solid #E4E2DC; background: #FFFFFF;">
+          <div style="display: flex; flex-shrink: 0; flex-direction: column; gap: 10px; padding: 28px;">
+            <h3 style="font-size: 21px; font-weight: 700; letter-spacing: -0.02em;">Divider</h3>
+            <p style="font-size: 15px; line-height: 1.55; color: #6B6B67;">A line or a gap.</p>
+          </div>
+          <div aria-hidden="true" style="display: flex; flex: 1; align-items: center; padding-right: 28px;">
+            <div style="height: 1px; width: 100%; background: #E4E2DC;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 40px; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 24px; border-top: 1px solid #E4E2DC; padding-top: 28px;">
+        <p style="max-width: 62ch; font-size: 17px; line-height: 1.55; color: #6B6B67;">Drop in what you need, leave out what you don't. Freelancers, studios, shops and students all end up with pages that look nothing alike.</p>
+        <p style="font-family: ui-monospace, monospace; font-size: 12px; color: #6B6B67;">9 blocks / 10 themes / 1 page</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="background: #F7F6F2; padding: 128px 0 0;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(24px, 4vw, 48px);">
+      <div style="display: flex; max-width: 900px; flex-direction: column; gap: 20px;">
+        <h2 style="max-width: 22ch; font-size: clamp(34px, 4.6vw, 56px); line-height: 1.03; font-weight: 800; letter-spacing: -0.035em; text-wrap: balance;">It builds like a page, not like a website.</h2>
+        <p style="max-width: 54ch; font-size: clamp(17px, 1.6vw, 20px); line-height: 1.5; color: #6B6B67;">No template to fight, no hosting, no deploy. Three moves, and the URL is yours.</p>
+      </div>
+    </div>
+
+    <div style="max-width: 1280px; margin: 64px auto 0; padding: 0 clamp(24px, 4vw, 48px); display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 56px; align-items: center;">
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <button type="button" onClick="{{ setStepBuild }}" style="cursor: pointer; border: 0; border-left: 2px solid #0055FF; background: none; padding: 16px 0 16px 20px; text-align: left; font: inherit;">
+            <span style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px;">
+              <span style="font-size: clamp(21px, 2.2vw, 26px); font-weight: 700; letter-spacing: -0.025em; color: #111111;">Build</span>
+              <span style="font-size: 15px; color: #6B6B67;">Choose what belongs on your page.</span>
+            </span>
+          </button>
+          <button type="button" onClick="{{ setStepCustomize }}" style="cursor: pointer; border: 0; border-left: 2px solid #E4E2DC; background: none; padding: 16px 0 16px 20px; text-align: left; font: inherit;">
+            <span style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px;">
+              <span style="font-size: clamp(21px, 2.2vw, 26px); font-weight: 700; letter-spacing: -0.025em; color: #6B6B67;">Customize</span>
+              <span style="font-size: 15px; color: #6B6B67;">Make it look like you.</span>
+            </span>
+          </button>
+          <button type="button" onClick="{{ setStepPublish }}" style="cursor: pointer; border: 0; border-left: 2px solid #E4E2DC; background: none; padding: 16px 0 16px 20px; text-align: left; font: inherit;">
+            <span style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px;">
+              <span style="font-size: clamp(21px, 2.2vw, 26px); font-weight: 700; letter-spacing: -0.025em; color: #6B6B67;">Publish</span>
+              <span style="font-size: 15px; color: #6B6B67;">Go live when you're ready.</span>
+            </span>
+          </button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 18px; border-radius: 24px; border: 1px solid #E4E2DC; background: #FFFFFF; padding: 24px;">
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <p style="font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.16em; color: #6B6B67;">YOU</p>
+            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 8px; border-radius: 12px; border: 1px solid #E4E2DC; background: #F7F6F2; padding: 10px 14px; font-size: 14px; opacity: 0.5;">Hero</div>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <p style="font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.16em; color: #6B6B67;">CONTENT</p>
+            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 8px; border-radius: 12px; border: 1px solid #E4E2DC; background: #F7F6F2; padding: 10px 14px; font-size: 14px;">Text</div>
+              <div style="display: flex; align-items: center; gap: 8px; border-radius: 12px; border: 1px solid #0055FF; background: rgba(0,85,255,0.12); padding: 10px 14px; font-size: 14px;">Social links</div>
+              <div style="display: flex; align-items: center; gap: 8px; border-radius: 12px; border: 1px solid #E4E2DC; background: #F7F6F2; padding: 10px 14px; font-size: 14px;">Links</div>
+              <div style="display: flex; align-items: center; gap: 8px; border-radius: 12px; border: 1px solid #0055FF; background: rgba(0,85,255,0.12); padding: 10px 14px; font-size: 14px;">Projects</div>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <p style="font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.16em; color: #6B6B67;">MEDIA</p>
+            <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 8px; border-radius: 12px; border: 1px solid #E4E2DC; background: #F7F6F2; padding: 10px 14px; font-size: 14px;">Image</div>
+              <div style="display: flex; align-items: center; gap: 8px; border-radius: 12px; border: 1px solid #0055FF; background: rgba(0,85,255,0.12); padding: 10px 14px; font-size: 14px;">Gallery</div>
+              <div style="display: flex; align-items: center; gap: 8px; border-radius: 12px; border: 1px solid #E4E2DC; background: #F7F6F2; padding: 10px 14px; font-size: 14px;">Embed</div>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <p style="font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.16em; color: #6B6B67;">STRUCTURE</p>
+            <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 8px; border-radius: 12px; border: 1px solid #E4E2DC; background: #F7F6F2; padding: 10px 14px; font-size: 14px;">Divider</div>
+            </div>
+          </div>
+          <p style="border-top: 1px solid #E4E2DC; padding-top: 14px; font-size: 14px; line-height: 1.5; color: #6B6B67;">Blocks reorder by dragging. Anything you leave out never renders.</p>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 14px;">
+        <div style="height: 620px; width: 380px; overflow: hidden; border-radius: 28px; border: 1px solid #E4E2DC; background: #FFFFFF;">{{ previewBuildFlow }}</div>
+        <p style="font-family: ui-monospace, monospace; font-size: 12px; color: #6B6B67;">owna.online/yourname</p>
+      </div>
+    </div>
+
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(24px, 4vw, 48px) 128px;">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; border-top: 1px solid #E4E2DC; padding-top: 32px; margin-top: 96px;">
+        <p style="max-width: 52ch; font-size: 18px; line-height: 1.55; color: #6B6B67;">There is no hosting dashboard to open, and no build to wait on.</p>
+        <a href="#" style="display: inline-flex; flex-shrink: 0; align-items: center; height: 56px; padding: 0 32px; border-radius: 999px; background: #0055FF; color: #FFFFFF; font-size: 16px; font-weight: 600;">Create your OWNA</a>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: 160px 0; background: #111111; color: #F7F6F2;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(24px, 4vw, 48px);">
+      <div style="max-width: 900px; margin-bottom: 96px;">
+        <h2 style="font-size: 64px; line-height: 1.1; font-weight: 700; margin-bottom: 32px;">Why should everyone online look the same?</h2>
+        <p style="font-size: 24px; line-height: 1.6; color: rgba(247,246,242,0.7); max-width: 42ch;">Your work isn't generic. Your business isn't generic. Your story isn't generic. Your online presence shouldn't be either.</p>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 48px;">
+        <div>
+          <div style="border-radius: 24px; overflow: hidden; height: 500px; border: 1px solid rgba(255,255,255,0.1); background: #F7F6F2;">{{ previewPhotographer }}</div>
+        </div>
+        <div style="transform: translateY(64px);">
+          <div style="border-radius: 24px; overflow: hidden; height: 500px; border: 1px solid rgba(255,255,255,0.1); background: #F7F6F2;">{{ previewFreelancer }}</div>
+        </div>
+        <div style="transform: translateY(128px);">
+          <div style="border-radius: 24px; overflow: hidden; height: 500px; border: 1px solid rgba(255,255,255,0.1); background: #F7F6F2;">{{ previewCreative }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="for" style="padding: 160px 0 128px;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(24px, 4vw, 48px);">
+      <div style="margin-bottom: 80px;">
+        <h2 style="font-size: 48px; font-weight: 700; letter-spacing: -0.02em;">Made for people with something to say.</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 64px 96px;">
+        <div>
+          <h3 style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">Independent professionals</h3>
+          <p style="font-size: 18px; color: #6B6B67; margin-bottom: 32px;">Your expertise deserves a home.</p>
+          <div style="border-radius: 16px; border: 1px solid #E4E2DC; padding: 32px; background: rgba(247,246,242,0.3);">
+            <div style="font-weight: 500; margin-bottom: 16px;">Common blocks:</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+              <span style="padding: 6px 16px; border-radius: 999px; border: 1px solid #E4E2DC; background: #F7F6F2; font-size: 14px;">About</span>
+              <span style="padding: 6px 16px; border-radius: 999px; border: 1px solid #E4E2DC; background: #F7F6F2; font-size: 14px;">Services</span>
+              <span style="padding: 6px 16px; border-radius: 999px; border: 1px solid #E4E2DC; background: #F7F6F2; font-size: 14px;">Testimonials</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">Small businesses</h3>
+          <p style="font-size: 18px; color: #6B6B67; margin-bottom: 32px;">Bring your brand beyond social media.</p>
+          <div style="border-radius: 16px; border: 1px solid #E4E2DC; padding: 32px; background: rgba(247,246,242,0.3);">
+            <div style="font-weight: 500; margin-bottom: 16px;">Common blocks:</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+              <span style="padding: 6px 16px; border-radius: 999px; border: 1px solid #E4E2DC; background: #F7F6F2; font-size: 14px;">Gallery</span>
+              <span style="padding: 6px 16px; border-radius: 999px; border: 1px solid #E4E2DC; background: #F7F6F2; font-size: 14px;">Contact</span>
+              <span style="padding: 6px 16px; border-radius: 999px; border: 1px solid #E4E2DC; background: #F7F6F2; font-size: 14px;">Booking Links</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="border-top: 1px solid #E4E2DC; border-bottom: 1px solid #E4E2DC; background: rgba(247,246,242,0.3); padding: 112px 0;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(24px, 4vw, 48px);">
+      <div style="display: grid; grid-template-columns: 7fr 5fr; align-items: center; gap: 96px;">
+        <figure style="margin: 0;">
+          <blockquote style="margin: 0; font-size: 40px; line-height: 1.25; font-weight: 700; letter-spacing: -0.02em; text-wrap: balance; font-family: 'Plus Jakarta Sans', system-ui, sans-serif;">"We had Instagram, WhatsApp and a PDF catalogue. OWNA gave our customers one place to understand what we actually do."</blockquote>
+          <figcaption style="margin-top: 32px; display: flex; align-items: center; gap: 16px;">
+            <span aria-hidden="true" style="height: 40px; width: 1px; flex-shrink: 0; background: #E4E2DC;"></span>
+            <span>
+              <span style="display: block; font-size: 18px; font-weight: 500;">AURA Jewellery</span>
+              <span style="display: block; color: #6B6B67;">Paris, France</span>
+            </span>
+          </figcaption>
+        </figure>
+        <div>
+          <div style="height: 460px; overflow: hidden; border-radius: 28px; border: 1px solid #E4E2DC; background: #F7F6F2; mask-image: linear-gradient(to bottom, #000 78%, transparent 99%);">{{ previewJewellery }}</div>
+          <p style="margin-top: 16px; font-size: 14px; color: #6B6B67;">owna.online/aura-jewellery</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="explore" style="overflow: hidden; padding: 128px 0;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(24px, 4vw, 48px);">
+      <div style="margin-bottom: 56px; display: flex; align-items: flex-end; justify-content: space-between; gap: 32px;">
+        <h2 style="max-width: 16ch; font-size: 48px; font-weight: 700; letter-spacing: -0.02em; text-wrap: balance;">The internet is full of people worth discovering.</h2>
+        <p style="max-width: 38ch; font-size: 18px; line-height: 1.6; color: #6B6B67;">Five pages, five themes, one renderer. Every one of these is a real starting point you can pick during setup.</p>
+      </div>
+    </div>
+
+    <div aria-hidden="true" style="overflow: hidden; padding: 8px clamp(24px, 4vw, 48px);">
+      <div style="display: flex; width: max-content; animation: rail-marquee 70s linear infinite;">{{ rail }}</div>
+    </div>
+
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(24px, 4vw, 48px);">
+      <div style="margin-top: 56px; display: flex; align-items: center; justify-content: space-between; gap: 20px; border-top: 1px solid #E4E2DC; padding-top: 40px;">
+        <p style="max-width: 46ch; color: #6B6B67;">A public directory is coming. Until then, the fastest way to see one is to build it.</p>
+        <a href="#" style="display: inline-flex; flex-shrink: 0; align-items: center; height: 56px; padding: 0 32px; border-radius: 999px; background: #0055FF; color: #FFFFFF; font-size: 16px; font-weight: 600;">Create your OWNA</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing" style="padding: 160px 0;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(24px, 4vw, 48px);">
+      <div style="display: grid; grid-template-columns: 5fr 7fr; gap: 96px;">
+        <div style="padding-top: 8px;">
+          <h2 style="font-size: 48px; font-weight: 700; letter-spacing: -0.02em;">Free, for now.</h2>
+          <p style="margin-top: 24px; max-width: 38ch; font-size: 18px; line-height: 1.6; color: #6B6B67;">Every block, every theme, your own handle. Nothing sits behind a card, and nothing you build today gets taken away later.</p>
+          <p style="margin-top: 40px; max-width: 42ch; border-left: 2px solid #E4E2DC; padding-left: 20px; font-size: 15px; line-height: 1.6; color: #6B6B67;">A paid tier will arrive when there is something worth charging for — more than one page, a domain of your own. Until then this is the whole product, and the page you make on it stays yours.</p>
+        </div>
+        <div style="position: relative; overflow: hidden; border-radius: 32px; border: 1px solid #E4E2DC; background: #FFFFFF;">
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 32px 40px;">
+            <div>
+              <div style="font-size: 24px; font-weight: 700; font-family: 'Plus Jakarta Sans', system-ui, sans-serif;">Everything OWNA does</div>
+              <div style="margin-top: 4px; font-size: 14px; color: #6B6B67;">No card, no trial clock.</div>
+            </div>
+            <div style="font-size: 48px; font-weight: 700; letter-spacing: -0.02em; font-family: 'Plus Jakarta Sans', system-ui, sans-serif;">Free</div>
+          </div>
+          <ul style="list-style: none; margin: 0; padding: 0; border-top: 1px solid #E4E2DC; border-bottom: 1px solid #E4E2DC;">
+            <li style="display: flex; gap: 16px; padding: 24px 40px; border-bottom: 1px solid #E4E2DC;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" style="margin-top: 2px; flex-shrink: 0;" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+              <div>
+                <div style="font-weight: 500;">Nine kinds of block</div>
+                <p style="margin-top: 4px; font-size: 14px; line-height: 1.6; color: #6B6B67;">Hero, links, projects, gallery, text, image, embed, social, divider — as many of each as you want.</p>
+              </div>
+            </li>
+            <li style="display: flex; gap: 16px; padding: 24px 40px; border-bottom: 1px solid #E4E2DC;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" style="margin-top: 2px; flex-shrink: 0;" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+              <div>
+                <div style="font-weight: 500;">All ten themes</div>
+                <p style="margin-top: 4px; font-size: 14px; line-height: 1.6; color: #6B6B67;">Colour, type and layout, swapped live. Every one of them contrast-checked.</p>
+              </div>
+            </li>
+            <li style="display: flex; gap: 16px; padding: 24px 40px; border-bottom: 1px solid #E4E2DC;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" style="margin-top: 2px; flex-shrink: 0;" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+              <div>
+                <div style="font-weight: 500;">Your own handle</div>
+                <p style="margin-top: 4px; font-size: 14px; line-height: 1.6; color: #6B6B67;">owna.online/yourname, yours the moment you claim it.</p>
+              </div>
+            </li>
+            <li style="display: flex; gap: 16px; padding: 24px 40px; border-bottom: 1px solid #E4E2DC;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" style="margin-top: 2px; flex-shrink: 0;" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+              <div>
+                <div style="font-weight: 500;">Publish and unpublish</div>
+                <p style="margin-top: 4px; font-size: 14px; line-height: 1.6; color: #6B6B67;">Take the page down, put it back, as often as you like. Drafts stay private until you say otherwise.</p>
+              </div>
+            </li>
+            <li style="display: flex; gap: 16px; padding: 24px 40px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" style="margin-top: 2px; flex-shrink: 0;" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+              <div>
+                <div style="font-weight: 500;">No account to start</div>
+                <p style="margin-top: 4px; font-size: 14px; line-height: 1.6; color: #6B6B67;">Build the whole page first. Signing up is what puts it online, not what lets you begin.</p>
+              </div>
+            </li>
+          </ul>
+          <div style="padding: 32px 40px;">
+            <a href="#" style="display: inline-flex; align-items: center; height: 56px; padding: 0 40px; border-radius: 999px; background: #0055FF; color: #FFFFFF; font-size: 16px; font-weight: 600;">Create your OWNA</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: 160px 0; background: #111111; color: #F7F6F2; text-align: center;">
+    <div style="max-width: 900px; margin: 0 auto; padding: 0 clamp(24px, 4vw, 48px);">
+      <h2 style="font-size: 88px; line-height: 1.05; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 32px;">Own your corner<br />of the internet.</h2>
+      <p style="font-size: 24px; color: rgba(247,246,242,0.7); margin-bottom: 48px;">Build a presence that's unmistakably yours.</p>
+      <a href="#" style="display: inline-flex; align-items: center; height: 56px; padding: 0 40px; border-radius: 999px; background: #0055FF; color: #FFFFFF; font-size: 20px; font-weight: 500;">Create your OWNA</a>
+    </div>
+  </section>
+
+  <footer style="border-top: 1px solid #E4E2DC; padding: 80px clamp(24px, 4vw, 48px);">
+    <div style="max-width: 1280px; margin: 0 auto 64px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px;">
+      <div>
+        <a href="#" aria-label="OWNA home" style="display: block; width: fit-content; margin-bottom: 16px;">
+          <svg viewBox="0 0 141 48" fill="none" style="height: 42px; width: auto;" aria-hidden="true">
+            <path d="M132.616 8.21157C132.153 9.13728 131.896 10.7316 131.896 11.5544V34.543C131.896 35.3659 132.256 38.6059 132.616 39.7887C132.616 39.943 132.667 40.0459 132.667 40.1487C132.667 40.5601 132.359 40.9201 131.947 40.9201C130.867 40.7659 129.736 40.7144 128.656 40.7144C127.524 40.7144 126.444 40.7659 125.364 40.9201C124.953 40.9201 124.593 40.5601 124.593 40.1487C124.593 40.0973 124.593 39.9944 124.644 39.943C125.261 38.0916 125.364 36.1373 125.364 34.183V28.6801C125.364 28.2687 125.056 27.9601 124.644 27.9601C124.593 27.9601 124.49 27.9601 124.387 28.0116L114.77 31.5601C114.153 31.7659 113.793 32.383 113.793 33.0516V33.3087C114.204 35.3659 114.461 37.6287 114.461 40.1487C114.461 40.3544 114.41 40.5601 114.256 40.7144C114.101 40.8173 113.947 40.9201 113.741 40.9201C112.61 40.8173 111.53 40.7144 110.45 40.7144C109.319 40.7144 108.239 40.8173 107.159 40.9201C106.953 40.9201 106.747 40.8173 106.593 40.7144C106.49 40.5601 106.387 40.3544 106.387 40.1487C106.387 40.0459 106.387 39.9944 106.439 39.8916C106.747 39.0173 107.056 38.0401 107.056 37.1144C107.056 30.3259 105.719 27.8059 105.719 23.1259V22.8687C105.821 14.1259 113.021 7.08014 121.764 7.08014H132.05C132.41 7.08014 132.667 7.38871 132.667 7.80014V7.85157C132.667 8.00585 132.667 8.10871 132.616 8.21157ZM112.301 24.5659C112.301 24.9773 112.61 25.2344 112.97 25.2344C113.021 25.2344 113.124 25.2344 113.227 25.183L124.387 21.0173C125.004 20.8116 125.364 20.2459 125.364 19.5773V14.5373C125.364 14.023 124.953 13.6116 124.439 13.6116H122.176C116.724 13.6116 112.25 17.983 112.25 23.383V23.5887C112.25 23.8973 112.25 24.2573 112.301 24.5659Z" fill="currentColor" />
+            <path d="M102.074 8.21157C101.662 8.93157 101.354 9.703 101.354 10.5259V37.4744C101.354 38.2973 101.662 39.0687 102.074 39.7887C102.125 39.8916 102.125 40.0459 102.125 40.1487C102.125 40.5601 101.817 40.9201 101.405 40.9201H95.2852C94.6166 40.9201 94.0509 40.4059 94.0509 39.7373C93.6909 31.663 90.0395 20.503 82.9424 17.263C82.8395 17.2116 82.7366 17.2116 82.6338 17.2116C82.1195 17.2116 81.7081 17.5716 81.7081 18.0859V34.0801C81.7081 36.0859 82.1195 38.0401 82.4795 40.0459V40.1487C82.4795 40.3544 82.4281 40.5601 82.2738 40.7144C82.1195 40.8173 81.9652 40.9201 81.7595 40.9201C80.6281 40.8173 79.5481 40.7144 78.4681 40.7144C77.3366 40.7144 76.2566 40.8173 75.1766 40.9201C74.9709 40.9201 74.7652 40.8173 74.6109 40.7144C74.5081 40.5601 74.4052 40.3544 74.4052 40.1487C74.4052 40.0459 74.4052 39.9944 74.4566 39.8916C75.0738 38.0916 75.1766 36.1373 75.1766 34.183V13.8173C75.1766 11.863 74.8681 9.90871 74.4052 8.00585V7.85157C74.4052 7.44014 74.7138 7.08014 75.1766 7.08014H75.2281C76.1024 7.08014 76.9766 7.183 77.7995 7.28585C79.3938 7.49157 80.9366 7.85157 82.4281 8.41728C87.2109 10.2173 91.3766 13.7659 94.3595 18.3944C94.4109 18.4459 94.5138 18.4973 94.5652 18.4973C94.7195 18.4973 94.8738 18.3944 94.8738 18.2401V13.9201C94.8738 11.9144 94.4109 9.96014 94.0509 8.00585V7.85157C94.0509 7.38871 94.4109 7.08014 94.8738 7.08014C96.0052 7.23443 97.1366 7.33728 98.2681 7.33728C98.8338 7.33728 99.3995 7.28585 99.9652 7.23443L101.405 7.08014H101.508C101.868 7.08014 102.125 7.38871 102.125 7.80014V7.85157C102.125 8.00585 102.125 8.10871 102.074 8.21157Z" fill="currentColor" />
+            <path d="M70.802 40.2516C70.802 40.6116 70.4935 40.9201 70.1335 40.9201H69.722C62.3163 40.9201 56.8135 35.7259 55.2706 32.4859C55.2192 32.3316 55.1163 32.2801 55.0135 32.2801C54.8592 32.2801 54.7563 32.3316 54.7049 32.4859C53.2649 35.6744 47.6077 40.9201 40.3049 40.9201V40.8687C40.202 40.8687 40.1506 40.8687 40.0477 40.9201H39.9449C39.5335 40.9201 39.2249 40.6116 39.2249 40.1487V39.9944C39.6363 38.0916 39.9963 36.1373 39.9963 34.1316V13.8173C39.9963 11.9144 39.8935 9.90871 39.2249 8.10871V7.85157C39.2249 7.64586 39.2763 7.44014 39.4306 7.33728C39.5849 7.183 39.7392 7.08014 39.9449 7.08014C41.0763 7.23443 42.1563 7.28585 43.2363 7.28585C44.3677 7.28585 45.4477 7.23443 46.5277 7.08014C46.7335 7.08014 46.9392 7.183 47.0935 7.33728C47.1963 7.44014 47.2992 7.64586 47.2992 7.85157V7.95443C46.9392 9.96014 46.4763 11.9144 46.4763 13.9716V29.503C46.4763 29.9144 46.8363 30.223 47.1963 30.223C47.2992 30.223 47.402 30.1716 47.5049 30.1201C50.4363 28.3201 52.9049 22.5087 53.882 18.7544C54.0363 18.1887 54.4992 17.9316 54.962 17.9316C55.4249 17.9316 55.8877 18.1887 56.042 18.7544C56.9677 22.303 59.3849 28.2687 62.4192 30.8916C62.522 30.9944 62.6763 31.0459 62.8306 31.0459C63.1906 31.0459 63.4992 30.7887 63.4992 30.3773V13.8173C63.4992 11.9144 63.3963 9.90871 62.7277 8.10871V7.85157C62.7277 7.64586 62.7792 7.44014 62.9335 7.33728C63.0877 7.183 63.242 7.08014 63.4477 7.08014C64.5792 7.23443 65.6592 7.28585 66.7392 7.28585C67.8706 7.28585 68.9506 7.23443 70.0306 7.08014C70.2363 7.08014 70.442 7.183 70.5963 7.33728C70.6992 7.44014 70.802 7.64586 70.802 7.85157V7.95443C70.442 9.96014 70.0306 11.9144 70.0306 13.9716V34.1316C70.0306 36.0859 70.3392 38.0401 70.802 39.9944V40.2516Z" fill="currentColor" />
+            <path d="M21.2571 7.08002C30.1543 7.08002 35.6057 14.6914 35.6057 24C35.6057 33.36 30.1543 40.92 21.2571 40.92C12.36 40.92 6.85712 33.36 6.85712 24C6.85712 14.6914 12.36 7.08002 21.2571 7.08002ZM21.2571 34.3886C26.4514 34.3886 28.92 29.76 28.92 24C28.92 18.24 26.4514 13.6114 21.2571 13.6114C16.0114 13.6114 13.5428 18.24 13.5428 24C13.5428 29.76 16.0114 34.3886 21.2571 34.3886Z" fill="currentColor" />
+          </svg>
+        </a>
+        <p style="max-width: 320px; font-size: 14px; color: #6B6B67;">Own your corner of the Internet</p>
+      </div>
+      <div>
+        <h4 style="margin-bottom: 24px; font-weight: 700;">Product</h4>
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; font-size: 14px; color: #6B6B67;">
+          <li><a href="#product">What you can build</a></li>
+          <li><a href="#for">Built for you</a></li>
+          <li><a href="#explore">Discover</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="margin-bottom: 24px; font-weight: 700;">Account</h4>
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; font-size: 14px; color: #6B6B67;">
+          <li><a href="#">Log in</a></li>
+          <li><a href="#">Sign up</a></li>
+          <li><a href="#">Dashboard</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="margin-bottom: 24px; font-weight: 700;">Legal</h4>
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; font-size: 14px; color: #6B6B67;">
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div style="max-width: 1280px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid #E4E2DC; padding-top: 32px; font-size: 14px; color: #6B6B67;">
+      <div>OWNA © 2026</div>
+      <div style="display: flex; gap: 24px;">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { lib: null, step: 0 };
+
+  componentDidMount() {
+    import("./owna-profiles.js").then((lib) => this.setState({ lib }));
+  }
+
+  preview(id, opts) {
+    const { lib } = this.state;
+    if (!lib) return null;
+    return lib.renderProfile(React, lib.snapshotFor(id), opts);
+  }
+
+  renderVals() {
+    const { lib } = this.state;
+    const rail = lib
+      ? [
+          { id: "photographer", name: "Marc Dubois", craft: "Editorial photography", theme: "Portfolio" },
+          { id: "jewellery", name: "AURA", craft: "Fine jewellery", theme: "Editorial" },
+          { id: "freelancer", name: "Alex Chen", craft: "Full-stack development", theme: "Cyber" },
+          { id: "creative", name: "Maya Chandra", craft: "Type design", theme: "Glass" },
+          { id: "consultant", name: "Sarah Jenkins", craft: "Growth consulting", theme: "Professional" },
+        ]
+      : [];
+
+    const tile = (entry, key) =>
+      React.createElement("figure", { key, style: { width: 300, flexShrink: 0, margin: 0, marginRight: 24 } }, [
+        React.createElement("div", {
+          key: "f",
+          style: {
+            height: 480, overflow: "hidden", borderRadius: 24, border: "1px solid #E4E2DC",
+            background: "#F7F6F2", maskImage: "linear-gradient(to bottom, #000 78%, transparent 99%)",
+          },
+        }, this.preview(entry.id, { contentWidth: 300 })),
+        React.createElement("figcaption", { key: "c", style: { marginTop: 20, display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 16 } }, [
+          React.createElement("span", { key: "l" }, [
+            React.createElement("span", { key: "n", style: { display: "block", fontWeight: 500 } }, entry.name),
+            React.createElement("span", { key: "c", style: { display: "block", fontSize: 14, color: "#6B6B67" } }, entry.craft),
+          ]),
+          React.createElement("span", { key: "t", style: { flexShrink: 0, fontFamily: "ui-monospace, monospace", fontSize: 11, letterSpacing: "0.05em", textTransform: "uppercase", color: "rgba(107,107,103,0.7)" } }, entry.theme),
+        ]),
+      ]);
+
+    return {
+      previewPhotographer: this.preview("photographer", { contentWidth: 380 }),
+      previewFreelancer: this.preview("freelancer", { contentWidth: 380 }),
+      previewCreative: this.preview("creative", { contentWidth: 380 }),
+      previewJewellery: this.preview("jewellery", { contentWidth: 380 }),
+      previewBuildFlow: this.preview("creative", { contentWidth: 380 }),
+      rail: [...rail, ...rail].map((entry, i) => tile(entry, i)),
+      setStepBuild: () => this.setState({ step: 0 }),
+      setStepCustomize: () => this.setState({ step: 1 }),
+      setStepPublish: () => this.setState({ step: 2 }),
+    };
+  }
+}
+</script>
+</body>
+</html>

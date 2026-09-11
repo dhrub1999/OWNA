@@ -1,132 +1,41 @@
-import { Check } from "lucide-react";
 import { StartBuildingButton } from "@/components/marketing/start-building-button";
-import { BlurFade } from "@/components/magicui/blur-fade";
-import { BorderBeam } from "@/components/magicui/border-beam";
+import { BLOCK_TYPES } from "@/lib/blocks/definitions";
+import { THEME_PRESETS } from "@/lib/themes/presets";
 
 /**
- * Pricing.
+ * Section 7: "Free, for now." — pricing.
  *
- * The nav and the footer both linked to `#pricing`, which did not exist. This
- * is the section, and it says the true thing: there is one tier and it costs
- * nothing. No invented ladder, no greyed-out "Pro" column for a plan nobody has
- * specified — a fake tier is a promise, and this one would be a promise made up
- * by the marketing page rather than by the product.
- *
- * Every line in the list is checkable against the codebase: nine block types in
- * `components/public/blocks/`, ten presets in `lib/themes/presets.ts`, and the
- * publish/unpublish pair the dashboard already ships.
+ * One row, not a ladder: there is one tier and it costs nothing, so this says
+ * that rather than inventing a "Pro" column for a plan nobody has specified.
+ * The mono line's counts come from `BLOCK_TYPES` and `THEME_PRESETS` for the
+ * same reason the block grid's footer does — a number typed by hand here
+ * could drift from what the product actually ships.
  */
-const INCLUDED = [
-  {
-    label: "Nine kinds of block",
-    detail:
-      "Hero, links, projects, gallery, text, image, embed, social, divider — as many of each as you want.",
-  },
-  {
-    label: "All ten themes",
-    detail:
-      "Colour, type and layout, swapped live. Every one of them contrast-checked.",
-  },
-  {
-    label: "Your own handle",
-    detail: "owna.online/yourname, yours the moment you claim it.",
-  },
-  {
-    label: "Publish and unpublish",
-    detail:
-      "Take the page down, put it back, as often as you like. Drafts stay private until you say otherwise.",
-  },
-  {
-    label: "No account to start",
-    detail:
-      "Build the whole page first. Signing up is what puts it online, not what lets you begin.",
-  },
-];
-
 export function Pricing() {
   return (
-    <section id="pricing" className="scroll-mt-20 py-32 sm:py-40">
-      <div className="mx-auto max-w-7xl px-6 sm:px-12">
-        {/* 5/7, not 6/6: the list is the substance and gets the wider half. */}
-        <BlurFade
-          inView
-          direction="up"
-          className="grid gap-16 lg:grid-cols-[5fr_7fr] lg:gap-24"
-        >
-          <div className="lg:pt-2">
-            <h2 className="font-display text-4xl font-bold tracking-tight sm:text-5xl">
-              Free, for now.
-            </h2>
-            <p className="mt-6 max-w-[38ch] text-lg leading-relaxed text-muted-foreground">
-              Every block, every theme, your own handle. Nothing sits behind a
-              card, and nothing you build today gets taken away later.
-            </p>
+    <section
+      id="pricing"
+      className="scroll-mt-20 border-t border-border bg-card py-[clamp(56px,6vw,88px)]"
+    >
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-8 px-[clamp(16px,4vw,48px)]">
+        <div className="min-w-0">
+          <h2 className="font-display text-[clamp(28px,3vw,40px)] font-extrabold tracking-[-0.03em]">
+            Free, for now.
+          </h2>
+          <p className="mt-3 max-w-[52ch] text-[17px] leading-[1.55] text-muted-foreground">
+            Every block, every theme, your own handle, publish and unpublish as often as you
+            want. No card, no trial clock.
+          </p>
+        </div>
 
-            <p className="mt-10 max-w-[42ch] border-l-2 border-border pl-5 text-[15px] leading-relaxed text-muted-foreground">
-              A paid tier will arrive when there is something worth charging
-              for — more than one page, a domain of your own. Until then this is
-              the whole product, and the page you make on it stays yours.
-            </p>
-          </div>
-
-          {/* One surface, divided — not five stacked cards. There's only one
-              plan, so the beam is doing the job a "most popular" ribbon does
-              on a pricing ladder — pointing at the thing to look at — without
-              inventing a ladder to point along. */}
-          {/* `overflow-hidden` is not cosmetic: BorderBeam is an absolutely
-              positioned square that travels the border path, and without a
-              clipping container it escapes the card's right edge and widens the
-              document. That was the one thing making every page width below
-              1440 scroll sideways. */}
-          <div className="relative overflow-hidden rounded-[32px] border border-border bg-card">
-            <BorderBeam
-              duration={8}
-              size={140}
-              colorFrom="var(--primary)"
-              colorTo="var(--logo-hover)"
-            />
-            <div className="flex flex-wrap items-end justify-between gap-4 px-8 py-8 sm:px-10">
-              <div>
-                <div className="font-display text-2xl font-bold">
-                  Everything OWNA does
-                </div>
-                <div className="mt-1 text-sm text-muted-foreground">
-                  No card, no trial clock.
-                </div>
-              </div>
-              <div className="font-display text-5xl font-bold tracking-tight">
-                Free
-              </div>
-            </div>
-
-            <ul className="divide-y divide-border border-y border-border">
-              {INCLUDED.map((item) => (
-                <li
-                  key={item.label}
-                  className="flex gap-4 px-8 py-6 sm:px-10"
-                >
-                  <Check
-                    aria-hidden
-                    className="mt-0.5 size-5 shrink-0 text-primary"
-                    strokeWidth={2}
-                  />
-                  <div>
-                    <div className="font-medium">{item.label}</div>
-                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                      {item.detail}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-
-            <div className="px-8 py-8 sm:px-10">
-              <StartBuildingButton className="h-14 w-full rounded-full text-base font-semibold transition-transform active:scale-[0.98] sm:w-auto sm:px-10">
-                Create your OWNA
-              </StartBuildingButton>
-            </div>
-          </div>
-        </BlurFade>
+        <div className="flex flex-[1_1_300px] flex-wrap items-center gap-4">
+          <p className="font-mono text-xs text-muted-foreground">
+            {BLOCK_TYPES.length} blocks · {THEME_PRESETS.length} themes · 1 page · $0
+          </p>
+          <StartBuildingButton className="h-13 flex-[1_1_200px] justify-center rounded-full px-7 text-base font-semibold">
+            Create your OWNA
+          </StartBuildingButton>
+        </div>
       </div>
     </section>
   );
