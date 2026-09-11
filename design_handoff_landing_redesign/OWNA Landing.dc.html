@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700&family=Outfit:wght@400;600;700&family=Playfair+Display:wght@400;700&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;700&family=Bricolage+Grotesque:wght@400;800&display=swap" rel="stylesheet" />
+<style>
+@font-face {
+  font-family: "Parkinsans";
+  src: url("assets/fonts/parkinsans-variable.woff2") format("woff2");
+  font-weight: 300 800;
+  font-display: swap;
+}
+* { box-sizing: border-box; }
+:root {
+  color-scheme: light;
+  --ow-bg: #F7F6F2;
+  --ow-surface: #FFFFFF;
+  --ow-ink: #111111;
+  --ow-muted: #6B6B67;
+  --ow-line: #E4E2DC;
+  --ow-line-soft: rgba(228,226,220,0.4);
+  --ow-faint: #C6C3BB;
+  --ow-header: rgba(247,246,242,0.72);
+  --ow-accent: #0055FF;
+  --ow-accent-soft: rgba(0,85,255,0.07);
+  --ow-shadow: rgba(17,17,17,0.25);
+  --ow-invert-bg: #111111;
+  --ow-invert-ink: #F7F6F2;
+  --ow-invert-muted: rgba(247,246,242,0.7);
+  --ow-invert-faint: rgba(247,246,242,0.55);
+}
+html.dark {
+  color-scheme: dark;
+  --ow-bg: #0D0D0D;
+  --ow-surface: #151515;
+  --ow-ink: #F5F4EF;
+  --ow-muted: #A5A49F;
+  --ow-line: #292929;
+  --ow-line-soft: rgba(41,41,41,0.55);
+  --ow-faint: #454542;
+  --ow-header: rgba(13,13,13,0.72);
+  --ow-accent-soft: rgba(0,85,255,0.2);
+  --ow-shadow: rgba(0,0,0,0.7);
+  --ow-invert-bg: #F5F4EF;
+  --ow-invert-ink: #111111;
+  --ow-invert-muted: rgba(17,17,17,0.74);
+  --ow-invert-faint: rgba(17,17,17,0.64);
+}
+body { margin: 0; background: var(--ow-bg); color: var(--ow-ink); font-family: "Parkinsans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; transition: background-color 220ms ease, color 220ms ease; }
+@media (max-width: 880px) { [data-r="nav"] { display: none; } }
+@media (max-width: 480px) { [data-r="login"] { display: none; } [data-r="cta-header"] { padding: 0 16px; } }
+a { color: inherit; text-decoration: none; }
+a:hover { color: #0055FF; }
+h1, h2, h3, h4 { font-family: "Plus Jakarta Sans", system-ui, sans-serif; margin: 0; }
+p { margin: 0; }
+@keyframes rise { from { opacity: 0; transform: translateY(10px); filter: blur(6px); } to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes rail { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { [style*="animation"] { animation: none !important; } }
+</style>
+</helmet>
+
+<div style="background: var(--ow-bg, #F7F6F2); color: var(--ow-ink, #111111); min-width: 0;">
+
+  <header style="position: sticky; top: 0; z-index: 40; border-bottom: 1px solid var(--ow-line-soft, rgba(228,226,220,0.4)); background: var(--ow-header, rgba(247,246,242,0.72)); backdrop-filter: blur(16px) saturate(1.5);">
+    <div style="display: flex; height: 72px; align-items: center; justify-content: space-between; gap: 12px; padding: 0 clamp(16px, 4vw, 48px);">
+      <div style="display: flex; align-items: center; gap: clamp(24px, 4vw, 48px); min-width: 0;">
+        <a href="#top" aria-label="OWNA home" style="display: flex; align-items: center; flex-shrink: 0;">
+          <svg viewBox="0 0 141 48" fill="none" style="height: 30px; width: auto;" aria-hidden="true">
+            <path d="M132.616 8.21157C132.153 9.13728 131.896 10.7316 131.896 11.5544V34.543C131.896 35.3659 132.256 38.6059 132.616 39.7887C132.616 39.943 132.667 40.0459 132.667 40.1487C132.667 40.5601 132.359 40.9201 131.947 40.9201C130.867 40.7659 129.736 40.7144 128.656 40.7144C127.524 40.7144 126.444 40.7659 125.364 40.9201C124.953 40.9201 124.593 40.5601 124.593 40.1487C124.593 40.0973 124.593 39.9944 124.644 39.943C125.261 38.0916 125.364 36.1373 125.364 34.183V28.6801C125.364 28.2687 125.056 27.9601 124.644 27.9601C124.593 27.9601 124.49 27.9601 124.387 28.0116L114.77 31.5601C114.153 31.7659 113.793 32.383 113.793 33.0516V33.3087C114.204 35.3659 114.461 37.6287 114.461 40.1487C114.461 40.3544 114.41 40.5601 114.256 40.7144C114.101 40.8173 113.947 40.9201 113.741 40.9201C112.61 40.8173 111.53 40.7144 110.45 40.7144C109.319 40.7144 108.239 40.8173 107.159 40.9201C106.953 40.9201 106.747 40.8173 106.593 40.7144C106.49 40.5601 106.387 40.3544 106.387 40.1487C106.387 40.0459 106.387 39.9944 106.439 39.8916C106.747 39.0173 107.056 38.0401 107.056 37.1144C107.056 30.3259 105.719 27.8059 105.719 23.1259V22.8687C105.821 14.1259 113.021 7.08014 121.764 7.08014H132.05C132.41 7.08014 132.667 7.38871 132.667 7.80014V7.85157C132.667 8.00585 132.667 8.10871 132.616 8.21157ZM112.301 24.5659C112.301 24.9773 112.61 25.2344 112.97 25.2344C113.021 25.2344 113.124 25.2344 113.227 25.183L124.387 21.0173C125.004 20.8116 125.364 20.2459 125.364 19.5773V14.5373C125.364 14.023 124.953 13.6116 124.439 13.6116H122.176C116.724 13.6116 112.25 17.983 112.25 23.383V23.5887C112.25 23.8973 112.25 24.2573 112.301 24.5659Z" fill="currentColor" />
+            <path d="M102.074 8.21157C101.662 8.93157 101.354 9.703 101.354 10.5259V37.4744C101.354 38.2973 101.662 39.0687 102.074 39.7887C102.125 39.8916 102.125 40.0459 102.125 40.1487C102.125 40.5601 101.817 40.9201 101.405 40.9201H95.2852C94.6166 40.9201 94.0509 40.4059 94.0509 39.7373C93.6909 31.663 90.0395 20.503 82.9424 17.263C82.8395 17.2116 82.7366 17.2116 82.6338 17.2116C82.1195 17.2116 81.7081 17.5716 81.7081 18.0859V34.0801C81.7081 36.0859 82.1195 38.0401 82.4795 40.0459V40.1487C82.4795 40.3544 82.4281 40.5601 82.2738 40.7144C82.1195 40.8173 81.9652 40.9201 81.7595 40.9201C80.6281 40.8173 79.5481 40.7144 78.4681 40.7144C77.3366 40.7144 76.2566 40.8173 75.1766 40.9201C74.9709 40.9201 74.7652 40.8173 74.6109 40.7144C74.5081 40.5601 74.4052 40.3544 74.4052 40.1487C74.4052 40.0459 74.4052 39.9944 74.4566 39.8916C75.0738 38.0916 75.1766 36.1373 75.1766 34.183V13.8173C75.1766 11.863 74.8681 9.90871 74.4052 8.00585V7.85157C74.4052 7.44014 74.7138 7.08014 75.1766 7.08014H75.2281C76.1024 7.08014 76.9766 7.183 77.7995 7.28585C79.3938 7.49157 80.9366 7.85157 82.4281 8.41728C87.2109 10.2173 91.3766 13.7659 94.3595 18.3944C94.4109 18.4459 94.5138 18.4973 94.5652 18.4973C94.7195 18.4973 94.8738 18.3944 94.8738 18.2401V13.9201C94.8738 11.9144 94.4109 9.96014 94.0509 8.00585V7.85157C94.0509 7.38871 94.4109 7.08014 94.8738 7.08014C96.0052 7.23443 97.1366 7.33728 98.2681 7.33728C98.8338 7.33728 99.3995 7.28585 99.9652 7.23443L101.405 7.08014H101.508C101.868 7.08014 102.125 7.38871 102.125 7.80014V7.85157C102.125 8.00585 102.125 8.10871 102.074 8.21157Z" fill="currentColor" />
+            <path d="M70.802 40.2516C70.802 40.6116 70.4935 40.9201 70.1335 40.9201H69.722C62.3163 40.9201 56.8135 35.7259 55.2706 32.4859C55.2192 32.3316 55.1163 32.2801 55.0135 32.2801C54.8592 32.2801 54.7563 32.3316 54.7049 32.4859C53.2649 35.6744 47.6077 40.9201 40.3049 40.9201V40.8687C40.202 40.8687 40.1506 40.8687 40.0477 40.9201H39.9449C39.5335 40.9201 39.2249 40.6116 39.2249 40.1487V39.9944C39.6363 38.0916 39.9963 36.1373 39.9963 34.1316V13.8173C39.9963 11.9144 39.8935 9.90871 39.2249 8.10871V7.85157C39.2249 7.64586 39.2763 7.44014 39.4306 7.33728C39.5849 7.183 39.7392 7.08014 39.9449 7.08014C41.0763 7.23443 42.1563 7.28585 43.2363 7.28585C44.3677 7.28585 45.4477 7.23443 46.5277 7.08014C46.7335 7.08014 46.9392 7.183 47.0935 7.33728C47.1963 7.44014 47.2992 7.64586 47.2992 7.85157V7.95443C46.9392 9.96014 46.4763 11.9144 46.4763 13.9716V29.503C46.4763 29.9144 46.8363 30.223 47.1963 30.223C47.2992 30.223 47.402 30.1716 47.5049 30.1201C50.4363 28.3201 52.9049 22.5087 53.882 18.7544C54.0363 18.1887 54.4992 17.9316 54.962 17.9316C55.4249 17.9316 55.8877 18.1887 56.042 18.7544C56.9677 22.303 59.3849 28.2687 62.4192 30.8916C62.522 30.9944 62.6763 31.0459 62.8306 31.0459C63.1906 31.0459 63.4992 30.7887 63.4992 30.3773V13.8173C63.4992 11.9144 63.3963 9.90871 62.7277 8.10871V7.85157C62.7277 7.64586 62.7792 7.44014 62.9335 7.33728C63.0877 7.183 63.242 7.08014 63.4477 7.08014C64.5792 7.23443 65.6592 7.28585 66.7392 7.28585C67.8706 7.28585 68.9506 7.23443 70.0306 7.08014C70.2363 7.08014 70.442 7.183 70.5963 7.33728C70.6992 7.44014 70.802 7.64586 70.802 7.85157V7.95443C70.442 9.96014 70.0306 11.9144 70.0306 13.9716V34.1316C70.0306 36.0859 70.3392 38.0401 70.802 39.9944V40.2516Z" fill="currentColor" />
+            <path d="M21.2571 7.08002C30.1543 7.08002 35.6057 14.6914 35.6057 24C35.6057 33.36 30.1543 40.92 21.2571 40.92C12.36 40.92 6.85712 33.36 6.85712 24C6.85712 14.6914 12.36 7.08002 21.2571 7.08002ZM21.2571 34.3886C26.4514 34.3886 28.92 29.76 28.92 24C28.92 18.24 26.4514 13.6114 21.2571 13.6114C16.0114 13.6114 13.5428 18.24 13.5428 24C13.5428 29.76 16.0114 34.3886 21.2571 34.3886Z" fill="currentColor" />
+          </svg>
+        </a>
+        <nav data-r="nav" style="display: flex; align-items: center; gap: clamp(14px, 2vw, 32px); font-size: 14px; font-weight: 500; white-space: nowrap;">
+          <a href="#product">Product</a>
+          <a href="#explore">Explore</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+      </div>
+      <div style="display: flex; align-items: center; gap: clamp(8px, 1.4vw, 16px); flex-shrink: 0;">
+        <button type="button" onClick="{{ toggleTheme }}" title="{{ themeLabel }}" aria-label="{{ themeLabel }}" style="display: flex; cursor: pointer; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; padding: 0; border-radius: 999px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF); color: var(--ow-ink, #111111);">
+          <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"></path></svg>
+          </sc-if>
+          <sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v1.6M12 20.4V22M4.9 4.9l1.2 1.2M17.9 17.9l1.2 1.2M2 12h1.6M20.4 12H22M4.9 19.1l1.2-1.2M17.9 6.1l1.2-1.2"></path></svg>
+          </sc-if>
+        </button>
+        <a data-r="login" href="#" style="font-size: 14px; font-weight: 500; white-space: nowrap;">Log in</a>
+        <a data-r="cta-header" href="#" style="display: inline-flex; align-items: center; height: 38px; padding: 0 22px; border-radius: 999px; background: #0055FF; color: #FFFFFF; font-size: 14px; font-weight: 600; white-space: nowrap;">Create your OWNA</a>
+      </div>
+    </div>
+  </header>
+
+  <section id="top" style="padding: clamp(48px, 7vw, 88px) clamp(16px, 4vw, 48px) clamp(56px, 7vw, 96px);">
+    <div style="max-width: 1280px; margin: 0 auto;">
+
+      <sc-if value="{{ isSplit }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-wrap: wrap; gap: clamp(32px, 4vw, 64px); align-items: center;">
+          <div style="flex: 1 1 380px; min-width: 0; animation: rise 0.6s cubic-bezier(0.25,1,0.5,1) both;">
+            <p style="display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF); border-radius: 999px; padding: 6px 14px 6px 10px; font-family: ui-monospace, monospace; font-size: 12px; color: var(--ow-muted, #6B6B67);">
+              <span style="width: 6px; height: 6px; border-radius: 999px; background: #0055FF;"></span>
+              owna.online/yourname
+            </p>
+            <h1 style="margin-top: 24px; font-family: 'Parkinsans', system-ui, sans-serif; font-size: clamp(33px, 4.6vw, 64px); line-height: 1.02; font-weight: 800; letter-spacing: -0.038em; text-wrap: balance;">Build the page you point people to.</h1>
+            <p style="margin-top: 20px; max-width: 44ch; font-size: clamp(17px, 1.4vw, 20px); line-height: 1.5; color: var(--ow-muted, #6B6B67);">Drop in blocks, pick a theme, publish to your own handle. No code, no hosting, no deploys — and no account until you want it live.</p>
+            <div style="margin-top: 32px; display: flex; flex-wrap: wrap; gap: 12px;">
+              <a href="#" style="display: inline-flex; align-items: center; justify-content: center; height: 54px; padding: 0 30px; border-radius: 999px; background: #0055FF; color: #FFFFFF; font-size: 16px; font-weight: 600;">Create your OWNA</a>
+              <a href="#explore" style="display: inline-flex; align-items: center; justify-content: center; height: 54px; padding: 0 26px; border-radius: 999px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF); color: var(--ow-ink, #111111); font-size: 16px; font-weight: 500;">See real profiles</a>
+            </div>
+            <p style="margin-top: 20px; display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ow-muted, #6B6B67);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+              Signing up is what publishes the page, not what starts it.
+            </p>
+          </div>
+          <div style="flex: 1 1 480px; min-width: 0; animation: rise 0.7s 0.1s cubic-bezier(0.25,1,0.5,1) both;">
+            <dc-import name="EditorStage" persona="creative" hint-size="100%,600px"></dc-import>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isConsole }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="max-width: 900px; animation: rise 0.6s cubic-bezier(0.25,1,0.5,1) both;">
+            <p style="display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF); border-radius: 999px; padding: 6px 14px 6px 10px; font-family: ui-monospace, monospace; font-size: 12px; color: var(--ow-muted, #6B6B67);">
+              <span style="width: 6px; height: 6px; border-radius: 999px; background: #0055FF;"></span>
+              owna.online/yourname
+            </p>
+            <h1 style="margin-top: 24px; font-family: 'Parkinsans', system-ui, sans-serif; font-size: clamp(33px, 6vw, 82px); line-height: 1; font-weight: 800; letter-spacing: -0.038em; text-wrap: balance;">Build the page you point people to.</h1>
+            <div style="margin-top: 28px; display: flex; flex-wrap: wrap; align-items: center; gap: 24px;">
+              <p style="max-width: 46ch; font-size: clamp(17px, 1.4vw, 20px); line-height: 1.5; color: var(--ow-muted, #6B6B67);">Drop in blocks, pick a theme, publish to your own handle. No code, no hosting, no deploys — and no account until you want it live.</p>
+              <a href="#" style="display: inline-flex; align-items: center; justify-content: center; height: 54px; padding: 0 30px; border-radius: 999px; background: #0055FF; color: #FFFFFF; font-size: 16px; font-weight: 600;">Create your OWNA</a>
+            </div>
+          </div>
+          <div style="margin-top: 44px; animation: rise 0.7s 0.12s cubic-bezier(0.25,1,0.5,1) both;">
+            <dc-import name="EditorStage" persona="creative" hint-size="100%,600px"></dc-import>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isCanvas }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px; animation: rise 0.6s cubic-bezier(0.25,1,0.5,1) both;">
+            <h1 style="max-width: 20ch; font-family: 'Parkinsans', system-ui, sans-serif; font-size: clamp(28px, 3.4vw, 48px); line-height: 1.04; font-weight: 800; letter-spacing: -0.035em;">Build the page you point people to.</h1>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
+              <p style="max-width: 34ch; font-size: 16px; line-height: 1.5; color: var(--ow-muted, #6B6B67);">No code, no hosting. An account is only needed to publish.</p>
+              <a href="#" style="display: inline-flex; align-items: center; justify-content: center; height: 50px; padding: 0 26px; border-radius: 999px; background: #0055FF; color: #FFFFFF; font-size: 15px; font-weight: 600;">Create your OWNA</a>
+            </div>
+          </div>
+          <div style="margin-top: 32px; animation: rise 0.7s 0.1s cubic-bezier(0.25,1,0.5,1) both;">
+            <dc-import name="EditorStage" persona="photographer" hint-size="100%,600px"></dc-import>
+          </div>
+        </div>
+      </sc-if>
+
+      <p style="margin-top: 20px; font-family: ui-monospace, monospace; font-size: 12px; letter-spacing: 0.04em; color: var(--ow-muted, #6B6B67);">↑ Live. Add a block, swap the theme — this is the editor, not a picture of it.</p>
+    </div>
+  </section>
+
+  <section id="start" style="border-top: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF); padding: clamp(64px, 8vw, 112px) clamp(16px, 4vw, 48px);">
+    <div style="max-width: 1280px; margin: 0 auto;">
+      <div style="display: flex; max-width: 860px; flex-direction: column; gap: 18px;">
+        <h2 style="font-size: clamp(27px, 4vw, 52px); line-height: 1.05; font-weight: 800; letter-spacing: -0.035em; text-wrap: balance;">Start from where you actually are.</h2>
+        <p style="max-width: 56ch; font-size: clamp(16px, 1.5vw, 19px); line-height: 1.55; color: var(--ow-muted, #6B6B67);">The builder opens with one question. Your answer picks the blocks and the theme, so the first thing you see is a page — not an empty canvas.</p>
+      </div>
+
+      <div style="margin-top: 48px; display: flex; flex-wrap: wrap; gap: clamp(28px, 3vw, 56px); align-items: flex-start;">
+        <div style="flex: 1 1 320px; min-width: 0;">
+          <p style="margin-bottom: 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ow-muted, #6B6B67);">What is this page for?</p>
+          <div style="display: flex; flex-direction: column; gap: 8px;">{{ personaOptions }}</div>
+          <p style="margin-top: 20px; border-left: 2px solid var(--ow-line, #E4E2DC); padding-left: 16px; font-size: 14px; line-height: 1.6; color: var(--ow-muted, #6B6B67);">Five starting points, five themes. Whichever you pick, every block, colour and corner stays editable afterwards.</p>
+        </div>
+        <div style="flex: 1 1 420px; min-width: 0;">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 12px;">
+            <p style="font-family: ui-monospace, monospace; font-size: 12px; color: var(--ow-muted, #6B6B67);">{{ personaUrl }}</p>
+            <p style="font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ow-muted, #6B6B67);">{{ personaTheme }} theme</p>
+          </div>
+          <div ref="{{ previewRef }}" style="height: clamp(400px, 92vw, 560px); overflow: hidden; border-radius: 20px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-bg, #F7F6F2); mask-image: linear-gradient(to bottom, #000 82%, transparent 99%);">{{ personaPreview }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="product" style="border-top: 1px solid var(--ow-line, #E4E2DC); padding: clamp(64px, 8vw, 112px) clamp(16px, 4vw, 48px);">
+    <div style="max-width: 1280px; margin: 0 auto;">
+      <div style="display: flex; max-width: 900px; flex-direction: column; gap: 18px;">
+        <h2 style="max-width: 22ch; font-size: clamp(27px, 4vw, 52px); line-height: 1.05; font-weight: 800; letter-spacing: -0.035em; text-wrap: balance;">Nine blocks. A link list gives you one.</h2>
+        <p style="max-width: 54ch; font-size: clamp(16px, 1.5vw, 19px); line-height: 1.55; color: var(--ow-muted, #6B6B67);">Each block is real content — a gallery, a case study, a player, a bio that carries availability and location. Not a button pointing at content somewhere else.</p>
+      </div>
+
+      <div style="margin-top: 48px; display: flex; flex-wrap: wrap; gap: 16px;">
+        <div style="flex: 3 1 520px; display: flex; flex-wrap: wrap; overflow: hidden; border-radius: 24px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF);">
+          <div style="display: flex; flex: 1 1 240px; min-width: 0; flex-direction: column; gap: 10px; justify-content: center; padding: clamp(20px, 3vw, 28px);">
+            <h3 style="font-size: 20px; font-weight: 700; letter-spacing: -0.02em;">Hero</h3>
+            <p style="max-width: 34ch; font-size: 15px; line-height: 1.55; color: var(--ow-muted, #6B6B67);">Your photo, name and one line about you — plus availability and location, which a bio link flattens into the same row as everything else.</p>
+          </div>
+          <div style="width: min(280px, 100%); flex-shrink: 0; aspect-ratio: 922 / 1206; background: var(--ow-bg, #F7F6F2);">
+            <img src="assets/products/hero.jpg" alt="A profile hero with a photo, name, role, bio, availability and location" style="height: 100%; width: 100%; object-fit: cover; display: block;" />
+          </div>
+        </div>
+
+        <div style="flex: 1 1 260px; display: flex; flex-direction: column; overflow: hidden; border-radius: 24px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF);">
+          <div style="display: flex; flex-direction: column; gap: 8px; padding: 24px 24px 20px;">
+            <h3 style="font-size: 20px; font-weight: 700; letter-spacing: -0.02em;">Gallery</h3>
+            <p style="font-size: 15px; line-height: 1.55; color: var(--ow-muted, #6B6B67);">A grid of images. Tap one, it opens full size.</p>
+          </div>
+          <div style="margin-top: auto; aspect-ratio: 16 / 9; width: 100%; background: var(--ow-bg, #F7F6F2);">
+            <img src="assets/products/gallery.jpg" alt="A gallery block laid out as a grid of photographs" style="height: 100%; width: 100%; object-fit: cover; display: block;" />
+          </div>
+        </div>
+
+        <div style="flex: 1 1 260px; display: flex; flex-direction: column; overflow: hidden; border-radius: 24px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF);">
+          <div style="display: flex; flex-direction: column; gap: 8px; padding: 24px 24px 20px;">
+            <h3 style="font-size: 20px; font-weight: 700; letter-spacing: -0.02em;">Projects</h3>
+            <p style="font-size: 15px; line-height: 1.55; color: var(--ow-muted, #6B6B67);">Cards for the things you've made, with the story behind each one.</p>
+          </div>
+          <div style="margin-top: auto; aspect-ratio: 16 / 9; width: 100%; background: var(--ow-bg, #F7F6F2);">
+            <img src="assets/products/projects.jpg" alt="A project card with an image, a name and a description" style="height: 100%; width: 100%; object-fit: cover; display: block;" />
+          </div>
+        </div>
+
+        <div style="flex: 1 1 260px; display: flex; flex-direction: column; overflow: hidden; border-radius: 24px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF);">
+          <div style="display: flex; flex-direction: column; gap: 8px; padding: 24px 24px 20px;">
+            <h3 style="font-size: 20px; font-weight: 700; letter-spacing: -0.02em;">Links</h3>
+            <p style="font-size: 15px; line-height: 1.55; color: var(--ow-muted, #6B6B67);">Buttons pointing anywhere you like — the one block a link-in-bio tool gives you.</p>
+          </div>
+          <div style="margin-top: auto; aspect-ratio: 16 / 9; width: 100%; background: var(--ow-bg, #F7F6F2);">
+            <img src="assets/products/links.jpg" alt="A list of link buttons, each with a title, subtitle and arrow" style="height: 100%; width: 100%; object-fit: cover; display: block;" />
+          </div>
+        </div>
+
+        <div style="flex: 1 1 260px; display: flex; flex-direction: column; overflow: hidden; border-radius: 24px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF);">
+          <div style="display: flex; flex-direction: column; gap: 8px; padding: 24px 24px 20px;">
+            <h3 style="font-size: 20px; font-weight: 700; letter-spacing: -0.02em;">Social links</h3>
+            <p style="font-size: 15px; line-height: 1.55; color: var(--ow-muted, #6B6B67);">Icons for the platforms you're on. Thirteen to choose from, email included.</p>
+          </div>
+          <div style="margin-top: auto; aspect-ratio: 16 / 9; width: 100%; background: var(--ow-bg, #F7F6F2);">
+            <img src="assets/products/social-links.jpg" alt="A row of social platform icons under a heading" style="height: 100%; width: 100%; object-fit: cover; display: block;" />
+          </div>
+        </div>
+
+        <div style="flex: 1 1 260px; display: flex; flex-direction: column; overflow: hidden; border-radius: 24px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF);">
+          <div style="display: flex; flex-direction: column; gap: 8px; padding: 24px 24px 20px;">
+            <h3 style="font-size: 20px; font-weight: 700; letter-spacing: -0.02em;">Embed</h3>
+            <p style="font-size: 15px; line-height: 1.55; color: var(--ow-muted, #6B6B67);">A Spotify or YouTube player. Paste the URL, it plays in place.</p>
+          </div>
+          <div style="margin-top: auto; aspect-ratio: 16 / 9; width: 100%; background: var(--ow-bg, #F7F6F2);">
+            <img src="assets/products/embed.jpg" alt="A YouTube player embedded in a page under its own heading" style="height: 100%; width: 100%; object-fit: cover; display: block;" />
+          </div>
+        </div>
+
+        <div style="flex: 1 1 260px; display: flex; flex-direction: column; overflow: hidden; border-radius: 24px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF);">
+          <div style="display: flex; flex-direction: column; gap: 8px; padding: 24px 24px 20px;">
+            <h3 style="font-size: 20px; font-weight: 700; letter-spacing: -0.02em;">Text</h3>
+            <p style="font-size: 15px; line-height: 1.55; color: var(--ow-muted, #6B6B67);">A heading and a paragraph, in your own words.</p>
+          </div>
+          <div style="margin-top: auto; aspect-ratio: 16 / 9; width: 100%; background: var(--ow-bg, #F7F6F2);">
+            <img src="assets/products/text.jpg" alt="A text block with a heading and a paragraph" style="height: 100%; width: 100%; object-fit: cover; display: block;" />
+          </div>
+        </div>
+
+        <div style="flex: 1 1 260px; display: flex; flex-direction: column; overflow: hidden; border-radius: 24px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF);">
+          <div style="display: flex; flex-direction: column; gap: 8px; padding: 24px 24px 20px;">
+            <h3 style="font-size: 20px; font-weight: 700; letter-spacing: -0.02em;">Image</h3>
+            <p style="font-size: 15px; line-height: 1.55; color: var(--ow-muted, #6B6B67);">A single picture, optionally linked.</p>
+          </div>
+          <div style="margin-top: auto; aspect-ratio: 16 / 9; width: 100%; background: var(--ow-bg, #F7F6F2);">
+            <img src="assets/products/image.jpg" alt="A single image block showing one photograph" style="height: 100%; width: 100%; object-fit: cover; display: block;" />
+          </div>
+        </div>
+
+        <div style="flex: 1 1 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; overflow: hidden; border-radius: 24px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF);">
+          <div style="display: flex; flex: 1 1 200px; flex-direction: column; gap: 8px; padding: 24px 28px;">
+            <h3 style="font-size: 20px; font-weight: 700; letter-spacing: -0.02em;">Divider</h3>
+            <p style="font-size: 15px; line-height: 1.55; color: var(--ow-muted, #6B6B67);">A line or a gap.</p>
+          </div>
+          <div aria-hidden="true" style="display: flex; flex: 1; align-items: center; padding-right: 28px;">
+            <div style="height: 1px; width: 100%; background: var(--ow-line, #E4E2DC);"></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 36px; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 20px; border-top: 1px solid var(--ow-line, #E4E2DC); padding-top: 24px;">
+        <p style="max-width: 60ch; font-size: 16px; line-height: 1.55; color: var(--ow-muted, #6B6B67);">Use what you need, leave out the rest. Nothing you don't add ever renders.</p>
+        <p style="font-family: ui-monospace, monospace; font-size: 12px; color: var(--ow-muted, #6B6B67);">9 blocks / 10 themes / 1 page</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="explore" style="border-top: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF); overflow: hidden; padding: clamp(64px, 8vw, 112px) 0;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px);">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 32px;">
+        <h2 style="max-width: 18ch; font-size: clamp(27px, 4vw, 52px); line-height: 1.05; font-weight: 800; letter-spacing: -0.035em; text-wrap: balance;">Five real pages, one renderer.</h2>
+        <p style="max-width: 44ch; font-size: clamp(16px, 1.5vw, 19px); line-height: 1.55; color: var(--ow-muted, #6B6B67);">These are not screenshots. Every tile below is drawn by the same code that serves published pages — which is also why the preview you edit can't drift from what a visitor sees.</p>
+      </div>
+    </div>
+
+    <div aria-hidden="true" style="margin-top: 48px; overflow: hidden; padding: 0 clamp(16px, 4vw, 48px);">
+      <div style="display: flex; width: max-content; animation: rail 70s linear infinite;">{{ rail }}</div>
+    </div>
+  </section>
+
+  <section style="border-top: 1px solid var(--ow-line, #E4E2DC); padding: clamp(64px, 8vw, 112px) clamp(16px, 4vw, 48px);">
+    <div style="max-width: 1280px; margin: 0 auto;">
+      <div style="display: flex; flex-wrap: wrap; gap: clamp(32px, 4vw, 72px); align-items: flex-start;">
+        <div style="flex: 1 1 320px; min-width: 0;">
+          <h2 style="font-size: clamp(27px, 4vw, 52px); line-height: 1.05; font-weight: 800; letter-spacing: -0.035em; text-wrap: balance;">Nothing clever is happening to your page.</h2>
+          <p style="margin-top: 20px; max-width: 42ch; font-size: clamp(16px, 1.5vw, 19px); line-height: 1.55; color: var(--ow-muted, #6B6B67);">No audience to grow, no algorithm, no analytics you didn't ask for. It is a page, at a URL, that you control.</p>
+          <p style="margin-top: 28px; max-width: 44ch; border-left: 2px solid var(--ow-line, #E4E2DC); padding-left: 18px; font-size: 15px; line-height: 1.6; color: var(--ow-muted, #6B6B67);">Free while OWNA is this young. A paid tier will only arrive for things that don't exist yet — more than one page, a domain of your own — and nothing you build today gets taken away.</p>
+        </div>
+
+        <div style="flex: 1 1 420px; min-width: 0; overflow: hidden; border-radius: 24px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF);">
+          <div style="display: flex; gap: 14px; padding: 24px 28px; border-bottom: 1px solid var(--ow-line, #E4E2DC);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" style="margin-top: 3px; flex-shrink: 0;" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <div>
+              <div style="font-weight: 600;">Your draft is private until you say otherwise</div>
+              <p style="margin-top: 6px; font-size: 15px; line-height: 1.6; color: var(--ow-muted, #6B6B67);">A page is invisible until you publish it, and unpublishing takes it straight back down. As often as you like.</p>
+            </div>
+          </div>
+          <div style="display: flex; gap: 14px; padding: 24px 28px; border-bottom: 1px solid var(--ow-line, #E4E2DC);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" style="margin-top: 3px; flex-shrink: 0;" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+            <div>
+              <div style="font-weight: 600;">Only you can write to it</div>
+              <p style="margin-top: 6px; font-size: 15px; line-height: 1.6; color: var(--ow-muted, #6B6B67);">Every change is made as you, enforced by the database itself. There is no admin key in the product that could edit your page on your behalf.</p>
+            </div>
+          </div>
+          <div style="display: flex; gap: 14px; padding: 24px 28px; border-bottom: 1px solid var(--ow-line, #E4E2DC);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" style="margin-top: 3px; flex-shrink: 0;" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h2"></path><path d="M15 7h2a5 5 0 1 1 0 10h-2"></path><line x1="8" x2="16" y1="12" y2="12"></line></svg>
+            <div>
+              <div style="font-weight: 600;">Links and embeds are checked, not trusted</div>
+              <p style="margin-top: 6px; font-size: 15px; line-height: 1.6; color: var(--ow-muted, #6B6B67);">A pasted URL is matched against a fixed list of providers before anything renders, so an embed is never arbitrary code on your page.</p>
+            </div>
+          </div>
+          <div style="display: flex; gap: 14px; padding: 24px 28px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#0055FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" style="margin-top: 3px; flex-shrink: 0;" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
+            <div>
+              <div style="font-weight: 600;">The handle stays the same</div>
+              <p style="margin-top: 6px; font-size: 15px; line-height: 1.6; color: var(--ow-muted, #6B6B67);">Publishing swaps the page behind owna.online/yourname in about a second — no rebuild, no new URL. A printed card or a bio link never goes stale.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing" style="border-top: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF); padding: clamp(56px, 6vw, 88px) clamp(16px, 4vw, 48px);">
+    <div style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 32px;">
+      <div style="min-width: 0;">
+        <h2 style="font-size: clamp(28px, 3vw, 40px); font-weight: 800; letter-spacing: -0.03em;">Free, for now.</h2>
+        <p style="margin-top: 12px; max-width: 52ch; font-size: 17px; line-height: 1.55; color: var(--ow-muted, #6B6B67);">Every block, every theme, your own handle, publish and unpublish as often as you want. No card, no trial clock.</p>
+      </div>
+      <div style="display: flex; flex: 1 1 300px; flex-wrap: wrap; align-items: center; gap: 16px;">
+        <p style="font-family: ui-monospace, monospace; font-size: 12px; color: var(--ow-muted, #6B6B67);">9 blocks · 10 themes · 1 page · $0</p>
+        <a href="#" style="display: inline-flex; flex: 1 1 200px; align-items: center; justify-content: center; height: 52px; padding: 0 28px; border-radius: 999px; background: #0055FF; color: #FFFFFF; font-size: 16px; font-weight: 600;">Create your OWNA</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" style="border-top: 1px solid var(--ow-line, #E4E2DC); padding: clamp(64px, 8vw, 112px) clamp(16px, 4vw, 48px);">
+    <div style="max-width: 1280px; margin: 0 auto;">
+      <div style="display: flex; flex-wrap: wrap; gap: clamp(28px, 4vw, 64px); align-items: flex-start;">
+        <h2 style="flex: 1 1 260px; font-size: clamp(27px, 4vw, 52px); line-height: 1.05; font-weight: 800; letter-spacing: -0.035em;">Straight answers.</h2>
+
+        <div style="flex: 2 1 480px; min-width: 0; border-top: 1px solid var(--ow-line, #E4E2DC);">
+          <div style="border-bottom: 1px solid var(--ow-line, #E4E2DC);">
+            <button type="button" onClick="{{ toggle0 }}" style="display: flex; width: 100%; cursor: pointer; align-items: center; justify-content: space-between; gap: 20px; border: 0; background: none; padding: 22px 0; font: inherit; font-size: 18px; font-weight: 600; text-align: left; color: var(--ow-ink, #111111);">
+              Do I need an account to start?
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" style="flex-shrink: 0; color: var(--ow-muted, #6B6B67);" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+            </button>
+            <sc-if value="{{ open0 }}" hint-placeholder-val="{{ true }}">
+              <p style="padding: 0 0 22px; max-width: 68ch; font-size: 16px; line-height: 1.65; color: var(--ow-muted, #6B6B67);">No. Build the whole page first — every block, every theme. Signing up is what puts it online, not what lets you begin.</p>
+            </sc-if>
+          </div>
+          <div style="border-bottom: 1px solid var(--ow-line, #E4E2DC);">
+            <button type="button" onClick="{{ toggle1 }}" style="display: flex; width: 100%; cursor: pointer; align-items: center; justify-content: space-between; gap: 20px; border: 0; background: none; padding: 22px 0; font: inherit; font-size: 18px; font-weight: 600; text-align: left; color: var(--ow-ink, #111111);">
+              What do I actually get?
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" style="flex-shrink: 0; color: var(--ow-muted, #6B6B67);" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+            </button>
+            <sc-if value="{{ open1 }}" hint-placeholder-val="{{ false }}">
+              <p style="padding: 0 0 22px; max-width: 68ch; font-size: 16px; line-height: 1.65; color: var(--ow-muted, #6B6B67);">One page at owna.online/yourname, built from nine kinds of block, on any of ten themes. That is the product — not a page tree, not a plugin marketplace, not hosting config.</p>
+            </sc-if>
+          </div>
+          <div style="border-bottom: 1px solid var(--ow-line, #E4E2DC);">
+            <button type="button" onClick="{{ toggle2 }}" style="display: flex; width: 100%; cursor: pointer; align-items: center; justify-content: space-between; gap: 20px; border: 0; background: none; padding: 22px 0; font: inherit; font-size: 18px; font-weight: 600; text-align: left; color: var(--ow-ink, #111111);">
+              Can I use my own domain?
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" style="flex-shrink: 0; color: var(--ow-muted, #6B6B67);" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+            </button>
+            <sc-if value="{{ open2 }}" hint-placeholder-val="{{ false }}">
+              <p style="padding: 0 0 22px; max-width: 68ch; font-size: 16px; line-height: 1.65; color: var(--ow-muted, #6B6B67);">Not yet. Custom domains and more than one page are the two things a paid tier is being held for — we would rather say that plainly than list a feature that doesn't ship.</p>
+            </sc-if>
+          </div>
+          <div style="border-bottom: 1px solid var(--ow-line, #E4E2DC);">
+            <button type="button" onClick="{{ toggle3 }}" style="display: flex; width: 100%; cursor: pointer; align-items: center; justify-content: space-between; gap: 20px; border: 0; background: none; padding: 22px 0; font: inherit; font-size: 18px; font-weight: 600; text-align: left; color: var(--ow-ink, #111111);">
+              What happens when you start charging?
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" style="flex-shrink: 0; color: var(--ow-muted, #6B6B67);" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+            </button>
+            <sc-if value="{{ open3 }}" hint-placeholder-val="{{ false }}">
+              <p style="padding: 0 0 22px; max-width: 68ch; font-size: 16px; line-height: 1.65; color: var(--ow-muted, #6B6B67);">What exists today stays free. A paid tier would cover new things — extra pages, a domain of your own — not put a lock on the page you already built.</p>
+            </sc-if>
+          </div>
+          <div style="border-bottom: 1px solid var(--ow-line, #E4E2DC);">
+            <button type="button" onClick="{{ toggle4 }}" style="display: flex; width: 100%; cursor: pointer; align-items: center; justify-content: space-between; gap: 20px; border: 0; background: none; padding: 22px 0; font: inherit; font-size: 18px; font-weight: 600; text-align: left; color: var(--ow-ink, #111111);">
+              How long does publishing take?
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" style="flex-shrink: 0; color: var(--ow-muted, #6B6B67);" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+            </button>
+            <sc-if value="{{ open4 }}" hint-placeholder-val="{{ false }}">
+              <p style="padding: 0 0 22px; max-width: 68ch; font-size: 16px; line-height: 1.65; color: var(--ow-muted, #6B6B67);">About a second. Publishing replaces the page behind your URL — there is no build to wait on and no hosting dashboard to open.</p>
+            </sc-if>
+          </div>
+          <div style="border-bottom: 1px solid var(--ow-line, #E4E2DC);">
+            <button type="button" onClick="{{ toggle5 }}" style="display: flex; width: 100%; cursor: pointer; align-items: center; justify-content: space-between; gap: 20px; border: 0; background: none; padding: 22px 0; font: inherit; font-size: 18px; font-weight: 600; text-align: left; color: var(--ow-ink, #111111);">
+              Do I need to know how to design?
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" style="flex-shrink: 0; color: var(--ow-muted, #6B6B67);" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+            </button>
+            <sc-if value="{{ open5 }}" hint-placeholder-val="{{ false }}">
+              <p style="padding: 0 0 22px; max-width: 68ch; font-size: 16px; line-height: 1.65; color: var(--ow-muted, #6B6B67);">No. Ten themes set colour, type, spacing and shape for you, and each one is contrast-checked so the text stays readable. If you do want to sweat the corner radius, every value is still there.</p>
+            </sc-if>
+          </div>
+          <div style="border-bottom: 1px solid var(--ow-line, #E4E2DC);">
+            <button type="button" onClick="{{ toggle6 }}" style="display: flex; width: 100%; cursor: pointer; align-items: center; justify-content: space-between; gap: 20px; border: 0; background: none; padding: 22px 0; font: inherit; font-size: 18px; font-weight: 600; text-align: left; color: var(--ow-ink, #111111);">
+              Can I take the page down?
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" style="flex-shrink: 0; color: var(--ow-muted, #6B6B67);" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+            </button>
+            <sc-if value="{{ open6 }}" hint-placeholder-val="{{ false }}">
+              <p style="padding: 0 0 22px; max-width: 68ch; font-size: 16px; line-height: 1.65; color: var(--ow-muted, #6B6B67);">Any time, and put it back just as easily. Unpublished pages are private drafts — only you can see them.</p>
+            </sc-if>
+          </div>
+          <div>
+            <button type="button" onClick="{{ toggle7 }}" style="display: flex; width: 100%; cursor: pointer; align-items: center; justify-content: space-between; gap: 20px; border: 0; background: none; padding: 22px 0; font: inherit; font-size: 18px; font-weight: 600; text-align: left; color: var(--ow-ink, #111111);">
+              Is this a website builder?
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" style="flex-shrink: 0; color: var(--ow-muted, #6B6B67);" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+            </button>
+            <sc-if value="{{ open7 }}" hint-placeholder-val="{{ false }}">
+              <p style="padding: 0 0 22px; max-width: 68ch; font-size: 16px; line-height: 1.65; color: var(--ow-muted, #6B6B67);">No, and that is deliberate. One page, one person, one link — which is why there is nothing to configure before you start.</p>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background: var(--ow-invert-bg, #111111); color: var(--ow-invert-ink, #F7F6F2); padding: clamp(72px, 10vw, 152px) clamp(16px, 4vw, 48px); text-align: center;">
+    <div style="max-width: 900px; margin: 0 auto;">
+      <h2 style="font-size: clamp(32px, 6vw, 80px); line-height: 1.05; font-weight: 800; letter-spacing: -0.035em;">Own your corner<br />of the internet.</h2>
+      <p style="margin-top: 24px; font-size: clamp(17px, 2vw, 22px); color: var(--ow-invert-muted, rgba(247,246,242,0.7));">Build the page first. Decide about the account later.</p>
+      <div style="margin-top: 40px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px;">
+        <a href="#" style="display: inline-flex; align-items: center; justify-content: center; height: 56px; padding: 0 clamp(24px, 5vw, 34px); border-radius: 999px; background: #0055FF; color: #FFFFFF; font-size: 17px; font-weight: 600;">Create your OWNA</a>
+        <p style="font-family: ui-monospace, monospace; font-size: 13px; color: var(--ow-invert-faint, rgba(247,246,242,0.55));">owna.online/yourname</p>
+      </div>
+    </div>
+  </section>
+
+  <footer style="border-top: 1px solid var(--ow-line, #E4E2DC); padding: clamp(48px, 7vw, 72px) clamp(16px, 4vw, 48px);">
+    <div style="max-width: 1280px; margin: 0 auto clamp(36px, 5vw, 56px); display: flex; flex-wrap: wrap; gap: clamp(28px, 4vw, 48px);">
+      <div style="flex: 1 1 240px; min-width: 0;">
+        <a href="#top" aria-label="OWNA home" style="display: block; width: fit-content; margin-bottom: 16px;">
+          <svg viewBox="0 0 141 48" fill="none" style="height: 36px; width: auto;" aria-hidden="true">
+            <path d="M132.616 8.21157C132.153 9.13728 131.896 10.7316 131.896 11.5544V34.543C131.896 35.3659 132.256 38.6059 132.616 39.7887C132.616 39.943 132.667 40.0459 132.667 40.1487C132.667 40.5601 132.359 40.9201 131.947 40.9201C130.867 40.7659 129.736 40.7144 128.656 40.7144C127.524 40.7144 126.444 40.7659 125.364 40.9201C124.953 40.9201 124.593 40.5601 124.593 40.1487C124.593 40.0973 124.593 39.9944 124.644 39.943C125.261 38.0916 125.364 36.1373 125.364 34.183V28.6801C125.364 28.2687 125.056 27.9601 124.644 27.9601C124.593 27.9601 124.49 27.9601 124.387 28.0116L114.77 31.5601C114.153 31.7659 113.793 32.383 113.793 33.0516V33.3087C114.204 35.3659 114.461 37.6287 114.461 40.1487C114.461 40.3544 114.41 40.5601 114.256 40.7144C114.101 40.8173 113.947 40.9201 113.741 40.9201C112.61 40.8173 111.53 40.7144 110.45 40.7144C109.319 40.7144 108.239 40.8173 107.159 40.9201C106.953 40.9201 106.747 40.8173 106.593 40.7144C106.49 40.5601 106.387 40.3544 106.387 40.1487C106.387 40.0459 106.387 39.9944 106.439 39.8916C106.747 39.0173 107.056 38.0401 107.056 37.1144C107.056 30.3259 105.719 27.8059 105.719 23.1259V22.8687C105.821 14.1259 113.021 7.08014 121.764 7.08014H132.05C132.41 7.08014 132.667 7.38871 132.667 7.80014V7.85157C132.667 8.00585 132.667 8.10871 132.616 8.21157ZM112.301 24.5659C112.301 24.9773 112.61 25.2344 112.97 25.2344C113.021 25.2344 113.124 25.2344 113.227 25.183L124.387 21.0173C125.004 20.8116 125.364 20.2459 125.364 19.5773V14.5373C125.364 14.023 124.953 13.6116 124.439 13.6116H122.176C116.724 13.6116 112.25 17.983 112.25 23.383V23.5887C112.25 23.8973 112.25 24.2573 112.301 24.5659Z" fill="currentColor" />
+            <path d="M102.074 8.21157C101.662 8.93157 101.354 9.703 101.354 10.5259V37.4744C101.354 38.2973 101.662 39.0687 102.074 39.7887C102.125 39.8916 102.125 40.0459 102.125 40.1487C102.125 40.5601 101.817 40.9201 101.405 40.9201H95.2852C94.6166 40.9201 94.0509 40.4059 94.0509 39.7373C93.6909 31.663 90.0395 20.503 82.9424 17.263C82.8395 17.2116 82.7366 17.2116 82.6338 17.2116C82.1195 17.2116 81.7081 17.5716 81.7081 18.0859V34.0801C81.7081 36.0859 82.1195 38.0401 82.4795 40.0459V40.1487C82.4795 40.3544 82.4281 40.5601 82.2738 40.7144C82.1195 40.8173 81.9652 40.9201 81.7595 40.9201C80.6281 40.8173 79.5481 40.7144 78.4681 40.7144C77.3366 40.7144 76.2566 40.8173 75.1766 40.9201C74.9709 40.9201 74.7652 40.8173 74.6109 40.7144C74.5081 40.5601 74.4052 40.3544 74.4052 40.1487C74.4052 40.0459 74.4052 39.9944 74.4566 39.8916C75.0738 38.0916 75.1766 36.1373 75.1766 34.183V13.8173C75.1766 11.863 74.8681 9.90871 74.4052 8.00585V7.85157C74.4052 7.44014 74.7138 7.08014 75.1766 7.08014H75.2281C76.1024 7.08014 76.9766 7.183 77.7995 7.28585C79.3938 7.49157 80.9366 7.85157 82.4281 8.41728C87.2109 10.2173 91.3766 13.7659 94.3595 18.3944C94.4109 18.4459 94.5138 18.4973 94.5652 18.4973C94.7195 18.4973 94.8738 18.3944 94.8738 18.2401V13.9201C94.8738 11.9144 94.4109 9.96014 94.0509 8.00585V7.85157C94.0509 7.38871 94.4109 7.08014 94.8738 7.08014C96.0052 7.23443 97.1366 7.33728 98.2681 7.33728C98.8338 7.33728 99.3995 7.28585 99.9652 7.23443L101.405 7.08014H101.508C101.868 7.08014 102.125 7.38871 102.125 7.80014V7.85157C102.125 8.00585 102.125 8.10871 102.074 8.21157Z" fill="currentColor" />
+            <path d="M70.802 40.2516C70.802 40.6116 70.4935 40.9201 70.1335 40.9201H69.722C62.3163 40.9201 56.8135 35.7259 55.2706 32.4859C55.2192 32.3316 55.1163 32.2801 55.0135 32.2801C54.8592 32.2801 54.7563 32.3316 54.7049 32.4859C53.2649 35.6744 47.6077 40.9201 40.3049 40.9201V40.8687C40.202 40.8687 40.1506 40.8687 40.0477 40.9201H39.9449C39.5335 40.9201 39.2249 40.6116 39.2249 40.1487V39.9944C39.6363 38.0916 39.9963 36.1373 39.9963 34.1316V13.8173C39.9963 11.9144 39.8935 9.90871 39.2249 8.10871V7.85157C39.2249 7.64586 39.2763 7.44014 39.4306 7.33728C39.5849 7.183 39.7392 7.08014 39.9449 7.08014C41.0763 7.23443 42.1563 7.28585 43.2363 7.28585C44.3677 7.28585 45.4477 7.23443 46.5277 7.08014C46.7335 7.08014 46.9392 7.183 47.0935 7.33728C47.1963 7.44014 47.2992 7.64586 47.2992 7.85157V7.95443C46.9392 9.96014 46.4763 11.9144 46.4763 13.9716V29.503C46.4763 29.9144 46.8363 30.223 47.1963 30.223C47.2992 30.223 47.402 30.1716 47.5049 30.1201C50.4363 28.3201 52.9049 22.5087 53.882 18.7544C54.0363 18.1887 54.4992 17.9316 54.962 17.9316C55.4249 17.9316 55.8877 18.1887 56.042 18.7544C56.9677 22.303 59.3849 28.2687 62.4192 30.8916C62.522 30.9944 62.6763 31.0459 62.8306 31.0459C63.1906 31.0459 63.4992 30.7887 63.4992 30.3773V13.8173C63.4992 11.9144 63.3963 9.90871 62.7277 8.10871V7.85157C62.7277 7.64586 62.7792 7.44014 62.9335 7.33728C63.0877 7.183 63.242 7.08014 63.4477 7.08014C64.5792 7.23443 65.6592 7.28585 66.7392 7.28585C67.8706 7.28585 68.9506 7.23443 70.0306 7.08014C70.2363 7.08014 70.442 7.183 70.5963 7.33728C70.6992 7.44014 70.802 7.64586 70.802 7.85157V7.95443C70.442 9.96014 70.0306 11.9144 70.0306 13.9716V34.1316C70.0306 36.0859 70.3392 38.0401 70.802 39.9944V40.2516Z" fill="currentColor" />
+            <path d="M21.2571 7.08002C30.1543 7.08002 35.6057 14.6914 35.6057 24C35.6057 33.36 30.1543 40.92 21.2571 40.92C12.36 40.92 6.85712 33.36 6.85712 24C6.85712 14.6914 12.36 7.08002 21.2571 7.08002ZM21.2571 34.3886C26.4514 34.3886 28.92 29.76 28.92 24C28.92 18.24 26.4514 13.6114 21.2571 13.6114C16.0114 13.6114 13.5428 18.24 13.5428 24C13.5428 29.76 16.0114 34.3886 21.2571 34.3886Z" fill="currentColor" />
+          </svg>
+        </a>
+        <p style="max-width: 320px; font-size: 14px; color: var(--ow-muted, #6B6B67);">Own your corner of the Internet</p>
+      </div>
+      <div style="flex: 2 1 300px; min-width: 0; display: flex; flex-wrap: wrap; gap: clamp(20px, 3vw, 40px);">
+      <div style="flex: 1 1 108px; min-width: 0;">
+        <h4 style="margin-bottom: 20px; font-weight: 700;">Product</h4>
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; font-size: 14px; color: var(--ow-muted, #6B6B67);">
+          <li><a href="#product">What you can build</a></li>
+          <li><a href="#start">Built for you</a></li>
+          <li><a href="#explore">Discover</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+        </ul>
+      </div>
+      <div style="flex: 1 1 108px; min-width: 0;">
+        <h4 style="margin-bottom: 20px; font-weight: 700;">Account</h4>
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; font-size: 14px; color: var(--ow-muted, #6B6B67);">
+          <li><a href="#">Log in</a></li>
+          <li><a href="#">Sign up</a></li>
+          <li><a href="#">Dashboard</a></li>
+        </ul>
+      </div>
+      <div style="flex: 1 1 108px; min-width: 0;">
+        <h4 style="margin-bottom: 20px; font-weight: 700;">Legal</h4>
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; font-size: 14px; color: var(--ow-muted, #6B6B67);">
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      </div>
+    </div>
+    <div style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid var(--ow-line, #E4E2DC); padding-top: 28px; font-size: 14px; color: var(--ow-muted, #6B6B67);">
+      <div>OWNA © 2026</div>
+      <div style="display: flex; gap: 24px;">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;heroLayout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;split&quot;,&quot;console&quot;,&quot;canvas&quot;],&quot;default&quot;:&quot;canvas&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Hero&quot;},&quot;startPersona&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;photographer&quot;,&quot;creative&quot;,&quot;freelancer&quot;,&quot;consultant&quot;,&quot;jewellery&quot;],&quot;default&quot;:&quot;photographer&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;defaultTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;system&quot;,&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;system&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Appearance&quot;}}">
+const RAIL = [
+  { id: "photographer", name: "Marc Dubois", craft: "Editorial photography", theme: "Portfolio" },
+  { id: "jewellery", name: "AURA", craft: "Fine jewellery", theme: "Editorial" },
+  { id: "freelancer", name: "Alex Chen", craft: "Full-stack development", theme: "Cyber" },
+  { id: "creative", name: "Maya Chandra", craft: "Type design", theme: "Glass" },
+  { id: "consultant", name: "Sarah Jenkins", craft: "Growth consulting", theme: "Professional" },
+];
+
+const readTheme = (pref) => {
+  if (pref === "dark") return true;
+  if (pref === "light") return false;
+  try {
+    const stored = localStorage.getItem("theme");
+    if (stored === "dark" || stored === "light") return stored === "dark";
+  } catch (e) { /* storage blocked */ }
+  return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+};
+
+class Component extends DCLogic {
+  previewRef = React.createRef();
+  state = { lib: null, persona: null, faq: 0, dark: readTheme(this.props.defaultTheme), previewW: 460 };
+
+  componentDidMount() {
+    this.applyTheme(this.state.dark, false);
+    import("./owna-profiles.js").then((lib) => {
+      this.setState({ lib, persona: this.props.startPersona || "photographer" });
+    });
+    this.onResize = () => this.measure();
+    window.addEventListener("resize", this.onResize);
+    this.measure();
+  }
+
+  componentDidUpdate() { this.measure(); }
+
+  componentWillUnmount() { window.removeEventListener("resize", this.onResize); }
+
+  // The persona preview renders at a fixed content width, so it has to be told
+  // how much room it actually has rather than assuming the desktop case.
+  measure() {
+    const el = this.previewRef.current;
+    if (!el) return;
+    const w = Math.max(260, Math.min(460, el.clientWidth - 24));
+    if (w !== this.state.previewW) this.setState({ previewW: w });
+  }
+
+  applyTheme(dark, persist) {
+    document.documentElement.classList.toggle("dark", dark);
+    if (persist === false) return;
+    try { localStorage.setItem("theme", dark ? "dark" : "light"); } catch (e) { /* storage blocked */ }
+  }
+
+  toggleTheme() {
+    const dark = !this.state.dark;
+    this.applyTheme(dark);
+    this.setState({ dark });
+  }
+
+  renderVals() {
+    const { lib, persona, faq } = this.state;
+    const layout = this.props.heroLayout || "split";
+
+    const vals = {
+      previewRef: this.previewRef,
+      isDark: this.state.dark,
+      isLight: !this.state.dark,
+      themeLabel: this.state.dark ? "Switch to light mode" : "Switch to dark mode",
+      toggleTheme: () => this.toggleTheme(),
+      isSplit: layout === "split",
+      isConsole: layout === "console",
+      isCanvas: layout === "canvas",
+      personaOptions: [],
+      personaPreview: null,
+      personaUrl: "",
+      personaTheme: "",
+      rail: [],
+    };
+
+    for (let i = 0; i < 8; i += 1) {
+      vals[`open${i}`] = faq === i;
+      vals[`toggle${i}`] = () => this.setState((s) => ({ faq: s.faq === i ? -1 : i }));
+    }
+
+    if (!lib || !persona) return vals;
+
+    const demo = lib.demoProfiles[persona];
+    vals.personaUrl = `owna.online/${demo.profile.username}`;
+    vals.personaTheme = lib.PRESETS[demo.preset].name;
+    vals.personaPreview = lib.renderProfile(React, lib.snapshotFor(persona), { contentWidth: this.state.previewW });
+
+    vals.personaOptions = lib.PURPOSE_OPTIONS.map((option) => {
+      const active = option.id === persona;
+      return React.createElement("button", {
+        key: option.id,
+        type: "button",
+        "aria-pressed": active,
+        onClick: () => this.setState({ persona: option.id }),
+        style: {
+          display: "flex", flexDirection: "column", gap: 4, cursor: "pointer",
+          borderRadius: 14, padding: "16px 18px", font: "inherit", textAlign: "left",
+          border: `1px solid ${active ? "#0055FF" : "var(--ow-line, #E4E2DC)"}`,
+          background: active ? "var(--ow-accent-soft, rgba(0,85,255,0.07))" : "var(--ow-surface, #FFFFFF)",
+          color: "var(--ow-ink, #111111)",
+          transition: "background-color 200ms ease, border-color 200ms ease",
+        },
+      }, [
+        React.createElement("span", { key: "l", style: { fontSize: 16, fontWeight: 600 } }, option.label),
+        React.createElement("span", { key: "d", style: { fontSize: 14, lineHeight: 1.5, color: "var(--ow-muted, #6B6B67)" } }, option.description),
+      ]);
+    });
+
+    const tile = (entry, key) =>
+      React.createElement("figure", { key, style: { width: 300, flexShrink: 0, margin: 0, marginRight: 24 } }, [
+        React.createElement("div", {
+          key: "f",
+          style: {
+            height: 460, overflow: "hidden", borderRadius: 20, border: "1px solid var(--ow-line, #E4E2DC)",
+            background: "var(--ow-bg, #F7F6F2)", maskImage: "linear-gradient(to bottom, #000 80%, transparent 99%)",
+          },
+        }, lib.renderProfile(React, lib.snapshotFor(entry.id), { contentWidth: 300 })),
+        React.createElement("figcaption", { key: "c", style: { marginTop: 18, display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 16 } }, [
+          React.createElement("span", { key: "l" }, [
+            React.createElement("span", { key: "n", style: { display: "block", fontWeight: 500 } }, entry.name),
+            React.createElement("span", { key: "c", style: { display: "block", fontSize: 14, color: "var(--ow-muted, #6B6B67)" } }, entry.craft),
+          ]),
+          React.createElement("span", { key: "t", style: { flexShrink: 0, fontFamily: "ui-monospace, monospace", fontSize: 11, letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--ow-muted, #6B6B67)" } }, entry.theme),
+        ]),
+      ]);
+
+    vals.rail = [...RAIL, ...RAIL].map((entry, i) => tile(entry, i));
+    return vals;
+  }
+}
+</script>
+</body>
+</html>

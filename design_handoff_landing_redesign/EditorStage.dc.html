@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+:root {
+  color-scheme: light;
+  --ow-bg: #F7F6F2;
+  --ow-surface: #FFFFFF;
+  --ow-ink: #111111;
+  --ow-muted: #6B6B67;
+  --ow-line: #E4E2DC;
+  --ow-line-soft: rgba(228,226,220,0.4);
+  --ow-faint: #C6C3BB;
+  --ow-header: rgba(247,246,242,0.72);
+  --ow-accent: #0055FF;
+  --ow-accent-soft: rgba(0,85,255,0.07);
+  --ow-shadow: rgba(17,17,17,0.25);
+  --ow-invert-bg: #111111;
+  --ow-invert-ink: #F7F6F2;
+  --ow-invert-muted: rgba(247,246,242,0.7);
+  --ow-invert-faint: rgba(247,246,242,0.55);
+}
+html.dark {
+  color-scheme: dark;
+  --ow-bg: #0D0D0D;
+  --ow-surface: #151515;
+  --ow-ink: #F5F4EF;
+  --ow-muted: #A5A49F;
+  --ow-line: #292929;
+  --ow-line-soft: rgba(41,41,41,0.55);
+  --ow-faint: #454542;
+  --ow-header: rgba(13,13,13,0.72);
+  --ow-accent-soft: rgba(0,85,255,0.2);
+  --ow-shadow: rgba(0,0,0,0.7);
+  --ow-invert-bg: #F5F4EF;
+  --ow-invert-ink: #111111;
+  --ow-invert-muted: rgba(17,17,17,0.74);
+  --ow-invert-faint: rgba(17,17,17,0.64);
+}
+@media (max-width: 760px) {
+  [data-r="stage-side"] { flex-basis: 100%; max-height: 260px; border-right: 0; border-bottom: 1px solid var(--ow-line); }
+  [data-r="stage-canvas"] { height: 380px; padding: 14px; }
+  [data-r="stage-saved"] { display: none; }
+}
+</style>
+</helmet>
+<div style="display: flex; flex-direction: column; overflow: hidden; border-radius: 20px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF); box-shadow: 0 1px 2px rgba(17,17,17,0.04), 0 24px 60px -28px rgba(17,17,17,0.22); min-width: 0;">
+
+  <div style="display: flex; min-height: 52px; flex-shrink: 0; flex-wrap: wrap; align-items: center; gap: 8px; border-bottom: 1px solid var(--ow-line, #E4E2DC); padding: 6px 12px;">
+    <svg viewBox="0 0 141 48" fill="none" style="height: 18px; width: auto; color: var(--ow-ink, #111111); flex-shrink: 0;" aria-hidden="true">
+      <path d="M132.616 8.21157C132.153 9.13728 131.896 10.7316 131.896 11.5544V34.543C131.896 35.3659 132.256 38.6059 132.616 39.7887C132.616 39.943 132.667 40.0459 132.667 40.1487C132.667 40.5601 132.359 40.9201 131.947 40.9201C130.867 40.7659 129.736 40.7144 128.656 40.7144C127.524 40.7144 126.444 40.7659 125.364 40.9201C124.953 40.9201 124.593 40.5601 124.593 40.1487C124.593 40.0973 124.593 39.9944 124.644 39.943C125.261 38.0916 125.364 36.1373 125.364 34.183V28.6801C125.364 28.2687 125.056 27.9601 124.644 27.9601C124.593 27.9601 124.49 27.9601 124.387 28.0116L114.77 31.5601C114.153 31.7659 113.793 32.383 113.793 33.0516V33.3087C114.204 35.3659 114.461 37.6287 114.461 40.1487C114.461 40.3544 114.41 40.5601 114.256 40.7144C114.101 40.8173 113.947 40.9201 113.741 40.9201C112.61 40.8173 111.53 40.7144 110.45 40.7144C109.319 40.7144 108.239 40.8173 107.159 40.9201C106.953 40.9201 106.747 40.8173 106.593 40.7144C106.49 40.5601 106.387 40.3544 106.387 40.1487C106.387 40.0459 106.387 39.9944 106.439 39.8916C106.747 39.0173 107.056 38.0401 107.056 37.1144C107.056 30.3259 105.719 27.8059 105.719 23.1259V22.8687C105.821 14.1259 113.021 7.08014 121.764 7.08014H132.05C132.41 7.08014 132.667 7.38871 132.667 7.80014V7.85157C132.667 8.00585 132.667 8.10871 132.616 8.21157ZM112.301 24.5659C112.301 24.9773 112.61 25.2344 112.97 25.2344C113.021 25.2344 113.124 25.2344 113.227 25.183L124.387 21.0173C125.004 20.8116 125.364 20.2459 125.364 19.5773V14.5373C125.364 14.023 124.953 13.6116 124.439 13.6116H122.176C116.724 13.6116 112.25 17.983 112.25 23.383V23.5887C112.25 23.8973 112.25 24.2573 112.301 24.5659Z" fill="currentColor" />
+      <path d="M102.074 8.21157C101.662 8.93157 101.354 9.703 101.354 10.5259V37.4744C101.354 38.2973 101.662 39.0687 102.074 39.7887C102.125 39.8916 102.125 40.0459 102.125 40.1487C102.125 40.5601 101.817 40.9201 101.405 40.9201H95.2852C94.6166 40.9201 94.0509 40.4059 94.0509 39.7373C93.6909 31.663 90.0395 20.503 82.9424 17.263C82.8395 17.2116 82.7366 17.2116 82.6338 17.2116C82.1195 17.2116 81.7081 17.5716 81.7081 18.0859V34.0801C81.7081 36.0859 82.1195 38.0401 82.4795 40.0459V40.1487C82.4795 40.3544 82.4281 40.5601 82.2738 40.7144C82.1195 40.8173 81.9652 40.9201 81.7595 40.9201C80.6281 40.8173 79.5481 40.7144 78.4681 40.7144C77.3366 40.7144 76.2566 40.8173 75.1766 40.9201C74.9709 40.9201 74.7652 40.8173 74.6109 40.7144C74.5081 40.5601 74.4052 40.3544 74.4052 40.1487C74.4052 40.0459 74.4052 39.9944 74.4566 39.8916C75.0738 38.0916 75.1766 36.1373 75.1766 34.183V13.8173C75.1766 11.863 74.8681 9.90871 74.4052 8.00585V7.85157C74.4052 7.44014 74.7138 7.08014 75.1766 7.08014H75.2281C76.1024 7.08014 76.9766 7.183 77.7995 7.28585C79.3938 7.49157 80.9366 7.85157 82.4281 8.41728C87.2109 10.2173 91.3766 13.7659 94.3595 18.3944C94.4109 18.4459 94.5138 18.4973 94.5652 18.4973C94.7195 18.4973 94.8738 18.3944 94.8738 18.2401V13.9201C94.8738 11.9144 94.4109 9.96014 94.0509 8.00585V7.85157C94.0509 7.38871 94.4109 7.08014 94.8738 7.08014C96.0052 7.23443 97.1366 7.33728 98.2681 7.33728C98.8338 7.33728 99.3995 7.28585 99.9652 7.23443L101.405 7.08014H101.508C101.868 7.08014 102.125 7.38871 102.125 7.80014V7.85157C102.125 8.00585 102.125 8.10871 102.074 8.21157Z" fill="currentColor" />
+      <path d="M70.802 40.2516C70.802 40.6116 70.4935 40.9201 70.1335 40.9201H69.722C62.3163 40.9201 56.8135 35.7259 55.2706 32.4859C55.2192 32.3316 55.1163 32.2801 55.0135 32.2801C54.8592 32.2801 54.7563 32.3316 54.7049 32.4859C53.2649 35.6744 47.6077 40.9201 40.3049 40.9201V40.8687C40.202 40.8687 40.1506 40.8687 40.0477 40.9201H39.9449C39.5335 40.9201 39.2249 40.6116 39.2249 40.1487V39.9944C39.6363 38.0916 39.9963 36.1373 39.9963 34.1316V13.8173C39.9963 11.9144 39.8935 9.90871 39.2249 8.10871V7.85157C39.2249 7.64586 39.2763 7.44014 39.4306 7.33728C39.5849 7.183 39.7392 7.08014 39.9449 7.08014C41.0763 7.23443 42.1563 7.28585 43.2363 7.28585C44.3677 7.28585 45.4477 7.23443 46.5277 7.08014C46.7335 7.08014 46.9392 7.183 47.0935 7.33728C47.1963 7.44014 47.2992 7.64586 47.2992 7.85157V7.95443C46.9392 9.96014 46.4763 11.9144 46.4763 13.9716V29.503C46.4763 29.9144 46.8363 30.223 47.1963 30.223C47.2992 30.223 47.402 30.1716 47.5049 30.1201C50.4363 28.3201 52.9049 22.5087 53.882 18.7544C54.0363 18.1887 54.4992 17.9316 54.962 17.9316C55.4249 17.9316 55.8877 18.1887 56.042 18.7544C56.9677 22.303 59.3849 28.2687 62.4192 30.8916C62.522 30.9944 62.6763 31.0459 62.8306 31.0459C63.1906 31.0459 63.4992 30.7887 63.4992 30.3773V13.8173C63.4992 11.9144 63.3963 9.90871 62.7277 8.10871V7.85157C62.7277 7.64586 62.7792 7.44014 62.9335 7.33728C63.0877 7.183 63.242 7.08014 63.4477 7.08014C64.5792 7.23443 65.6592 7.28585 66.7392 7.28585C67.8706 7.28585 68.9506 7.23443 70.0306 7.08014C70.2363 7.08014 70.442 7.183 70.5963 7.33728C70.6992 7.44014 70.802 7.64586 70.802 7.85157V7.95443C70.442 9.96014 70.0306 11.9144 70.0306 13.9716V34.1316C70.0306 36.0859 70.3392 38.0401 70.802 39.9944V40.2516Z" fill="currentColor" />
+      <path d="M21.2571 7.08002C30.1543 7.08002 35.6057 14.6914 35.6057 24C35.6057 33.36 30.1543 40.92 21.2571 40.92C12.36 40.92 6.85712 33.36 6.85712 24C6.85712 14.6914 12.36 7.08002 21.2571 7.08002ZM21.2571 34.3886C26.4514 34.3886 28.92 29.76 28.92 24C28.92 18.24 26.4514 13.6114 21.2571 13.6114C16.0114 13.6114 13.5428 18.24 13.5428 24C13.5428 29.76 16.0114 34.3886 21.2571 34.3886Z" fill="currentColor" />
+    </svg>
+
+    <div role="radiogroup" aria-label="Preview size" style="margin-left: auto; margin-right: auto; display: flex; align-items: center; gap: 2px; border-radius: 8px; background: var(--ow-bg, #F7F6F2); padding: 2px;">
+      <button type="button" onClick="{{ setDesktop }}" title="Desktop" aria-label="Desktop" style="display: flex; cursor: pointer; align-items: center; border: 0; border-radius: 6px; background: none; padding: 6px; color: var(--ow-muted, #6B6B67);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg>
+      </button>
+      <button type="button" onClick="{{ setMobile }}" title="Mobile" aria-label="Mobile" style="display: flex; cursor: pointer; align-items: center; border: 0; border-radius: 6px; background: none; padding: 6px; color: var(--ow-muted, #6B6B67);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect><path d="M12 18h.01"></path></svg>
+      </button>
+    </div>
+
+    <p data-r="stage-saved" role="status" style="display: flex; align-items: center; gap: 6px; padding: 0 8px; font-size: 12px; white-space: nowrap; color: var(--ow-muted, #6B6B67);">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+      Saved
+    </p>
+
+    <span style="display: inline-flex; height: 32px; align-items: center; border-radius: 6px; background: #0055FF; padding: 0 14px; font-size: 13px; font-weight: 500; color: #FFFFFF;">Publish</span>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; align-items: stretch;">
+
+    <div data-r="stage-side" style="flex: 0 1 208px; max-height: 560px; display: flex; flex-direction: column; border-right: 1px solid var(--ow-line, #E4E2DC); overflow: auto;">
+      <div style="border-bottom: 1px solid var(--ow-line, #E4E2DC); padding: 12px 0;">
+        <p style="margin: 0 0 8px; padding: 0 16px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ow-muted, #6B6B67);">Your page</p>
+        <sc-for list="{{ pageBlocks }}" as="row" hint-placeholder-count="2">
+          <div style="display: flex; align-items: center; gap: 6px; padding: 5px 10px 5px 8px; font-size: 12px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" style="color: var(--ow-faint, #C6C3BB); flex-shrink: 0;" aria-hidden="true"><circle cx="9" cy="12" r="1"></circle><circle cx="9" cy="5" r="1"></circle><circle cx="9" cy="19" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="15" cy="5" r="1"></circle><circle cx="15" cy="19" r="1"></circle></svg>
+            <span style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ row.label }}</span>
+            <sc-if value="{{ row.removable }}" hint-placeholder-val="{{ true }}">
+              <button type="button" onClick="{{ row.remove }}" aria-label="Remove block" style="cursor: pointer; border: 0; background: none; padding: 2px; font-size: 13px; line-height: 1; color: var(--ow-muted, #6B6B67);">×</button>
+            </sc-if>
+            <sc-if value="{{ row.locked }}" hint-placeholder-val="{{ false }}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11" style="color: var(--ow-faint, #C6C3BB); flex-shrink: 0; margin-right: 3px;" aria-label="The hero always stays"><title>The hero always stays</title><rect width="14" height="9" x="5" y="11" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 16px; padding: 16px;">
+        <div>
+          <p style="margin: 0 0 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ow-muted, #6B6B67);">You</p>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px;">
+            <div style="display: flex; align-items: center; gap: 8px; border-radius: 6px; border: 1px solid var(--ow-line, #E4E2DC); padding: 8px; font-size: 12px; opacity: 0.5;" title="You already have a hero">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" style="color: var(--ow-muted, #6B6B67); flex-shrink: 0;" aria-hidden="true"><circle cx="12" cy="8" r="5"></circle><path d="M20 21a8 8 0 0 0-16 0"></path></svg>
+              <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Hero</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <p style="margin: 0 0 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ow-muted, #6B6B67);">Content</p>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px;">
+            <button type="button" onClick="{{ addText }}" title="A heading and a paragraph." style="display: flex; cursor: pointer; align-items: center; gap: 8px; border-radius: 6px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF); padding: 8px; font: inherit; font-size: 12px; text-align: left; color: var(--ow-ink, #111111);" style-hover="border-color: var(--ow-shadow, rgba(17,17,17,0.25)); background: rgba(247,246,242,0.6);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" style="color: var(--ow-muted, #6B6B67); flex-shrink: 0;" aria-hidden="true"><path d="M12 4v16"></path><path d="M4 7V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2"></path><path d="M9 20h6"></path></svg>
+              <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Text</span>
+            </button>
+            <button type="button" onClick="{{ addSocial }}" title="Icons for the platforms you're on." style="display: flex; cursor: pointer; align-items: center; gap: 8px; border-radius: 6px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF); padding: 8px; font: inherit; font-size: 12px; text-align: left; color: var(--ow-ink, #111111);" style-hover="border-color: var(--ow-shadow, rgba(17,17,17,0.25)); background: rgba(247,246,242,0.6);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" style="color: var(--ow-muted, #6B6B67); flex-shrink: 0;" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"></path></svg>
+              <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Social links</span>
+            </button>
+            <button type="button" onClick="{{ addLinks }}" title="Buttons pointing anywhere you like." style="display: flex; cursor: pointer; align-items: center; gap: 8px; border-radius: 6px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF); padding: 8px; font: inherit; font-size: 12px; text-align: left; color: var(--ow-ink, #111111);" style-hover="border-color: var(--ow-shadow, rgba(17,17,17,0.25)); background: rgba(247,246,242,0.6);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" style="color: var(--ow-muted, #6B6B67); flex-shrink: 0;" aria-hidden="true"><path d="M9 17H7A5 5 0 0 1 7 7h2"></path><path d="M15 7h2a5 5 0 1 1 0 10h-2"></path><line x1="8" x2="16" y1="12" y2="12"></line></svg>
+              <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Links</span>
+            </button>
+            <button type="button" onClick="{{ addProjects }}" title="Cards for the things you've made." style="display: flex; cursor: pointer; align-items: center; gap: 8px; border-radius: 6px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF); padding: 8px; font: inherit; font-size: 12px; text-align: left; color: var(--ow-ink, #111111);" style-hover="border-color: var(--ow-shadow, rgba(17,17,17,0.25)); background: rgba(247,246,242,0.6);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" style="color: var(--ow-muted, #6B6B67); flex-shrink: 0;" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg>
+              <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Projects</span>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <p style="margin: 0 0 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ow-muted, #6B6B67);">Media</p>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px;">
+            <button type="button" onClick="{{ addImage }}" title="A single picture, optionally linked." style="display: flex; cursor: pointer; align-items: center; gap: 8px; border-radius: 6px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF); padding: 8px; font: inherit; font-size: 12px; text-align: left; color: var(--ow-ink, #111111);" style-hover="border-color: var(--ow-shadow, rgba(17,17,17,0.25)); background: rgba(247,246,242,0.6);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" style="color: var(--ow-muted, #6B6B67); flex-shrink: 0;" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>
+              <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Image</span>
+            </button>
+            <button type="button" onClick="{{ addGallery }}" title="A grid of images." style="display: flex; cursor: pointer; align-items: center; gap: 8px; border-radius: 6px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF); padding: 8px; font: inherit; font-size: 12px; text-align: left; color: var(--ow-ink, #111111);" style-hover="border-color: var(--ow-shadow, rgba(17,17,17,0.25)); background: rgba(247,246,242,0.6);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" style="color: var(--ow-muted, #6B6B67); flex-shrink: 0;" aria-hidden="true"><path d="m22 11-1.296-1.296a2.4 2.4 0 0 0-3.408 0L11 16"></path><path d="M4 8a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2"></path><circle cx="13" cy="7" r="1" fill="currentColor"></circle><rect x="8" y="2" width="14" height="14" rx="2"></rect></svg>
+              <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Gallery</span>
+            </button>
+            <button type="button" onClick="{{ addEmbed }}" title="A Spotify or YouTube player." style="display: flex; cursor: pointer; align-items: center; gap: 8px; border-radius: 6px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF); padding: 8px; font: inherit; font-size: 12px; text-align: left; color: var(--ow-ink, #111111);" style-hover="border-color: var(--ow-shadow, rgba(17,17,17,0.25)); background: rgba(247,246,242,0.6);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" style="color: var(--ow-muted, #6B6B67); flex-shrink: 0;" aria-hidden="true"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"></path></svg>
+              <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Embed</span>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <p style="margin: 0 0 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ow-muted, #6B6B67);">Structure</p>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px;">
+            <button type="button" onClick="{{ addDivider }}" title="A line or a gap." style="display: flex; cursor: pointer; align-items: center; gap: 8px; border-radius: 6px; border: 1px solid var(--ow-line, #E4E2DC); background: var(--ow-surface, #FFFFFF); padding: 8px; font: inherit; font-size: 12px; text-align: left; color: var(--ow-ink, #111111);" style-hover="border-color: var(--ow-shadow, rgba(17,17,17,0.25)); background: rgba(247,246,242,0.6);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" style="color: var(--ow-muted, #6B6B67); flex-shrink: 0;" aria-hidden="true"><path d="M5 12h14"></path></svg>
+              <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Divider</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex: 1 1 300px; display: flex; min-width: 0; min-height: 0; flex-direction: column;">
+      <div ref="{{ viewportRef }}" data-r="stage-canvas" style="height: 460px; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; background: var(--ow-bg, #F7F6F2); padding: 20px; display: flex; align-items: flex-start; justify-content: center;">
+        <div style="{{ canvasFrame }}">{{ canvas }}</div>
+      </div>
+
+      <div style="flex-shrink: 0; border-top: 1px solid var(--ow-line, #E4E2DC); padding: 12px 16px;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px;">
+          <p style="margin: 0; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ow-muted, #6B6B67);">Theme</p>
+          <p style="margin: 0; font-family: ui-monospace, monospace; font-size: 10px; color: var(--ow-muted, #6B6B67);">10 presets</p>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px;">{{ presets }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1000,&quot;height&quot;:620},&quot;persona&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;creative&quot;,&quot;photographer&quot;,&quot;freelancer&quot;,&quot;consultant&quot;,&quot;jewellery&quot;],&quot;default&quot;:&quot;creative&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;preset&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;minimal&quot;,&quot;dark&quot;,&quot;glass&quot;,&quot;retro&quot;,&quot;cyber&quot;,&quot;editorial&quot;,&quot;soft&quot;,&quot;colorful&quot;,&quot;professional&quot;,&quot;portfolio&quot;],&quot;default&quot;:&quot;glass&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;startBlocks&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;string[]&quot;}}">
+const STARTERS = {
+  text: { heading: "About", body: "A couple of sentences about what you do and what you're into.", size: "base", tone: "default", align: "inherit" },
+  social: { links: [{ id: "s1", platform: "instagram" }, { id: "s2", platform: "github" }], shape: "circle", size: "md", style: "icon", layout: "row" },
+  links: { items: [{ id: "l1", label: "My portfolio", url: "example.com", description: "" }], style: "solid", size: "md", showArrow: true },
+  projects: { heading: "Projects", items: [{ id: "p1", name: "Project name", description: "What it is, in one line.", imageUrl: "", tags: [] }], layout: "grid", columns: 2, imageRatio: "16:9", showTags: true, showDescription: true },
+  image: { url: "https://picsum.photos/seed/owna-starter-image/1200/800", alt: "", caption: "", ratio: "16:9", fit: "cover", width: "full" },
+  gallery: { heading: "Gallery", images: [
+    { id: "g1", url: "https://picsum.photos/seed/owna-starter-a/700/700", alt: "", shape: "square" },
+    { id: "g2", url: "https://picsum.photos/seed/owna-starter-b/700/700", alt: "", shape: "square" },
+    { id: "g3", url: "https://picsum.photos/seed/owna-starter-c/700/700", alt: "", shape: "square" },
+  ], layout: "grid", columns: 3, gap: 8, showCaptions: false },
+  embed: { heading: "", url: "", title: "" },
+  divider: { variant: "line", thickness: 1, height: 24, width: "full" },
+};
+
+const LABELS = {
+  hero: "Hero", text: "Text", social: "Social links", links: "Links",
+  projects: "Projects", image: "Image", gallery: "Gallery", embed: "Embed", divider: "Divider",
+};
+
+class Component extends DCLogic {
+  state = { lib: null, order: null, preset: null, device: "desktop", seq: 0 };
+  viewportRef = React.createRef();
+
+
+
+  componentDidMount() {
+    import("./owna-profiles.js").then((lib) => {
+      const persona = this.props.persona || "creative";
+      const demo = lib.demoProfiles[persona];
+      const start = this.props.startBlocks || ["hero", "gallery"];
+      this.setState({
+        lib,
+        order: start.map((type, i) => ({ key: `k${i}`, type })),
+        preset: this.props.preset || demo.preset,
+      });
+    });
+  }
+
+  add(type) {
+    this.setState((s) => ({ seq: s.seq + 1, order: [...(s.order || []), { key: `n${s.seq}`, type }] }));
+    setTimeout(() => this.revealEnd(), 80);
+  }
+
+  // A new block lands at the bottom of the page, so the canvas follows it down
+  // rather than leaving you looking at content that didn't change.
+  revealEnd() {
+    const el = this.viewportRef.current || document.querySelector('[data-r="stage-canvas"]');
+    if (!el) return;
+    requestAnimationFrame(() => {
+      const from = el.scrollTop;
+      const to = el.scrollHeight - el.clientHeight;
+      if (to - from < 2) return;
+      const start = performance.now();
+      const step = (now) => {
+        const t = Math.min(1, (now - start) / 340);
+        el.scrollTop = from + (to - from) * (1 - Math.pow(1 - t, 3));
+        if (t < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+
+  remove(key) {
+    this.setState((s) => {
+      const order = s.order || [];
+      const row = order.find((b) => b.key === key);
+      if (!row || row.type === "hero") return null;
+      return { order: order.filter((b) => b.key !== key) };
+    });
+  }
+
+  renderVals() {
+    const { lib, order, preset, device } = this.state;
+    const persona = this.props.persona || "creative";
+    const width = device === "mobile" ? 390 : 620;
+
+    const canvasFrame = {
+      width: "100%",
+      maxWidth: width,
+      overflow: "hidden",
+      borderRadius: 12,
+      border: "1px solid var(--ow-line, #E4E2DC)",
+      background: "var(--ow-surface, #FFFFFF)",
+      boxShadow: "0 1px 2px rgba(17,17,17,0.05), 0 12px 30px -18px var(--ow-shadow, rgba(17,17,17,0.25))",
+      transition: "max-width 260ms cubic-bezier(0.16,1,0.3,1)",
+    };
+
+    let canvas = null;
+    let presets = [];
+
+    if (lib && order) {
+      const demo = lib.demoProfiles[persona];
+      const byType = {};
+      for (const b of demo.blocks) byType[b.type] = b;
+      const theme = lib.PRESETS[preset];
+
+      const blocks = order.map((row) => {
+        const source = byType[row.type];
+        return {
+          id: row.key,
+          type: row.type,
+          props: source ? source.props : STARTERS[row.type] || {},
+        };
+      });
+
+      canvas = lib.renderProfile(
+        React,
+        { profile: demo.profile, theme: theme.theme, layout: theme.layout, blocks },
+        { contentWidth: width, sectionPadding: 36 },
+      );
+
+      presets = lib.PRESET_ORDER.map((id) => {
+        const p = lib.PRESETS[id];
+        const active = id === preset;
+        return React.createElement("button", {
+          key: id,
+          type: "button",
+          title: p.description,
+          "aria-pressed": active,
+          onClick: () => this.setState({ preset: id }),
+          style: {
+            display: "flex", alignItems: "center", gap: 6, cursor: "pointer",
+            borderRadius: 8, padding: "5px 9px 5px 6px", font: "inherit", fontSize: 11,
+            border: `1px solid ${active ? "#0055FF" : "var(--ow-line, #E4E2DC)"}`,
+            background: active ? "var(--ow-accent-soft, rgba(0,85,255,0.08))" : "var(--ow-surface, #FFFFFF)",
+            color: "var(--ow-ink, #111111)",
+          },
+        }, [
+          React.createElement("span", {
+            key: "sw",
+            style: {
+              display: "inline-flex", alignItems: "center", justifyContent: "center",
+              width: 18, height: 18, borderRadius: 4,
+              background: p.theme.colors.background,
+              border: `1px solid ${p.theme.colors.border}`,
+            },
+          }, React.createElement("span", { style: { width: 7, height: 7, borderRadius: 999, background: p.theme.colors.accent } })),
+          p.name,
+        ]);
+      });
+    }
+
+    return {
+      canvas,
+      canvasFrame,
+      presets,
+      viewportRef: this.viewportRef,
+      pageBlocks: (order || []).map((row) => ({
+        key: row.key,
+        label: LABELS[row.type] || row.type,
+        removable: row.type !== "hero",
+        locked: row.type === "hero",
+        remove: () => this.remove(row.key),
+      })),
+      addText: () => this.add("text"),
+      addSocial: () => this.add("social"),
+      addLinks: () => this.add("links"),
+      addProjects: () => this.add("projects"),
+      addImage: () => this.add("image"),
+      addGallery: () => this.add("gallery"),
+      addEmbed: () => this.add("embed"),
+      addDivider: () => this.add("divider"),
+      setDesktop: () => this.setState({ device: "desktop" }),
+      setMobile: () => this.setState({ device: "mobile" }),
+    };
+  }
+}
+</script>
+</body>
+</html>

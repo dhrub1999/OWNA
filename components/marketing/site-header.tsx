@@ -25,17 +25,17 @@ import { NAV_LINKS } from "@/components/marketing/nav-links";
  */
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-border/40 bg-background supports-backdrop-filter:bg-background/72 supports-backdrop-filter:backdrop-blur-xl supports-backdrop-filter:backdrop-saturate-150">
-      <div className="flex h-20 items-center justify-between px-6 sm:px-12">
-        <div className="flex items-center gap-12">
+    <header className="sticky top-0 z-40 border-b border-border/40 bg-background supports-backdrop-filter:bg-background/72 supports-backdrop-filter:backdrop-blur-xl supports-backdrop-filter:backdrop-saturate-150 dark:border-border/55">
+      <div className="flex h-18 items-center justify-between gap-3 px-[clamp(16px,4vw,48px)]">
+        <div className="flex min-w-0 items-center gap-[clamp(24px,4vw,48px)]">
           <Link
             href="/"
             aria-label="OWNA home"
-            className="text-foreground transition-colors hover:text-logo-hover"
+            className="shrink-0 text-foreground transition-colors hover:text-logo-hover"
           >
-            <Logo className="h-9 w-auto" />
+            <Logo className="h-7.5 w-auto" />
           </Link>
-          <nav className="hidden items-center gap-8 text-sm font-medium md:flex">
+          <nav className="hidden items-center gap-[clamp(14px,2vw,32px)] text-sm font-medium whitespace-nowrap nav:flex">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
@@ -48,7 +48,7 @@ export function SiteHeader() {
           </nav>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex shrink-0 items-center gap-[clamp(8px,1.4vw,16px)]">
           <ThemeToggle />
           <Suspense fallback={<HeaderAuthSlotFallback />}>
             <HeaderAuthSlot />

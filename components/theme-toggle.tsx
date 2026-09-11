@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 
 const TOGGLE_CLASS_NAME = cn(
   buttonVariants({ variant: "ghost", size: "icon" }),
-  "rounded-full h-10 w-10 border border-border"
+  "rounded-full h-9 w-9 border border-border"
 )
 
 export function ThemeToggle() {
@@ -25,7 +25,7 @@ export function ThemeToggle() {
       <Button
         variant="ghost"
         size="icon"
-        className="rounded-full h-10 w-10 border border-border"
+        className="rounded-full h-9 w-9 border border-border"
         aria-hidden
         tabIndex={-1}
       />

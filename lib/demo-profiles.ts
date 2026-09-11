@@ -53,6 +53,22 @@ export type DemoProfileId =
   | "freelancer"
   | "creative";
 
+/**
+ * Which preset each persona was built from.
+ *
+ * `createSnapshot` below resolves the preset into a full theme object and
+ * doesn't keep the id around, so anything that wants to *name* a persona's
+ * theme — the persona picker's "Portfolio theme" label, the hero editor's
+ * starting preset — needs it recorded separately, once, here.
+ */
+export const DEMO_PRESETS: Record<DemoProfileId, ThemePresetId> = {
+  consultant: "professional",
+  jewellery: "editorial",
+  photographer: "portfolio",
+  freelancer: "cyber",
+  creative: "glass",
+};
+
 export const demoProfiles: Record<DemoProfileId, ProfileSnapshot> = {
   consultant: createSnapshot(
     "professional",

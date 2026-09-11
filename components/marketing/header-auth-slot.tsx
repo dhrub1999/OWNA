@@ -45,13 +45,11 @@ export async function HeaderAuthSlot() {
 function DesktopActions({ viewer }: { viewer: Viewer }) {
   if (viewer.state === "member") {
     return (
-      <div className="hidden sm:inline-flex">
-        <UserMenu
-          avatarUrl={viewer.avatarUrl}
-          displayName={viewer.displayName}
-          liveUrl={viewer.liveUrl}
-        />
-      </div>
+      <UserMenu
+        avatarUrl={viewer.avatarUrl}
+        displayName={viewer.displayName}
+        liveUrl={viewer.liveUrl}
+      />
     );
   }
 
@@ -63,12 +61,12 @@ function DesktopActions({ viewer }: { viewer: Viewer }) {
             about what that costs — the choice is theirs, informed. */}
         <Link
           href="/login"
-          className="hidden text-sm font-medium transition-colors hover:text-primary sm:block"
+          className="hidden text-sm font-medium whitespace-nowrap transition-colors hover:text-primary xs:block"
         >
           Log in
         </Link>
         <Button
-          className="hidden rounded-full px-6 sm:inline-flex"
+          className="rounded-full px-4 xs:px-6"
           render={<Link href="/editor" />}
         >
           Continue building
@@ -81,11 +79,11 @@ function DesktopActions({ viewer }: { viewer: Viewer }) {
     <>
       <Link
         href="/login"
-        className="hidden text-sm font-medium transition-colors hover:text-primary sm:block"
+        className="hidden text-sm font-medium whitespace-nowrap transition-colors hover:text-primary xs:block"
       >
         Log in
       </Link>
-      <StartBuildingButton className="hidden rounded-full px-6 sm:inline-flex">
+      <StartBuildingButton className="rounded-full px-4 xs:px-6">
         Create your OWNA
       </StartBuildingButton>
     </>
@@ -105,7 +103,7 @@ export function HeaderAuthSlotFallback() {
     <>
       <div
         aria-hidden="true"
-        className="hidden h-9 w-40 animate-pulse rounded-full bg-muted sm:block"
+        className="h-9 w-28 animate-pulse rounded-full bg-muted xs:w-40"
       />
       <MobileNav viewer={{ state: "signed-out" }} />
     </>
